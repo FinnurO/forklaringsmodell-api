@@ -1,0 +1,15 @@
+## .NET
+bin/
+obj/
+*.user
+
+## SQLite dev database
+*.db
+*.db-shm
+*.db-wal
+
+## VS / Rider
+.vs/
+.vscode/
+*.suo
+*.userprefs
