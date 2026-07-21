@@ -52,6 +52,15 @@ public class FaktumService
         var sak = await _repository.GetSakAsync(sakId, ct) ?? throw new NotFoundException($"Sak {sakId} finnes ikke.");
         _ = await _repository.GetKildeAsync(dto.KildeId, ct) ?? throw new NotFoundException($"Kilde {dto.KildeId} finnes ikke.");
 
+        var rettskilder = dto.RettskildeIder.Count > 0
+            ? await _repository.GetRettskilderByIderAsync(dto.RettskildeIder, ct)
+            : new List<Rettskilde>();
+        var manglendeRettskilder = dto.RettskildeIder.Except(rettskilder.Select(r => r.RettskildeId)).ToList();
+        if (manglendeRettskilder.Count > 0)
+        {
+            throw new NotFoundException($"Rettskilde {string.Join(", ", manglendeRettskilder)} finnes ikke.");
+        }
+
         var faktum = new Faktum
         {
             FaktumId = Guid.NewGuid(),
@@ -62,6 +71,11 @@ public class FaktumService
             Verdi = dto.Verdi,
             InnhentetTidspunkt = dto.InnhentetTidspunkt ?? DateTimeOffset.UtcNow
         };
+
+        foreach (var rettskilde in rettskilder)
+        {
+            faktum.FaktumRettskilde.Add(new FaktumRettskilde { FaktumId = faktum.FaktumId, RettskildeId = rettskilde.RettskildeId });
+        }
 
         await _repository.AddFaktumAsync(faktum, ct);
         await _repository.SaveChangesAsync(ct);
@@ -129,6 +143,7 @@ public class FaktumService
         Verdi = faktum.Verdi,
         AvledetFraFaktumId = faktum.AvledetFraFaktumId,
         InnhentetTidspunkt = faktum.InnhentetTidspunkt,
+        RettskildeIder = faktum.FaktumRettskilde.Select(fr => fr.RettskildeId).ToList(),
         ErLaast = await _repository.ErFaktumReferertAsync(faktum.FaktumId, ct)
     };
 }

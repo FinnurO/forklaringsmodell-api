@@ -25,4 +25,5 @@ public class Faktum
     public Faktum? AvledetFraFaktum { get; set; }
     public ICollection<Faktum> Avledninger { get; set; } = new List<Faktum>();
     public ICollection<VurderingFaktum> VurderingFaktum { get; set; } = new List<VurderingFaktum>();
+    public ICollection<FaktumRettskilde> FaktumRettskilde { get; set; } = new List<FaktumRettskilde>();
 }

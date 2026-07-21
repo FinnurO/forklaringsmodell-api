@@ -50,7 +50,8 @@ public class SakService
             Tittel = dto.Tittel,
             Status = dto.Status,
             Opprettet = naa,
-            SistEndret = naa
+            SistEndret = naa,
+            TjenesteReferanse = dto.TjenesteReferanse
         };
 
         await _repository.AddSakAsync(sak, ct);
@@ -88,6 +89,7 @@ public class SakService
         Tittel = sak.Tittel,
         Status = sak.Status,
         Opprettet = sak.Opprettet,
-        SistEndret = sak.SistEndret
+        SistEndret = sak.SistEndret,
+        TjenesteReferanse = sak.TjenesteReferanse
     };
 }

@@ -34,7 +34,8 @@ public class RettskildeService
         var rettskilde = new Rettskilde
         {
             RettskildeId = Guid.NewGuid(),
-            Paragraf = dto.Paragraf,
+            Type = dto.Type,
+            Henvisning = dto.Henvisning,
             VersjonDato = dto.VersjonDato,
             EliReferanse = dto.EliReferanse
         };
@@ -47,7 +48,8 @@ public class RettskildeService
     private static RettskildeDto ToDto(Rettskilde rettskilde) => new()
     {
         RettskildeId = rettskilde.RettskildeId,
-        Paragraf = rettskilde.Paragraf,
+        Type = rettskilde.Type,
+        Henvisning = rettskilde.Henvisning,
         VersjonDato = rettskilde.VersjonDato,
         EliReferanse = rettskilde.EliReferanse
     };

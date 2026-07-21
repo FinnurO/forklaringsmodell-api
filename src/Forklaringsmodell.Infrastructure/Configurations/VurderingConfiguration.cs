@@ -40,3 +40,22 @@ public class VurderingFaktumConfiguration : IEntityTypeConfiguration<VurderingFa
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
+
+public class VurderingRettskildeConfiguration : IEntityTypeConfiguration<VurderingRettskilde>
+{
+    public void Configure(EntityTypeBuilder<VurderingRettskilde> builder)
+    {
+        builder.ToTable("VurderingRettskilde");
+        builder.HasKey(x => new { x.VurderingId, x.RettskildeId });
+
+        builder.HasOne(x => x.Vurdering)
+            .WithMany(v => v.VurderingRettskilde)
+            .HasForeignKey(x => x.VurderingId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.Rettskilde)
+            .WithMany(r => r.VurderingRettskilde)
+            .HasForeignKey(x => x.RettskildeId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+}

@@ -36,16 +36,25 @@ public class RegelService
             throw new AppValidationException(result.Errors);
         }
 
-        var rettskilde = await _repository.GetRettskildeAsync(dto.RettskildeId, ct)
-            ?? throw new NotFoundException($"Rettskilde {dto.RettskildeId} finnes ikke.");
+        var rettskilder = await _repository.GetRettskilderByIderAsync(dto.RettskildeIder, ct);
+        var manglende = dto.RettskildeIder.Except(rettskilder.Select(r => r.RettskildeId)).ToList();
+        if (manglende.Count > 0)
+        {
+            throw new NotFoundException($"Rettskilde {string.Join(", ", manglende)} finnes ikke.");
+        }
 
         var regel = new Regel
         {
             RegelId = Guid.NewGuid(),
-            RettskildeId = rettskilde.RettskildeId,
             Teknologi = dto.Teknologi,
-            Type = dto.Type
+            Type = dto.Type,
+            CpsvRuleReferanse = dto.CpsvRuleReferanse
         };
+
+        foreach (var rettskilde in rettskilder)
+        {
+            regel.RegelRettskilde.Add(new RegelRettskilde { RegelId = regel.RegelId, RettskildeId = rettskilde.RettskildeId });
+        }
 
         await _repository.AddRegelAsync(regel, ct);
         await _repository.SaveChangesAsync(ct);
@@ -55,9 +64,10 @@ public class RegelService
     private async Task<RegelDto> ToDtoAsync(Regel regel, CancellationToken ct) => new()
     {
         RegelId = regel.RegelId,
-        RettskildeId = regel.RettskildeId,
+        RettskildeIder = regel.RegelRettskilde.Select(rr => rr.RettskildeId).ToList(),
         Teknologi = regel.Teknologi,
         Type = regel.Type,
+        CpsvRuleReferanse = regel.CpsvRuleReferanse,
         ErLaast = await _repository.ErRegelReferertAsync(regel.RegelId, ct)
     };
 }

@@ -20,6 +20,17 @@ public enum KildeType
     AnnenKilde
 }
 
+public enum RettskildeType
+{
+    Lov,
+    Forskrift,
+    Rundskriv,
+    Forarbeider,
+    Rettspraksis,
+    InternasjonalRett,
+    Forvaltningspraksis
+}
+
 public enum VurderingsType
 {
     Deterministisk,

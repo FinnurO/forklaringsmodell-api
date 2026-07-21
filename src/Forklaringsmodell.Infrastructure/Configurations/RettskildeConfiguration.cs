@@ -11,10 +11,8 @@ public class RettskildeConfiguration : IEntityTypeConfiguration<Rettskilde>
         builder.ToTable("Rettskilder");
         builder.HasKey(x => x.RettskildeId);
 
-        builder.Property(x => x.Paragraf).IsRequired().HasMaxLength(300);
-        builder.Property(x => x.VersjonDato).IsRequired();
-        builder.Property(x => x.EliReferanse).IsRequired().HasMaxLength(500);
-
-        builder.HasMany(x => x.Regler).WithOne(r => r.Rettskilde).HasForeignKey(r => r.RettskildeId).OnDelete(DeleteBehavior.Restrict);
+        builder.Property(x => x.Type).HasConversion<string>().HasMaxLength(50);
+        builder.Property(x => x.Henvisning).IsRequired().HasMaxLength(300);
+        builder.Property(x => x.EliReferanse).HasMaxLength(500);
     }
 }

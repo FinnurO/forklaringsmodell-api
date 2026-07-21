@@ -9,12 +9,14 @@ public class SakDto
     public SakStatus Status { get; set; }
     public DateTimeOffset Opprettet { get; set; }
     public DateTimeOffset SistEndret { get; set; }
+    public string? TjenesteReferanse { get; set; }
 }
 
 public class OpprettSakDto
 {
     public string Tittel { get; set; } = string.Empty;
     public SakStatus Status { get; set; } = SakStatus.UnderBehandling;
+    public string? TjenesteReferanse { get; set; }
 }
 
 public class OppdaterSakDto

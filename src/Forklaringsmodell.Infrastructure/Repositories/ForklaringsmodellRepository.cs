@@ -28,24 +28,27 @@ public class ForklaringsmodellRepository : IForklaringsmodellRepository
 
     // Kilde
     public Task<Kilde?> GetKildeAsync(Guid kildeId, CancellationToken ct = default) =>
-        _db.Kilder.FirstOrDefaultAsync(k => k.KildeId == kildeId, ct);
+        _db.Kilder.Include(k => k.KildeRettskilde).FirstOrDefaultAsync(k => k.KildeId == kildeId, ct);
 
     public Task<List<Kilde>> GetKilderAsync(CancellationToken ct = default) =>
-        _db.Kilder.OrderBy(k => k.Navn).ToListAsync(ct);
+        _db.Kilder.Include(k => k.KildeRettskilde).OrderBy(k => k.Navn).ToListAsync(ct);
 
     public async Task AddKildeAsync(Kilde kilde, CancellationToken ct = default) =>
         await _db.Kilder.AddAsync(kilde, ct);
 
+    public Task<bool> ErKildeReferertAsync(Guid kildeId, CancellationToken ct = default) =>
+        _db.Faktum.AnyAsync(f => f.KildeId == kildeId, ct);
+
     // Faktum
     public Task<Faktum?> GetFaktumAsync(Guid faktumId, CancellationToken ct = default) =>
-        _db.Faktum.Include(f => f.VurderingFaktum).FirstOrDefaultAsync(f => f.FaktumId == faktumId, ct);
+        _db.Faktum.Include(f => f.VurderingFaktum).Include(f => f.FaktumRettskilde).FirstOrDefaultAsync(f => f.FaktumId == faktumId, ct);
 
     // Se kommentar ved GetSakerAsync ang. klientsidig sortering på DateTimeOffset.
     public async Task<List<Faktum>> GetFaktumForSakAsync(Guid sakId, CancellationToken ct = default) =>
-        (await _db.Faktum.Where(f => f.SakId == sakId).ToListAsync(ct)).OrderBy(f => f.InnhentetTidspunkt).ToList();
+        (await _db.Faktum.Include(f => f.FaktumRettskilde).Where(f => f.SakId == sakId).ToListAsync(ct)).OrderBy(f => f.InnhentetTidspunkt).ToList();
 
     public Task<List<Faktum>> GetFaktumByIderAsync(IEnumerable<Guid> faktumIder, CancellationToken ct = default) =>
-        _db.Faktum.Include(f => f.VurderingFaktum).Where(f => faktumIder.Contains(f.FaktumId)).ToListAsync(ct);
+        _db.Faktum.Include(f => f.VurderingFaktum).Include(f => f.FaktumRettskilde).Where(f => faktumIder.Contains(f.FaktumId)).ToListAsync(ct);
 
     public async Task AddFaktumAsync(Faktum faktum, CancellationToken ct = default) =>
         await _db.Faktum.AddAsync(faktum, ct);
@@ -58,17 +61,20 @@ public class ForklaringsmodellRepository : IForklaringsmodellRepository
         _db.Rettskilder.FirstOrDefaultAsync(r => r.RettskildeId == rettskildeId, ct);
 
     public Task<List<Rettskilde>> GetRettskilderAsync(CancellationToken ct = default) =>
-        _db.Rettskilder.OrderBy(r => r.Paragraf).ToListAsync(ct);
+        _db.Rettskilder.OrderBy(r => r.Henvisning).ToListAsync(ct);
+
+    public Task<List<Rettskilde>> GetRettskilderByIderAsync(IEnumerable<Guid> rettskildeIder, CancellationToken ct = default) =>
+        _db.Rettskilder.Where(r => rettskildeIder.Contains(r.RettskildeId)).ToListAsync(ct);
 
     public async Task AddRettskildeAsync(Rettskilde rettskilde, CancellationToken ct = default) =>
         await _db.Rettskilder.AddAsync(rettskilde, ct);
 
     // Regel
     public Task<Regel?> GetRegelAsync(Guid regelId, CancellationToken ct = default) =>
-        _db.Regler.FirstOrDefaultAsync(r => r.RegelId == regelId, ct);
+        _db.Regler.Include(r => r.RegelRettskilde).FirstOrDefaultAsync(r => r.RegelId == regelId, ct);
 
     public Task<List<Regel>> GetReglerAsync(CancellationToken ct = default) =>
-        _db.Regler.OrderBy(r => r.Teknologi).ToListAsync(ct);
+        _db.Regler.Include(r => r.RegelRettskilde).OrderBy(r => r.Teknologi).ToListAsync(ct);
 
     public async Task AddRegelAsync(Regel regel, CancellationToken ct = default) =>
         await _db.Regler.AddAsync(regel, ct);
@@ -78,13 +84,13 @@ public class ForklaringsmodellRepository : IForklaringsmodellRepository
 
     // Vurdering
     public Task<Vurdering?> GetVurderingAsync(Guid vurderingId, CancellationToken ct = default) =>
-        _db.Vurderinger.Include(v => v.VurderingFaktum).FirstOrDefaultAsync(v => v.VurderingId == vurderingId, ct);
+        _db.Vurderinger.Include(v => v.VurderingFaktum).Include(v => v.VurderingRettskilde).FirstOrDefaultAsync(v => v.VurderingId == vurderingId, ct);
 
     public Task<List<Vurdering>> GetVurderingerForSakAsync(Guid sakId, CancellationToken ct = default) =>
-        _db.Vurderinger.Include(v => v.VurderingFaktum).Where(v => v.SakId == sakId).ToListAsync(ct);
+        _db.Vurderinger.Include(v => v.VurderingFaktum).Include(v => v.VurderingRettskilde).Where(v => v.SakId == sakId).ToListAsync(ct);
 
     public Task<List<Vurdering>> GetVurderingerByIderAsync(IEnumerable<Guid> vurderingIder, CancellationToken ct = default) =>
-        _db.Vurderinger.Include(v => v.VurderingFaktum).Where(v => vurderingIder.Contains(v.VurderingId)).ToListAsync(ct);
+        _db.Vurderinger.Include(v => v.VurderingFaktum).Include(v => v.VurderingRettskilde).Where(v => vurderingIder.Contains(v.VurderingId)).ToListAsync(ct);
 
     public async Task AddVurderingAsync(Vurdering vurdering, CancellationToken ct = default) =>
         await _db.Vurderinger.AddAsync(vurdering, ct);

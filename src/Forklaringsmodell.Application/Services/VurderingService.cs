@@ -64,6 +64,15 @@ public class VurderingService
             throw new NotFoundException($"Faktum {string.Join(", ", manglende)} finnes ikke.");
         }
 
+        var rettskilder = dto.RettskildeIder.Count > 0
+            ? await _repository.GetRettskilderByIderAsync(dto.RettskildeIder, ct)
+            : new List<Rettskilde>();
+        var manglendeRettskilder = dto.RettskildeIder.Except(rettskilder.Select(r => r.RettskildeId)).ToList();
+        if (manglendeRettskilder.Count > 0)
+        {
+            throw new NotFoundException($"Rettskilde {string.Join(", ", manglendeRettskilder)} finnes ikke.");
+        }
+
         var eskalert = dto.Eskalert;
 
         // Pragmatisk tolkning av regel 3.3: terskelen for eskalering leses fra
@@ -100,6 +109,11 @@ public class VurderingService
             vurdering.VurderingFaktum.Add(new VurderingFaktum { VurderingId = vurdering.VurderingId, FaktumId = faktum.FaktumId });
         }
 
+        foreach (var rettskilde in rettskilder)
+        {
+            vurdering.VurderingRettskilde.Add(new VurderingRettskilde { VurderingId = vurdering.VurderingId, RettskildeId = rettskilde.RettskildeId });
+        }
+
         await _repository.AddVurderingAsync(vurdering, ct);
         await _repository.SaveChangesAsync(ct);
         return await ToDtoAsync(vurdering, ct);
@@ -131,6 +145,7 @@ public class VurderingService
         Hovedhensyn = vurdering.Hovedhensyn,
         ForkastedeUtfall = vurdering.ForkastedeUtfall,
         ErLaast = await _repository.ErVurderingReferertAsync(vurdering.VurderingId, ct),
-        FaktumIder = vurdering.VurderingFaktum.Select(vf => vf.FaktumId).ToList()
+        FaktumIder = vurdering.VurderingFaktum.Select(vf => vf.FaktumId).ToList(),
+        RettskildeIder = vurdering.VurderingRettskilde.Select(vr => vr.RettskildeId).ToList()
     };
 }

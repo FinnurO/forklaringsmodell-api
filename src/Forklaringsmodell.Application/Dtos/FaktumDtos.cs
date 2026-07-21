@@ -12,6 +12,7 @@ public class FaktumDto
     public string Verdi { get; set; } = string.Empty;
     public Guid? AvledetFraFaktumId { get; set; }
     public DateTimeOffset InnhentetTidspunkt { get; set; }
+    public List<Guid> RettskildeIder { get; set; } = new();
     public bool ErLaast { get; set; }
 }
 
@@ -22,6 +23,7 @@ public class OpprettFaktumDto
     public StrukturType Struktur { get; set; }
     public string Verdi { get; set; } = string.Empty;
     public DateTimeOffset? InnhentetTidspunkt { get; set; }
+    public List<Guid> RettskildeIder { get; set; } = new();
 }
 
 public class TransformerFaktumDto

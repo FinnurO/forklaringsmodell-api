@@ -14,6 +14,10 @@ public class ForklaringsmodellDbContext : DbContext
     public DbSet<Faktum> Faktum => Set<Faktum>();
     public DbSet<Rettskilde> Rettskilder => Set<Rettskilde>();
     public DbSet<Regel> Regler => Set<Regel>();
+    public DbSet<RegelRettskilde> RegelRettskilde => Set<RegelRettskilde>();
+    public DbSet<KildeRettskilde> KildeRettskilde => Set<KildeRettskilde>();
+    public DbSet<FaktumRettskilde> FaktumRettskilde => Set<FaktumRettskilde>();
+    public DbSet<VurderingRettskilde> VurderingRettskilde => Set<VurderingRettskilde>();
     public DbSet<Vurdering> Vurderinger => Set<Vurdering>();
     public DbSet<VurderingFaktum> VurderingFaktum => Set<VurderingFaktum>();
     public DbSet<Partsmedvirkning> Partsmedvirkninger => Set<Partsmedvirkning>();

@@ -9,6 +9,7 @@ public class Sak
     public SakStatus Status { get; set; }
     public DateTimeOffset Opprettet { get; set; }
     public DateTimeOffset SistEndret { get; set; }
+    public string? TjenesteReferanse { get; set; } // valgfri URI til CPSV-AP PublicService i data.norge.no
 
     public ICollection<Faktum> Faktum { get; set; } = new List<Faktum>();
     public ICollection<Partsmedvirkning> Partsmedvirkninger { get; set; } = new List<Partsmedvirkning>();

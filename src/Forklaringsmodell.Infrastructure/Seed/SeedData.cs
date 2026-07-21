@@ -26,7 +26,41 @@ public static class SeedData
             Tittel = "Søknad om dagpenger",
             Status = SakStatus.UnderBehandling,
             Opprettet = naa,
-            SistEndret = naa
+            SistEndret = naa,
+            TjenesteReferanse = "https://data.norge.no/services/dagpenger"
+        };
+
+        // De tre rettskildene fra spesifikasjonens punkt 6.
+        var rettskildeInntektskrav = new Rettskilde
+        {
+            RettskildeId = Guid.NewGuid(),
+            Type = RettskildeType.Lov,
+            Henvisning = "folketrygdloven § 4-5"
+        };
+
+        var rettskildeRundskriv = new Rettskilde
+        {
+            RettskildeId = Guid.NewGuid(),
+            Type = RettskildeType.Rundskriv,
+            Henvisning = "NAV rundskriv til § 4-5, pkt. 4.5.3 (selvforskyldt oppsigelse)"
+        };
+
+        var rettskildeInnhenting = new Rettskilde
+        {
+            RettskildeId = Guid.NewGuid(),
+            Type = RettskildeType.Lov,
+            Henvisning = "folketrygdloven § 21-4 (innhenting av opplysninger)"
+        };
+
+        // Spesifikasjonens eksempel viser ingen rettskildereferanse for "Søknad"-kilden,
+        // men regel 3.8 krever at enhver Kilde har minst én hjemmel for innhenting. Fyller
+        // derfor inn en fjerde, plausibel rettskilde for å holde seed-dataen internt
+        // konsistent med forretningsregelen (pragmatisk utfylling av et gap i eksempelet).
+        var rettskildeOpplysningsplikt = new Rettskilde
+        {
+            RettskildeId = Guid.NewGuid(),
+            Type = RettskildeType.Lov,
+            Henvisning = "folketrygdloven § 21-3 (søkers opplysningsplikt)"
         };
 
         var kildeAOrdningen = new Kilde
@@ -34,8 +68,10 @@ public static class SeedData
             KildeId = Guid.NewGuid(),
             Navn = "A-ordningen",
             Type = KildeType.AutoritativtRegister,
-            Autoritativ = true
+            Autoritativ = true,
+            CpsvReferanse = "https://data.norge.no/evidences/inntektsopplysninger"
         };
+        kildeAOrdningen.KildeRettskilde.Add(new KildeRettskilde { KildeId = kildeAOrdningen.KildeId, RettskildeId = rettskildeInnhenting.RettskildeId });
 
         var kildeSoknad = new Kilde
         {
@@ -44,6 +80,7 @@ public static class SeedData
             Type = KildeType.Soknad,
             Autoritativ = false
         };
+        kildeSoknad.KildeRettskilde.Add(new KildeRettskilde { KildeId = kildeSoknad.KildeId, RettskildeId = rettskildeOpplysningsplikt.RettskildeId });
 
         var faktumInntekt = new Faktum
         {
@@ -67,51 +104,31 @@ public static class SeedData
             InnhentetTidspunkt = naa
         };
 
-        // En Rettskilde/Regel per vurderingstype, som instruert i spesifikasjonens punkt 6.
-        var rettskildeDeterministisk = new Rettskilde
-        {
-            RettskildeId = Guid.NewGuid(),
-            Paragraf = "Folketrygdloven § 4-4 (inntektskrav)",
-            VersjonDato = naa,
-            EliReferanse = "https://lovdata.no/nav/folketrygdloven/kap4/section4-4"
-        };
+        // Regel-rader per vurderingstype, hjemlet i den generelle rettskilden som best
+        // matcher spesifikasjonens eksempel (regel 3.7).
         var regelDeterministisk = new Regel
         {
             RegelId = Guid.NewGuid(),
-            RettskildeId = rettskildeDeterministisk.RettskildeId,
             Teknologi = "DMN",
             Type = VurderingsType.Deterministisk
         };
+        regelDeterministisk.RegelRettskilde.Add(new RegelRettskilde { RegelId = regelDeterministisk.RegelId, RettskildeId = rettskildeInntektskrav.RettskildeId });
 
-        var rettskildeGenerativKI = new Rettskilde
-        {
-            RettskildeId = Guid.NewGuid(),
-            Paragraf = "Folketrygdloven § 4-3 (klassifisering av oppsigelsesgrunn)",
-            VersjonDato = naa,
-            EliReferanse = "https://lovdata.no/nav/folketrygdloven/kap4/section4-3"
-        };
         var regelGenerativKI = new Regel
         {
             RegelId = Guid.NewGuid(),
-            RettskildeId = rettskildeGenerativKI.RettskildeId,
             Teknologi = "LLM-prompt v3",
             Type = VurderingsType.GenerativKI
         };
+        regelGenerativKI.RegelRettskilde.Add(new RegelRettskilde { RegelId = regelGenerativKI.RegelId, RettskildeId = rettskildeInntektskrav.RettskildeId });
 
-        var rettskildeSkjonn = new Rettskilde
-        {
-            RettskildeId = Guid.NewGuid(),
-            Paragraf = "Folketrygdloven § 4-10 (selvforskyldt ledighet)",
-            VersjonDato = naa,
-            EliReferanse = "https://lovdata.no/nav/folketrygdloven/kap4/section4-10"
-        };
         var regelSkjonn = new Regel
         {
             RegelId = Guid.NewGuid(),
-            RettskildeId = rettskildeSkjonn.RettskildeId,
             Teknologi = "Saksbehandler",
             Type = VurderingsType.Skjonn
         };
+        regelSkjonn.RegelRettskilde.Add(new RegelRettskilde { RegelId = regelSkjonn.RegelId, RettskildeId = rettskildeRundskriv.RettskildeId });
 
         var vurderingDeterministisk = new Vurdering
         {
@@ -126,6 +143,11 @@ public static class SeedData
         {
             VurderingId = vurderingDeterministisk.VurderingId,
             FaktumId = faktumInntekt.FaktumId
+        });
+        vurderingDeterministisk.VurderingRettskilde.Add(new VurderingRettskilde
+        {
+            VurderingId = vurderingDeterministisk.VurderingId,
+            RettskildeId = rettskildeInntektskrav.RettskildeId
         });
 
         var vurderingGenerativKI = new Vurdering
@@ -158,6 +180,11 @@ public static class SeedData
         {
             VurderingId = vurderingSkjonn.VurderingId,
             FaktumId = faktumBegrunnelse.FaktumId
+        });
+        vurderingSkjonn.VurderingRettskilde.Add(new VurderingRettskilde
+        {
+            VurderingId = vurderingSkjonn.VurderingId,
+            RettskildeId = rettskildeRundskriv.RettskildeId
         });
 
         // Regel 3.5: AutomatiseringsGrad beregnes ut fra andelen Skjonn/eskalerte
@@ -195,9 +222,9 @@ public static class SeedData
         LeggTilOppforing(OppforingsType.Vurdering, vurderingSkjonn.VurderingId);
 
         db.Saker.Add(sak);
+        db.Rettskilder.AddRange(rettskildeInntektskrav, rettskildeRundskriv, rettskildeInnhenting, rettskildeOpplysningsplikt);
         db.Kilder.AddRange(kildeAOrdningen, kildeSoknad);
         db.Faktum.AddRange(faktumInntekt, faktumBegrunnelse);
-        db.Rettskilder.AddRange(rettskildeDeterministisk, rettskildeGenerativKI, rettskildeSkjonn);
         db.Regler.AddRange(regelDeterministisk, regelGenerativKI, regelSkjonn);
         db.Vurderinger.AddRange(vurderingDeterministisk, vurderingGenerativKI, vurderingSkjonn);
         db.Vedtak.Add(vedtak);

@@ -55,7 +55,23 @@ public class VedtakEndpointTests : IClassFixture<CustomWebApplicationFactory>
     {
         var client = _factory.CreateClient();
 
-        var kildeResponse = await client.PostAsJsonAsync("/api/kilder", new { navn = "Test-kilde", type = "AnnenKilde", autoritativ = false });
+        var rettskildeResponse = await client.PostAsJsonAsync("/api/rettskilder", new
+        {
+            type = "Lov",
+            henvisning = "Test-henvisning",
+            versjonDato = DateTimeOffset.UtcNow,
+            eliReferanse = "https://example.test/test"
+        });
+        rettskildeResponse.EnsureSuccessStatusCode();
+        var rettskilde = await rettskildeResponse.Content.ReadFromJsonAsync<RettskildeResult>();
+
+        var kildeResponse = await client.PostAsJsonAsync("/api/kilder", new
+        {
+            navn = "Test-kilde",
+            type = "AnnenKilde",
+            autoritativ = false,
+            rettskildeIder = new[] { rettskilde!.RettskildeId }
+        });
         kildeResponse.EnsureSuccessStatusCode();
         var kilde = await kildeResponse.Content.ReadFromJsonAsync<KildeResult>();
 
@@ -73,18 +89,9 @@ public class VedtakEndpointTests : IClassFixture<CustomWebApplicationFactory>
         faktumResponse.EnsureSuccessStatusCode();
         var faktum = await faktumResponse.Content.ReadFromJsonAsync<FaktumResult>();
 
-        var rettskildeResponse = await client.PostAsJsonAsync("/api/rettskilder", new
-        {
-            paragraf = "Test-paragraf",
-            versjonDato = DateTimeOffset.UtcNow,
-            eliReferanse = "https://example.test/test"
-        });
-        rettskildeResponse.EnsureSuccessStatusCode();
-        var rettskilde = await rettskildeResponse.Content.ReadFromJsonAsync<RettskildeResult>();
-
         var regelResponse = await client.PostAsJsonAsync("/api/regler", new
         {
-            rettskildeId = rettskilde!.RettskildeId,
+            rettskildeIder = new[] { rettskilde.RettskildeId },
             teknologi = "Test",
             type = "Deterministisk"
         });

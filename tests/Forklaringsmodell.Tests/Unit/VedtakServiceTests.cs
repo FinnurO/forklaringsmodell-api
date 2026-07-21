@@ -25,8 +25,9 @@ public class VedtakServiceTests : IDisposable
         var db = _testDb.Context;
 
         _sak = new Sak { SakId = Guid.NewGuid(), Tittel = "Test", Status = SakStatus.UnderBehandling, Opprettet = DateTimeOffset.UtcNow, SistEndret = DateTimeOffset.UtcNow };
-        var rettskilde = new Rettskilde { RettskildeId = Guid.NewGuid(), Paragraf = "Test", VersjonDato = DateTimeOffset.UtcNow, EliReferanse = "test" };
-        _regel = new Regel { RegelId = Guid.NewGuid(), RettskildeId = rettskilde.RettskildeId, Teknologi = "Test", Type = VurderingsType.Deterministisk };
+        var rettskilde = new Rettskilde { RettskildeId = Guid.NewGuid(), Type = RettskildeType.Lov, Henvisning = "Test", VersjonDato = DateTimeOffset.UtcNow, EliReferanse = "test" };
+        _regel = new Regel { RegelId = Guid.NewGuid(), Teknologi = "Test", Type = VurderingsType.Deterministisk };
+        _regel.RegelRettskilde.Add(new RegelRettskilde { RegelId = _regel.RegelId, RettskildeId = rettskilde.RettskildeId });
 
         db.Saker.Add(_sak);
         db.Rettskilder.Add(rettskilde);

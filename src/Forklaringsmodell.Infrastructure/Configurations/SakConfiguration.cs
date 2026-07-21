@@ -15,6 +15,7 @@ public class SakConfiguration : IEntityTypeConfiguration<Sak>
         builder.Property(x => x.Status).HasConversion<string>().HasMaxLength(50);
         builder.Property(x => x.Opprettet).IsRequired();
         builder.Property(x => x.SistEndret).IsRequired();
+        builder.Property(x => x.TjenesteReferanse).HasMaxLength(500);
 
         builder.HasMany(x => x.Faktum).WithOne(f => f.Sak).HasForeignKey(f => f.SakId).OnDelete(DeleteBehavior.Restrict);
         builder.HasMany(x => x.Partsmedvirkninger).WithOne(p => p.Sak).HasForeignKey(p => p.SakId).OnDelete(DeleteBehavior.Restrict);

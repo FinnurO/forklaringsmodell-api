@@ -23,4 +23,5 @@ public class Vurdering
     public Sak? Sak { get; set; }
     public Regel? Regel { get; set; }
     public ICollection<VurderingFaktum> VurderingFaktum { get; set; } = new List<VurderingFaktum>();
+    public ICollection<VurderingRettskilde> VurderingRettskilde { get; set; } = new List<VurderingRettskilde>();
 }

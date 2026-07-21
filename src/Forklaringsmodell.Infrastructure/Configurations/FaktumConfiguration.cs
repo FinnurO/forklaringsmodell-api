@@ -28,3 +28,22 @@ public class FaktumConfiguration : IEntityTypeConfiguration<Faktum>
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
+
+public class FaktumRettskildeConfiguration : IEntityTypeConfiguration<FaktumRettskilde>
+{
+    public void Configure(EntityTypeBuilder<FaktumRettskilde> builder)
+    {
+        builder.ToTable("FaktumRettskilde");
+        builder.HasKey(x => new { x.FaktumId, x.RettskildeId });
+
+        builder.HasOne(x => x.Faktum)
+            .WithMany(f => f.FaktumRettskilde)
+            .HasForeignKey(x => x.FaktumId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.Rettskilde)
+            .WithMany(r => r.FaktumRettskilde)
+            .HasForeignKey(x => x.RettskildeId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+}

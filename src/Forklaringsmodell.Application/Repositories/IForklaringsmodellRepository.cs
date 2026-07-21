@@ -20,6 +20,7 @@ public interface IForklaringsmodellRepository
     Task<Kilde?> GetKildeAsync(Guid kildeId, CancellationToken ct = default);
     Task<List<Kilde>> GetKilderAsync(CancellationToken ct = default);
     Task AddKildeAsync(Kilde kilde, CancellationToken ct = default);
+    Task<bool> ErKildeReferertAsync(Guid kildeId, CancellationToken ct = default);
 
     // Faktum
     Task<Faktum?> GetFaktumAsync(Guid faktumId, CancellationToken ct = default);
@@ -31,6 +32,7 @@ public interface IForklaringsmodellRepository
     // Rettskilde
     Task<Rettskilde?> GetRettskildeAsync(Guid rettskildeId, CancellationToken ct = default);
     Task<List<Rettskilde>> GetRettskilderAsync(CancellationToken ct = default);
+    Task<List<Rettskilde>> GetRettskilderByIderAsync(IEnumerable<Guid> rettskildeIder, CancellationToken ct = default);
     Task AddRettskildeAsync(Rettskilde rettskilde, CancellationToken ct = default);
 
     // Regel
