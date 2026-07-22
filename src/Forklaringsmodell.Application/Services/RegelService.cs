@@ -48,7 +48,7 @@ public class RegelService
             RegelId = Guid.NewGuid(),
             Teknologi = dto.Teknologi,
             Type = dto.Type,
-            CpsvRuleReferanse = dto.CpsvRuleReferanse
+            CpsvRegelReferanse = dto.CpsvRegelReferanse
         };
 
         foreach (var rettskilde in rettskilder)
@@ -67,7 +67,7 @@ public class RegelService
         RettskildeIder = regel.RegelRettskilde.Select(rr => rr.RettskildeId).ToList(),
         Teknologi = regel.Teknologi,
         Type = regel.Type,
-        CpsvRuleReferanse = regel.CpsvRuleReferanse,
+        CpsvRegelReferanse = regel.CpsvRegelReferanse,
         ErLaast = await _repository.ErRegelReferertAsync(regel.RegelId, ct)
     };
 }

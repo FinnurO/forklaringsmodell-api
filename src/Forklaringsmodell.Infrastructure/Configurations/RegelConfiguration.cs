@@ -13,7 +13,7 @@ public class RegelConfiguration : IEntityTypeConfiguration<Regel>
 
         builder.Property(x => x.Teknologi).IsRequired().HasMaxLength(200);
         builder.Property(x => x.Type).HasConversion<string>().HasMaxLength(50);
-        builder.Property(x => x.CpsvRuleReferanse).HasMaxLength(500);
+        builder.Property(x => x.CpsvRegelReferanse).HasMaxLength(500);
 
         builder.Ignore(x => x.ErLaast);
 

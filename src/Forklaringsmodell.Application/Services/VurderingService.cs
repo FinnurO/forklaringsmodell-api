@@ -64,6 +64,38 @@ public class VurderingService
             throw new NotFoundException($"Faktum {string.Join(", ", manglende)} finnes ikke.");
         }
 
+        // Regel 3.11: kryss-sak-referanser (Faktum fra en annen Sak) skal kun peke til
+        // rader som allerede er del av en frosset Forklaringslogg i den relaterte saken.
+        // Faktum i samme sak har ingen slik restriksjon (vanlig, ufrosset saksbehandling).
+        foreach (var faktum in faktumRader.Where(f => f.SakId != sakId))
+        {
+            if (!await _repository.ErFaktumReferertAsync(faktum.FaktumId, ct))
+            {
+                throw new AppendOnlyViolationException(
+                    $"Faktum {faktum.FaktumId} tilhører en annen sak ({faktum.SakId}) og er ikke del av en frosset Forklaringslogg der ennå — kan ikke refereres.");
+            }
+        }
+
+        var refererteVurderinger = dto.RefererteVurderingIder.Count > 0
+            ? await _repository.GetVurderingerByIderAsync(dto.RefererteVurderingIder, ct)
+            : new List<Vurdering>();
+        var manglendeReferanser = dto.RefererteVurderingIder.Except(refererteVurderinger.Select(v => v.VurderingId)).ToList();
+        if (manglendeReferanser.Count > 0)
+        {
+            throw new NotFoundException($"Vurdering {string.Join(", ", manglendeReferanser)} finnes ikke.");
+        }
+
+        // Regel 3.11: RefererteVurderingIder skal kun peke til vurderinger som allerede
+        // er del av en frosset Forklaringslogg (typisk i en annen, allerede avsluttet sak).
+        foreach (var referertVurdering in refererteVurderinger)
+        {
+            if (!await _repository.ErVurderingReferertAsync(referertVurdering.VurderingId, ct))
+            {
+                throw new AppendOnlyViolationException(
+                    $"Vurdering {referertVurdering.VurderingId} er ikke del av en frosset Forklaringslogg ennå — kan ikke refereres via RefererteVurderingIder.");
+            }
+        }
+
         var rettskilder = dto.RettskildeIder.Count > 0
             ? await _repository.GetRettskilderByIderAsync(dto.RettskildeIder, ct)
             : new List<Rettskilde>();
@@ -114,6 +146,11 @@ public class VurderingService
             vurdering.VurderingRettskilde.Add(new VurderingRettskilde { VurderingId = vurdering.VurderingId, RettskildeId = rettskilde.RettskildeId });
         }
 
+        foreach (var referertVurdering in refererteVurderinger)
+        {
+            vurdering.RefererteVurderinger.Add(new VurderingReferanse { VurderingId = vurdering.VurderingId, RefererteVurderingId = referertVurdering.VurderingId });
+        }
+
         await _repository.AddVurderingAsync(vurdering, ct);
         await _repository.SaveChangesAsync(ct);
         return await ToDtoAsync(vurdering, ct);
@@ -146,6 +183,7 @@ public class VurderingService
         ForkastedeUtfall = vurdering.ForkastedeUtfall,
         ErLaast = await _repository.ErVurderingReferertAsync(vurdering.VurderingId, ct),
         FaktumIder = vurdering.VurderingFaktum.Select(vf => vf.FaktumId).ToList(),
-        RettskildeIder = vurdering.VurderingRettskilde.Select(vr => vr.RettskildeId).ToList()
+        RettskildeIder = vurdering.VurderingRettskilde.Select(vr => vr.RettskildeId).ToList(),
+        RefererteVurderingIder = vurdering.RefererteVurderinger.Select(r => r.RefererteVurderingId).ToList()
     };
 }

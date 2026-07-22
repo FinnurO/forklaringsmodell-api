@@ -14,7 +14,7 @@ public class KildeConfiguration : IEntityTypeConfiguration<Kilde>
         builder.Property(x => x.Navn).IsRequired().HasMaxLength(300);
         builder.Property(x => x.Type).HasConversion<string>().HasMaxLength(50);
         builder.Property(x => x.Autoritativ).IsRequired();
-        builder.Property(x => x.CpsvReferanse).HasMaxLength(500);
+        builder.Property(x => x.CccevReferanse).HasMaxLength(500);
 
         builder.Ignore(x => x.ErLaast);
 

@@ -62,6 +62,32 @@ public class VedtakService
             throw new NotFoundException($"Partsmedvirkning {string.Join(", ", manglendePartsmedvirkning)} finnes ikke.");
         }
 
+        // Slå opp Vurdering-/Faktum-rader referert fra hver Vedtaksvirkning (regel 3.10) —
+        // gjøres før transaksjonen åpnes, i tråd med mønsteret over.
+        var virkningReferanser = new List<(OpprettVedtaksvirkningDto Dto, List<Vurdering> Vurderinger, List<Faktum> Faktum)>();
+        foreach (var virkningDto in dto.Virkninger)
+        {
+            var virkningVurderinger = virkningDto.VurderingIder.Count > 0
+                ? await _repository.GetVurderingerByIderAsync(virkningDto.VurderingIder, ct)
+                : new List<Vurdering>();
+            var manglendeVirkningVurdering = virkningDto.VurderingIder.Except(virkningVurderinger.Select(v => v.VurderingId)).ToList();
+            if (manglendeVirkningVurdering.Count > 0)
+            {
+                throw new NotFoundException($"Vurdering {string.Join(", ", manglendeVirkningVurdering)} finnes ikke.");
+            }
+
+            var virkningFaktum = virkningDto.FaktumIder.Count > 0
+                ? await _repository.GetFaktumByIderAsync(virkningDto.FaktumIder, ct)
+                : new List<Faktum>();
+            var manglendeVirkningFaktum = virkningDto.FaktumIder.Except(virkningFaktum.Select(f => f.FaktumId)).ToList();
+            if (manglendeVirkningFaktum.Count > 0)
+            {
+                throw new NotFoundException($"Faktum {string.Join(", ", manglendeVirkningFaktum)} finnes ikke.");
+            }
+
+            virkningReferanser.Add((virkningDto, virkningVurderinger, virkningFaktum));
+        }
+
         var transaction = await _repository.BeginTransactionAsync(ct);
 
         var vedtak = new Vedtak
@@ -112,6 +138,35 @@ public class VedtakService
             });
         }
 
+        foreach (var (virkningDto, virkningVurderinger, virkningFaktum) in virkningReferanser)
+        {
+            var virkning = new Vedtaksvirkning
+            {
+                VirkningId = Guid.NewGuid(),
+                VedtakId = vedtak.VedtakId,
+                Type = virkningDto.Type,
+                Beskrivelse = virkningDto.Beskrivelse,
+                Varighet = virkningDto.Varighet,
+                GyldigFra = virkningDto.GyldigFra,
+                GyldigTil = virkningDto.GyldigTil,
+                Belop = virkningDto.Belop,
+                LopendeVilkar = virkningDto.LopendeVilkar,
+                RapporteringsFrekvens = virkningDto.RapporteringsFrekvens
+            };
+
+            foreach (var vurdering in virkningVurderinger)
+            {
+                virkning.VedtaksvirkningVurdering.Add(new VedtaksvirkningVurdering { VirkningId = virkning.VirkningId, VurderingId = vurdering.VurderingId });
+            }
+
+            foreach (var faktum in virkningFaktum)
+            {
+                virkning.VedtaksvirkningFaktum.Add(new VedtaksvirkningFaktum { VirkningId = virkning.VirkningId, FaktumId = faktum.FaktumId });
+            }
+
+            await _repository.AddVedtaksvirkningAsync(virkning, ct);
+        }
+
         await _repository.AddVedtakMedForklaringsloggAsync(vedtak, logg, ct);
         await _repository.SaveChangesAsync(ct);
 
@@ -129,6 +184,14 @@ public class VedtakService
         return ToDto(vedtak);
     }
 
+    /// <summary>Lister alle Vedtaksvirkning-rader for et vedtak (GET /api/vedtak/{id}/virkninger).</summary>
+    public async Task<List<VedtaksvirkningDto>> GetVirkningerAsync(Guid vedtakId, CancellationToken ct = default)
+    {
+        _ = await _repository.GetVedtakAsync(vedtakId, ct) ?? throw new NotFoundException($"Vedtak {vedtakId} finnes ikke.");
+        var virkninger = await _repository.GetVirkningerForVedtakAsync(vedtakId, ct);
+        return virkninger.Select(ToDto).ToList();
+    }
+
     /// <summary>Leser hydrert forklaring: vedtak + alle refererte faktum/vurdering/partsmedvirkning-rader utfoldet.</summary>
     public async Task<HydrertForklaringDto> GetForklaringAsync(Guid vedtakId, CancellationToken ct = default)
     {
@@ -142,6 +205,7 @@ public class VedtakService
         var faktumRader = faktumIder.Count > 0 ? await _repository.GetFaktumByIderAsync(faktumIder, ct) : new List<Faktum>();
         var vurderingRader = vurderingIder.Count > 0 ? await _repository.GetVurderingerByIderAsync(vurderingIder, ct) : new List<Vurdering>();
         var partsmedvirkningRader = partsmedvirkningIder.Count > 0 ? await _repository.GetPartsmedvirkningerByIderAsync(partsmedvirkningIder, ct) : new List<Partsmedvirkning>();
+        var virkninger = await _repository.GetVirkningerForVedtakAsync(vedtakId, ct);
 
         return new HydrertForklaringDto
         {
@@ -190,7 +254,8 @@ public class VedtakService
                 Type = p.Type,
                 Tidspunkt = p.Tidspunkt,
                 Innhold = p.Innhold
-            }).ToList()
+            }).ToList(),
+            Virkninger = virkninger.Select(ToDto).ToList()
         };
     }
 
@@ -240,5 +305,21 @@ public class VedtakService
         Tidspunkt = vedtak.Tidspunkt,
         Utfall = vedtak.Utfall,
         AutomatiseringsGrad = vedtak.AutomatiseringsGrad
+    };
+
+    private static VedtaksvirkningDto ToDto(Vedtaksvirkning virkning) => new()
+    {
+        VirkningId = virkning.VirkningId,
+        VedtakId = virkning.VedtakId,
+        Type = virkning.Type,
+        Beskrivelse = virkning.Beskrivelse,
+        Varighet = virkning.Varighet,
+        GyldigFra = virkning.GyldigFra,
+        GyldigTil = virkning.GyldigTil,
+        Belop = virkning.Belop,
+        LopendeVilkar = virkning.LopendeVilkar,
+        RapporteringsFrekvens = virkning.RapporteringsFrekvens,
+        VurderingIder = virkning.VedtaksvirkningVurdering.Select(vv => vv.VurderingId).ToList(),
+        FaktumIder = virkning.VedtaksvirkningFaktum.Select(vf => vf.FaktumId).ToList()
     };
 }

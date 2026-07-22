@@ -24,4 +24,7 @@ public class Vurdering
     public Regel? Regel { get; set; }
     public ICollection<VurderingFaktum> VurderingFaktum { get; set; } = new List<VurderingFaktum>();
     public ICollection<VurderingRettskilde> VurderingRettskilde { get; set; } = new List<VurderingRettskilde>();
+
+    /// <summary>Utgående referanser: vurderinger fra andre (frosne) saker denne bygger på (regel 3.11).</summary>
+    public ICollection<VurderingReferanse> RefererteVurderinger { get; set; } = new List<VurderingReferanse>();
 }

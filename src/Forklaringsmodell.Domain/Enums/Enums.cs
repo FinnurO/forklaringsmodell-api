@@ -65,3 +65,39 @@ public enum SakStatus
     Avsluttet,
     Klaget
 }
+
+public enum VirkningType
+{
+    Tillatelse,
+    Plikt,
+    OkonomiskYtelse,
+    Tilskudd
+}
+
+public enum VarighetsType
+{
+    Tidsbegrenset,
+    Varig,
+    LopendeInntilVilkarBrister
+}
+
+public enum HendelseType
+{
+    Soknad,
+    Innrapportering,
+    Melding,
+    Tilbakekall,
+    Kontroll,
+    Klage,
+    Omgjoring
+}
+
+public enum SakRelasjonType
+{
+    Tilbakekall,
+    Revurdering,
+    OppfolgingAvMelding,
+    Klage,
+    Kontroll,
+    Annet
+}

@@ -16,6 +16,7 @@ public class VurderingDto
     public bool ErLaast { get; set; }
     public List<Guid> FaktumIder { get; set; } = new();
     public List<Guid> RettskildeIder { get; set; } = new();
+    public List<Guid> RefererteVurderingIder { get; set; } = new();
 }
 
 public class OpprettVurderingDto
@@ -29,4 +30,5 @@ public class OpprettVurderingDto
     public string? ForkastedeUtfall { get; set; }
     public List<Guid> FaktumIder { get; set; } = new();
     public List<Guid> RettskildeIder { get; set; } = new();
+    public List<Guid> RefererteVurderingIder { get; set; } = new();
 }

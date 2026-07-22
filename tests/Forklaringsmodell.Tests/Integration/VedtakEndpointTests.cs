@@ -75,7 +75,7 @@ public class VedtakEndpointTests : IClassFixture<CustomWebApplicationFactory>
         kildeResponse.EnsureSuccessStatusCode();
         var kilde = await kildeResponse.Content.ReadFromJsonAsync<KildeResult>();
 
-        var sakResponse = await client.PostAsJsonAsync("/api/saker", new { tittel = "Integrasjonstest-sak", status = "UnderBehandling" });
+        var sakResponse = await client.PostAsJsonAsync("/api/saker", new { tittel = "Integrasjonstest-sak", status = "UnderBehandling", utlosendeHendelse = "Soknad" });
         sakResponse.EnsureSuccessStatusCode();
         var sak = await sakResponse.Content.ReadFromJsonAsync<SakResult>();
 
@@ -114,7 +114,21 @@ public class VedtakEndpointTests : IClassFixture<CustomWebApplicationFactory>
             utfall = "Test-utfall",
             faktumIder = new[] { faktum.FaktumId },
             vurderingIder = new[] { vurdering!.VurderingId },
-            partsmedvirkningIder = Array.Empty<Guid>()
+            partsmedvirkningIder = Array.Empty<Guid>(),
+            virkninger = new[]
+            {
+                new
+                {
+                    type = "OkonomiskYtelse",
+                    beskrivelse = "Test-ytelse",
+                    varighet = "Tidsbegrenset",
+                    gyldigFra = DateTimeOffset.UtcNow,
+                    gyldigTil = DateTimeOffset.UtcNow.AddMonths(6),
+                    belop = 1000,
+                    vurderingIder = new[] { vurdering.VurderingId },
+                    faktumIder = new[] { faktum.FaktumId }
+                }
+            }
         });
         vedtakResponse.EnsureSuccessStatusCode();
         var vedtak = await vedtakResponse.Content.ReadFromJsonAsync<VedtakResult>();
@@ -125,6 +139,13 @@ public class VedtakEndpointTests : IClassFixture<CustomWebApplicationFactory>
         forklaringResponse.EnsureSuccessStatusCode();
         var body = await forklaringResponse.Content.ReadAsStringAsync();
         Assert.Contains("Test faktum", body);
+        Assert.Contains("Test-ytelse", body);
+
+        var virkningerResponse = await client.GetAsync($"/api/vedtak/{vedtak.VedtakId}/virkninger");
+        virkningerResponse.EnsureSuccessStatusCode();
+        var virkninger = await virkningerResponse.Content.ReadFromJsonAsync<List<VirkningResult>>();
+        Assert.Single(virkninger!);
+        Assert.Equal("Test-ytelse", virkninger![0].Beskrivelse);
     }
 
     private record KildeResult(Guid KildeId);
@@ -134,4 +155,5 @@ public class VedtakEndpointTests : IClassFixture<CustomWebApplicationFactory>
     private record RegelResult(Guid RegelId);
     private record VurderingResult(Guid VurderingId);
     private record VedtakResult(Guid VedtakId, string AutomatiseringsGrad);
+    private record VirkningResult(Guid VirkningId, string Beskrivelse);
 }

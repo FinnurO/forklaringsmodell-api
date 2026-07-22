@@ -8,7 +8,7 @@ public class RegelDto
     public List<Guid> RettskildeIder { get; set; } = new();
     public string Teknologi { get; set; } = string.Empty;
     public VurderingsType Type { get; set; }
-    public string? CpsvRuleReferanse { get; set; }
+    public string? CpsvRegelReferanse { get; set; }
     public bool ErLaast { get; set; }
 }
 
@@ -17,5 +17,5 @@ public class OpprettRegelDto
     public List<Guid> RettskildeIder { get; set; } = new();
     public string Teknologi { get; set; } = string.Empty;
     public VurderingsType Type { get; set; }
-    public string? CpsvRuleReferanse { get; set; }
+    public string? CpsvRegelReferanse { get; set; }
 }

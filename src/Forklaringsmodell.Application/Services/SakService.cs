@@ -51,7 +51,8 @@ public class SakService
             Status = dto.Status,
             Opprettet = naa,
             SistEndret = naa,
-            TjenesteReferanse = dto.TjenesteReferanse
+            CpsvTjenesteReferanse = dto.CpsvTjenesteReferanse,
+            UtlosendeHendelse = dto.UtlosendeHendelse!.Value // validator sikrer NotNull før vi kommer hit
         };
 
         await _repository.AddSakAsync(sak, ct);
@@ -90,6 +91,7 @@ public class SakService
         Status = sak.Status,
         Opprettet = sak.Opprettet,
         SistEndret = sak.SistEndret,
-        TjenesteReferanse = sak.TjenesteReferanse
+        CpsvTjenesteReferanse = sak.CpsvTjenesteReferanse,
+        UtlosendeHendelse = sak.UtlosendeHendelse
     };
 }

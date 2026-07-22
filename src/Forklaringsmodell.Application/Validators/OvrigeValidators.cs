@@ -50,5 +50,33 @@ public class OpprettVedtakDtoValidator : AbstractValidator<OpprettVedtakDto>
     public OpprettVedtakDtoValidator()
     {
         RuleFor(x => x.Utfall).NotEmpty();
+        RuleForEach(x => x.Virkninger).SetValidator(new OpprettVedtaksvirkningDtoValidator());
+    }
+}
+
+public class OpprettSakRelasjonDtoValidator : AbstractValidator<OpprettSakRelasjonDto>
+{
+    public OpprettSakRelasjonDtoValidator()
+    {
+        RuleFor(x => x.RelatertSakId).NotEmpty();
+    }
+}
+
+/// <summary>Regel 3.10: append-only-relevante feltkombinasjoner for Vedtaksvirkning.</summary>
+public class OpprettVedtaksvirkningDtoValidator : AbstractValidator<OpprettVedtaksvirkningDto>
+{
+    public OpprettVedtaksvirkningDtoValidator()
+    {
+        RuleFor(x => x.Beskrivelse).NotEmpty();
+
+        RuleFor(x => x.GyldigTil)
+            .Null()
+            .WithMessage("GyldigTil skal være null når Varighet == Varig.")
+            .When(x => x.Varighet == Forklaringsmodell.Domain.Enums.VarighetsType.Varig);
+
+        RuleFor(x => x.RapporteringsFrekvens)
+            .Null()
+            .WithMessage("RapporteringsFrekvens skal kun være satt når Type == Plikt.")
+            .When(x => x.Type != Forklaringsmodell.Domain.Enums.VirkningType.Plikt);
     }
 }

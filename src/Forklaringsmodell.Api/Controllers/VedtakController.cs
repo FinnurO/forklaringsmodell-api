@@ -47,4 +47,8 @@ public class VedtakController : ControllerBase
     [HttpGet("{id:guid}/forklaring")]
     public async Task<ActionResult<HydrertForklaringDto>> GetForklaring(Guid id, CancellationToken ct) =>
         Ok(await _vedtakService.GetForklaringAsync(id, ct));
+
+    [HttpGet("{id:guid}/virkninger")]
+    public async Task<ActionResult<List<VedtaksvirkningDto>>> GetVirkninger(Guid id, CancellationToken ct) =>
+        Ok(await _vedtakService.GetVirkningerAsync(id, ct));
 }

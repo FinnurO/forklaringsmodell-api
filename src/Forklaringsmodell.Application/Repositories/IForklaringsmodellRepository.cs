@@ -16,6 +16,10 @@ public interface IForklaringsmodellRepository
     Task<List<Sak>> GetSakerAsync(CancellationToken ct = default);
     Task AddSakAsync(Sak sak, CancellationToken ct = default);
 
+    // SakRelasjon
+    Task<List<SakRelasjon>> GetSakRelasjonerForSakAsync(Guid sakId, CancellationToken ct = default);
+    Task AddSakRelasjonAsync(SakRelasjon relasjon, CancellationToken ct = default);
+
     // Kilde
     Task<Kilde?> GetKildeAsync(Guid kildeId, CancellationToken ct = default);
     Task<List<Kilde>> GetKilderAsync(CancellationToken ct = default);
@@ -58,6 +62,10 @@ public interface IForklaringsmodellRepository
     Task<Vedtak?> GetVedtakAsync(Guid vedtakId, CancellationToken ct = default);
     Task<Forklaringslogg?> GetForklaringsloggAsync(Guid vedtakId, CancellationToken ct = default);
     Task AddVedtakMedForklaringsloggAsync(Vedtak vedtak, Forklaringslogg logg, CancellationToken ct = default);
+
+    // Vedtaksvirkning
+    Task<List<Vedtaksvirkning>> GetVirkningerForVedtakAsync(Guid vedtakId, CancellationToken ct = default);
+    Task AddVedtaksvirkningAsync(Vedtaksvirkning virkning, CancellationToken ct = default);
 
     Task<int> SaveChangesAsync(CancellationToken ct = default);
     Task<IAsyncDisposable> BeginTransactionAsync(CancellationToken ct = default);

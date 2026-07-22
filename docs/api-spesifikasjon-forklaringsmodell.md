@@ -23,6 +23,11 @@ erDiagram
   VURDERING }o--o{ RETTSKILDE : siterer
   VEDTAK ||--|| FORKLARINGSLOGG : har
   FORKLARINGSLOGG ||--o{ FORKLARINGSLOGG_OPPFORING : bestar_av
+  VEDTAK ||--o{ VEDTAKSVIRKNING : medforer
+  VEDTAKSVIRKNING }o--o{ VURDERING : fastsettes_av
+  VEDTAKSVIRKNING }o--o{ FAKTUM : bygger_pa
+  SAK }o--o{ SAK : relaterer_til
+  VURDERING }o--o{ VURDERING : bygger_pa
 ```
 
 `FORKLARINGSLOGG_OPPFORING` er en generisk referanserad (`OppforingsType`: Faktum / Vurdering / Partsmedvirkning + `ReferanseId`) som gjør at loggen kan peke på nøyaktig hvilke rader som forklarer vedtaket, uten å måtte modellere tre separate mange-til-mange-tabeller.
@@ -31,7 +36,9 @@ erDiagram
 
 Innhenting av faktum er også en hjemmelsregulert handling, atskilt fra hjemmelen for selve regelanvendelsen. Samme mønster gjenbrukes: `Kilde` har en stående hjemmel for innhenting (satt én gang når kildetilgangen/integrasjonen etableres, gjenbrukt av alle faktum fra den kilden), og `Faktum` kan i tillegg ha en tilleggshjemmel når én konkret innhenting krever noe mer enn kildens standardhjemmel — for eksempel innhenting av særlige kategorier personopplysninger.
 
-CPSV-AP/CCCEV-referanser (`TjenesteReferanse`, `CpsvRuleReferanse`, `CpsvReferanse` under) er et eget, valgfritt sporbarhetslag: de peker til et eksternt tjenestekatalog (Felles datakatalog/data.norge.no), ikke til noen lokal tabell, og er ikke del av forklaringsplikten selv.
+Ett vedtak kan medføre flere, uavhengig tidsbegrensede virkninger samtidig — en tillatelse med egen gyldighetsperiode, en løpende plikt, et beløp avhengig av et faktum. `Vedtaksvirkning` fanger dette som egne rader under `Vedtak`, hver med sin egen varighet og sporbar kobling til hvilken `Vurdering`/`Faktum` som fastsatte den.
+
+Denne modellen skal **ikke** modellere saksflyt eller tilstandsoverganger — det er en CPSV-AP-hendelse (søknad, innrapportering, tilbakekall, melding) som utløser en *ny* `Sak`, og den nye saken kan lese fra en relatert sak uten å modifisere den. `Sak.UtlosendeHendelse` merker hvorfor saken oppstod, `SakRelasjon` kobler den til en sak den følger opp, og `Vurdering.RefererteVurderingIder` lar en ny vurdering eksplisitt bygge på en vurdering fra en annen (allerede frosset) sak — for eksempel når en melding om endret inntekt utløser en ny vurdering på nytt faktum, i sin egen sak, som gjenbruker den opprinnelige vurderingen av grunnvilkåret.
 
 ### Enumer
 
@@ -45,6 +52,10 @@ public enum AutomatiseringsGrad { Helautomatisert, DelvisAutomatisert, Manuell }
 public enum PartsmedvirkningType { Forhaandsvarsel, Kommentar, InnsynsKrav }
 public enum OppforingsType { Faktum, Vurdering, Partsmedvirkning }
 public enum SakStatus { UnderBehandling, Avsluttet, Klaget }
+public enum VirkningType { Tillatelse, Plikt, OkonomiskYtelse, Tilskudd }
+public enum VarighetsType { Tidsbegrenset, Varig, LopendeInntilVilkarBrister }
+public enum HendelseType { Soknad, Innrapportering, Melding, Tilbakekall, Kontroll, Klage, Omgjoring }
+public enum SakRelasjonType { Tilbakekall, Revurdering, OppfolgingAvMelding, Klage, Kontroll, Annet }
 ```
 
 ### Entiteter (POCO-skisse, ikke ferdig EF-konfigurasjon)
@@ -57,7 +68,16 @@ public class Sak
     public SakStatus Status { get; set; }
     public DateTimeOffset Opprettet { get; set; }
     public DateTimeOffset SistEndret { get; set; }
-    public string TjenesteReferanse { get; set; } // valgfri URI til CPSV-AP PublicService i data.norge.no
+    public string CpsvTjenesteReferanse { get; set; } // IRI til cpsvno:Service i CPSV-AP-NO, valgfri
+    public HendelseType UtlosendeHendelse { get; set; } // hvilken hendelse på tjenesten som utløste denne saken
+}
+
+public class SakRelasjon
+{
+    public Guid RelasjonId { get; set; }
+    public Guid SakId { get; set; }           // den nye/oppfølgende saken
+    public Guid RelatertSakId { get; set; }   // saken den følger opp/relaterer til
+    public SakRelasjonType Type { get; set; }
 }
 
 public class Kilde
@@ -67,7 +87,7 @@ public class Kilde
     public KildeType Type { get; set; }
     public bool Autoritativ { get; set; }
     public ICollection<Guid> RettskildeIder { get; set; } // hjemmel for innhenting fra denne kilden, se punkt 3.8
-    public string CpsvReferanse { get; set; } // valgfri URI til CCCEV Evidence/Criterion
+    public string CccevReferanse { get; set; } // IRI til cccev:Evidence eller cccev:Criterion, valgfri
 }
 
 public class Faktum
@@ -98,7 +118,7 @@ public class Regel
     public ICollection<Guid> RettskildeIder { get; set; } // mange-til-mange, se punkt 3.7
     public string Teknologi { get; set; }           // f.eks. "DMN", "Python", "LLM-prompt v3"
     public VurderingsType Type { get; set; }        // regelens konfigurerte type
-    public string CpsvRuleReferanse { get; set; }   // valgfri URI til CPSV-AP Rule
+    public string CpsvRegelReferanse { get; set; }  // IRI til cpsvno:Rule i CPSV-AP-NO, valgfri
 }
 
 public class Vurdering
@@ -112,8 +132,9 @@ public class Vurdering
     public bool Eskalert { get; set; }
     public string Hovedhensyn { get; set; }         // obligatorisk når Type == Skjonn
     public string ForkastedeUtfall { get; set; }    // kontrastiv forklaring for skjønn
-    public ICollection<Guid> FaktumIder { get; set; }     // mange-til-mange via VurderingFaktum
+    public ICollection<Guid> FaktumIder { get; set; }     // mange-til-mange via VurderingFaktum — kan peke til Faktum i en annen Sak, se punkt 3.11
     public ICollection<Guid> RettskildeIder { get; set; } // saksspesifikke kilder ut over Regel — se punkt 3.7
+    public ICollection<Guid> RefererteVurderingIder { get; set; } // vurderinger fra andre (frosne) saker denne bygger på, se punkt 3.11
 }
 
 public class Partsmedvirkning
@@ -132,6 +153,22 @@ public class Vedtak
     public DateTimeOffset Tidspunkt { get; set; }
     public string Utfall { get; set; }
     public AutomatiseringsGrad AutomatiseringsGrad { get; set; }
+}
+
+public class Vedtaksvirkning
+{
+    public Guid VirkningId { get; set; }
+    public Guid VedtakId { get; set; }
+    public VirkningType Type { get; set; }
+    public string Beskrivelse { get; set; }              // f.eks. "Skjenkebevilling", "Innrapportering av omsetning", "Flerbarnstillegg"
+    public VarighetsType Varighet { get; set; }
+    public DateTimeOffset? GyldigFra { get; set; }
+    public DateTimeOffset? GyldigTil { get; set; }        // skal være null når Varighet == Varig
+    public decimal? Belop { get; set; }                   // for OkonomiskYtelse/Tilskudd
+    public string LopendeVilkar { get; set; }             // vilkår som må fortsette å være oppfylt, f.eks. "varig funksjonsnedsettelse"
+    public string RapporteringsFrekvens { get; set; }     // f.eks. "Kvartalsvis" — kun relevant når Type == Plikt
+    public ICollection<Guid> VurderingIder { get; set; }  // hvilke(n) vurdering(er) fastsatte denne virkningen
+    public ICollection<Guid> FaktumIder { get; set; }     // f.eks. "antall barn" — sporbarhet for beløpsberegning
 }
 
 public class Forklaringslogg
@@ -160,7 +197,9 @@ public class ForklaringsloggOppforing
 6. **`Sak` er mutable helt til `Vedtak` finnes**, men kan fortsatt få nye `Vedtak` senere (f.eks. ved klage/omgjøring) — det skal derfor være mulig å opprette flere `Vedtak` per `Sak` over tid, hver med sin egen `Forklaringslogg`.
 7. **Rettskilde kobles aldri direkte til `Sak`.** Koblingen går via `Regel.RettskildeIder` (den generelle hjemmelen for regelkonstruksjonen — typisk flere kilder: lov + forskrift + rundskriv) og/eller `Vurdering.RettskildeIder` (saksspesifikke kilder, f.eks. en konkret dom en saksbehandler siterer i en skjønnsutøvelse, uten at den er del av den stående regelen). `RettskildeType` skiller mellom lov, forskrift, rundskriv, forarbeider, rettspraksis, internasjonal rett og forvaltningspraksis — kun `Lov`/`Forskrift` har meningsfull `VersjonDato`/`EliReferanse`.
 8. **Innhenting av faktum krever hjemmel.** En `Kilde` skal ha minst én tilknyttet `Rettskilde` før den kan brukes til å registrere `Faktum` (valider ved `POST /api/kilder`). `Faktum.RettskildeIder` brukes kun når en konkret innhenting krever en tilleggshjemmel utover kildens standardhjemmel, og er derfor valgfritt.
-9. **CPSV-AP/CCCEV-referanser er valgfrie, eksterne URI-er — ikke internt eide entiteter.** `TjenesteReferanse`, `CpsvRuleReferanse` og `CpsvReferanse` peker til Felles datakatalog (data.norge.no), og skal ikke valideres mot noen lokal tabell. De er sporbarhetsmetadata, ikke del av forklaringsplikten — en `Vurdering`/`Vedtak` er fullt forklart uten dem.
+9. **CPSV-AP-NO/CCCEV-referanser er valgfrie, eksterne IRI-er — ikke internt eide entiteter.** `Sak.CpsvTjenesteReferanse`, `Regel.CpsvRegelReferanse` og `Kilde.CccevReferanse` peker til Felles datakatalog (data.norge.no), og skal ikke valideres mot noen lokal tabell. De er sporbarhetsmetadata, ikke del av forklaringsplikten — en `Vurdering`/`Vedtak` er fullt forklart uten dem.
+10. **`Vedtaksvirkning` er del av det frosne vedtaket** og dermed append-only på samme måte som `Forklaringslogg` (punkt 1) — ingen `PUT`/`DELETE` etter opprettelse. `GyldigTil` skal valideres til `null` når `Varighet == Varig`. `RapporteringsFrekvens` bør kun fylles ut når `Type == Plikt`.
+11. **Denne modellen skal ikke modellere saksflyt eller tilstandsoverganger.** `Sak.UtlosendeHendelse` og `SakRelasjon` er rene referanser til at én sak oppsto fra eller følger opp en annen — ikke en prosessmotor eller tilstandsmaskin. Cross-sak-referanser (`Vurdering.RefererteVurderingIder`, og `Vurdering.FaktumIder` som kan peke til `Faktum` i en annen `Sak`) skal kun peke til rader som allerede er del av en frosset `Forklaringslogg` i den relaterte saken, og er alltid skrivebeskyttede: en `Vurdering` kan lese fra en annen sak, men skal aldri kunne endre den.
 
 ## 4. Foreslått løsningsarkitektur (.NET)
 
@@ -175,8 +214,9 @@ public class ForklaringsloggOppforing
 
 | Metode | Sti | Beskrivelse |
 |---|---|---|
-| GET/POST | `/api/saker` | List / opprett sak |
+| GET/POST | `/api/saker` | List / opprett sak — body krever `utlosendeHendelse` |
 | GET/PUT | `/api/saker/{id}` | Les / oppdater sak (status, tittel) |
+| GET/POST | `/api/saker/{sakId}/relasjoner` | List / opprett `SakRelasjon` til en annen (relatert) sak |
 | GET/POST | `/api/saker/{sakId}/faktum` | List / registrer faktum på en sak |
 | POST | `/api/faktum/{id}/transformer` | Opprett nytt subsumert faktum avledet fra et rått faktum (setter `AvledetFraFaktumId` automatisk) |
 | GET | `/api/faktum/{id}` | Les ett faktum |
@@ -188,9 +228,10 @@ public class ForklaringsloggOppforing
 | GET/POST | `/api/saker/{sakId}/partsmedvirkning` | List / registrer partsmedvirkning |
 | POST | `/api/saker/{sakId}/vedtak` | Opprett vedtak — se body-skjema under |
 | GET | `/api/vedtak/{id}` | Les vedtaket (grunndata) |
-| GET | `/api/vedtak/{id}/forklaring` | Les hydrert forklaring: vedtak + alle refererte faktum/vurdering/partsmedvirkning-rader utfoldet |
+| GET | `/api/vedtak/{id}/forklaring` | Les hydrert forklaring: vedtak + alle refererte faktum/vurdering/partsmedvirkning-rader utfoldet, inkludert virkninger |
+| GET | `/api/vedtak/{id}/virkninger` | List alle `Vedtaksvirkning`-rader for et vedtak |
 
-Ingen `DELETE` på `vedtak`, `forklaringslogg`-relaterte ressurser. `PUT`/`DELETE` på `faktum`, `vurderinger`, `regler`, `kilder` skal avvises (409/423) dersom raden allerede er referert av en `ForklaringsloggOppforing`. `POST /api/regler`, `POST /api/saker/{sakId}/vurderinger` og `POST /api/kilder` tar imot `rettskildeIder` som en liste i request-body (mange-til-mange, ikke enkeltverdi) — se punkt 3.7–3.8. `POST /api/saker/{sakId}/faktum` tar imot `rettskildeIder` som valgfritt tilleggsfelt. `TjenesteReferanse`/`CpsvRuleReferanse`/`CpsvReferanse` er valgfrie strengfelt i body for `/api/saker`, `/api/regler` og `/api/kilder` — se punkt 3.9.
+Ingen `DELETE` på `vedtak`, `forklaringslogg`- eller `vedtaksvirkning`-relaterte ressurser. `PUT`/`DELETE` på `faktum`, `vurderinger`, `regler`, `kilder` skal avvises (409/423) dersom raden allerede er referert av en `ForklaringsloggOppforing`. `POST /api/regler`, `POST /api/saker/{sakId}/vurderinger` og `POST /api/kilder` tar imot `rettskildeIder` som en liste i request-body (mange-til-mange, ikke enkeltverdi) — se punkt 3.7–3.8. `POST /api/saker/{sakId}/faktum` tar imot `rettskildeIder` som valgfritt tilleggsfelt. `POST /api/saker/{sakId}/vurderinger` tar imot `refererteVurderingIder` som valgfritt tilleggsfelt — se punkt 3.11.
 
 **Body for `POST /api/saker/{sakId}/vedtak`:**
 
@@ -199,24 +240,36 @@ Ingen `DELETE` på `vedtak`, `forklaringslogg`-relaterte ressurser. `PUT`/`DELET
   "utfall": "Dagpenger tilkjent",
   "faktumIder": ["<guid>", "<guid>"],
   "vurderingIder": ["<guid>", "<guid>"],
-  "partsmedvirkningIder": ["<guid>"]
+  "partsmedvirkningIder": ["<guid>"],
+  "virkninger": [
+    {
+      "type": "OkonomiskYtelse",
+      "beskrivelse": "Dagpenger",
+      "varighet": "Tidsbegrenset",
+      "gyldigFra": "2026-08-01",
+      "gyldigTil": "2027-01-31",
+      "belop": 18500,
+      "vurderingIder": ["<guid>"],
+      "faktumIder": ["<guid>"]
+    }
+  ]
 }
 ```
 
-Serveren bygger `Forklaringslogg` og dens `ForklaringsloggOppforing`-rader fra disse listene, beregner `AutomatiseringsGrad` fra de refererte `Vurdering`-radene (regel 3.5), og fryser alt i samme transaksjon.
+Serveren bygger `Forklaringslogg` og dens `ForklaringsloggOppforing`-rader fra disse listene, beregner `AutomatiseringsGrad` fra de refererte `Vurdering`-radene (regel 3.5), oppretter `Vedtaksvirkning`-radene fra `virkninger`, og fryser alt i samme transaksjon.
 
 ## 6. Eksempeldata (fra dagpenger-eksempelet)
 
 ```json
 {
-  "sak": { "tittel": "Søknad om dagpenger", "status": "UnderBehandling", "tjenesteReferanse": "https://data.norge.no/services/dagpenger" },
+  "sak": { "tittel": "Søknad om dagpenger", "status": "UnderBehandling" },
   "rettskilder": [
     { "type": "Lov", "henvisning": "folketrygdloven § 4-5", "eliReferanse": "..." },
     { "type": "Rundskriv", "henvisning": "NAV rundskriv til § 4-5, pkt. 4.5.3 (selvforskyldt oppsigelse)" },
     { "type": "Lov", "henvisning": "folketrygdloven § 21-4 (innhenting av opplysninger)" }
   ],
   "faktum": [
-    { "type": "Raatt", "struktur": "Strukturert", "verdi": "420000", "kilde": { "navn": "A-ordningen", "type": "AutoritativtRegister", "autoritativ": true, "rettskildeReferanser": ["folketrygdloven § 21-4 (innhenting av opplysninger)"], "cpsvReferanse": "https://data.norge.no/evidences/inntektsopplysninger" } },
+    { "type": "Raatt", "struktur": "Strukturert", "verdi": "420000", "kilde": { "navn": "A-ordningen", "type": "AutoritativtRegister", "autoritativ": true, "rettskildeReferanser": ["folketrygdloven § 21-4 (innhenting av opplysninger)"] } },
     { "type": "Raatt", "struktur": "Ustrukturert", "verdi": "Fikk ikke fornyet vikariat, arbeidsgiver nedbemannet", "kilde": { "navn": "Søknad", "type": "Soknad", "autoritativ": false } }
   ],
   "vurderinger": [
@@ -227,6 +280,17 @@ Serveren bygger `Forklaringslogg` og dens `ForklaringsloggOppforing`-rader fra d
   "vedtak": { "utfall": "Dagpenger tilkjent", "automatiseringsGrad": "DelvisAutomatisert" }
 }
 ```
+
+**Tilleggseksempel — flere virkninger i samme vedtak (skjenkebevilling):**
+
+```json
+"virkninger": [
+  { "type": "Tillatelse", "beskrivelse": "Skjenkebevilling", "varighet": "Tidsbegrenset", "gyldigFra": "2026-09-01", "gyldigTil": "2030-08-31" },
+  { "type": "Plikt", "beskrivelse": "Innrapportering av omsetning", "varighet": "LopendeInntilVilkarBrister", "rapporteringsFrekvens": "Kvartalsvis" }
+]
+```
+
+**Tilleggseksempel — saksrelasjon (melding om endret inntekt):** en ny `Sak` med `utlosendeHendelse: "Melding"` opprettes når søker melder endret inntekt. Den kobles til den opprinnelige saken via `SakRelasjon { type: "OppfolgingAvMelding", relatertSakId: <opprinnelig sak> }`, og dens nye `Vurdering` av inntektsvilkåret setter `refererteVurderingIder: [<vurdering-id for opprinnelig skjønnsvurdering av oppsigelsesgrunn>]` — den opprinnelige vurderingen av selve oppsigelsesgrunnen gjøres ikke på nytt, kun inntektsvilkåret revurderes på nytt faktum.
 
 ## 7. Ikke-funksjonelle krav
 

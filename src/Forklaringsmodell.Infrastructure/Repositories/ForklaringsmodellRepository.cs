@@ -26,6 +26,13 @@ public class ForklaringsmodellRepository : IForklaringsmodellRepository
     public async Task AddSakAsync(Sak sak, CancellationToken ct = default) =>
         await _db.Saker.AddAsync(sak, ct);
 
+    // SakRelasjon
+    public Task<List<SakRelasjon>> GetSakRelasjonerForSakAsync(Guid sakId, CancellationToken ct = default) =>
+        _db.SakRelasjoner.Where(r => r.SakId == sakId).ToListAsync(ct);
+
+    public async Task AddSakRelasjonAsync(SakRelasjon relasjon, CancellationToken ct = default) =>
+        await _db.SakRelasjoner.AddAsync(relasjon, ct);
+
     // Kilde
     public Task<Kilde?> GetKildeAsync(Guid kildeId, CancellationToken ct = default) =>
         _db.Kilder.Include(k => k.KildeRettskilde).FirstOrDefaultAsync(k => k.KildeId == kildeId, ct);
@@ -84,13 +91,16 @@ public class ForklaringsmodellRepository : IForklaringsmodellRepository
 
     // Vurdering
     public Task<Vurdering?> GetVurderingAsync(Guid vurderingId, CancellationToken ct = default) =>
-        _db.Vurderinger.Include(v => v.VurderingFaktum).Include(v => v.VurderingRettskilde).FirstOrDefaultAsync(v => v.VurderingId == vurderingId, ct);
+        _db.Vurderinger.Include(v => v.VurderingFaktum).Include(v => v.VurderingRettskilde).Include(v => v.RefererteVurderinger)
+            .FirstOrDefaultAsync(v => v.VurderingId == vurderingId, ct);
 
     public Task<List<Vurdering>> GetVurderingerForSakAsync(Guid sakId, CancellationToken ct = default) =>
-        _db.Vurderinger.Include(v => v.VurderingFaktum).Include(v => v.VurderingRettskilde).Where(v => v.SakId == sakId).ToListAsync(ct);
+        _db.Vurderinger.Include(v => v.VurderingFaktum).Include(v => v.VurderingRettskilde).Include(v => v.RefererteVurderinger)
+            .Where(v => v.SakId == sakId).ToListAsync(ct);
 
     public Task<List<Vurdering>> GetVurderingerByIderAsync(IEnumerable<Guid> vurderingIder, CancellationToken ct = default) =>
-        _db.Vurderinger.Include(v => v.VurderingFaktum).Include(v => v.VurderingRettskilde).Where(v => vurderingIder.Contains(v.VurderingId)).ToListAsync(ct);
+        _db.Vurderinger.Include(v => v.VurderingFaktum).Include(v => v.VurderingRettskilde).Include(v => v.RefererteVurderinger)
+            .Where(v => vurderingIder.Contains(v.VurderingId)).ToListAsync(ct);
 
     public async Task AddVurderingAsync(Vurdering vurdering, CancellationToken ct = default) =>
         await _db.Vurderinger.AddAsync(vurdering, ct);
@@ -124,6 +134,14 @@ public class ForklaringsmodellRepository : IForklaringsmodellRepository
         await _db.Vedtak.AddAsync(vedtak, ct);
         await _db.Forklaringslogger.AddAsync(logg, ct);
     }
+
+    // Vedtaksvirkning
+    public Task<List<Vedtaksvirkning>> GetVirkningerForVedtakAsync(Guid vedtakId, CancellationToken ct = default) =>
+        _db.Vedtaksvirkninger.Include(v => v.VedtaksvirkningVurdering).Include(v => v.VedtaksvirkningFaktum)
+            .Where(v => v.VedtakId == vedtakId).ToListAsync(ct);
+
+    public async Task AddVedtaksvirkningAsync(Vedtaksvirkning virkning, CancellationToken ct = default) =>
+        await _db.Vedtaksvirkninger.AddAsync(virkning, ct);
 
     public Task<int> SaveChangesAsync(CancellationToken ct = default) => _db.SaveChangesAsync(ct);
 

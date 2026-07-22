@@ -59,3 +59,23 @@ public class VurderingRettskildeConfiguration : IEntityTypeConfiguration<Vurderi
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
+
+/// <summary>Selvrefererende join for Vurdering.RefererteVurderingIder (regel 3.11).</summary>
+public class VurderingReferanseConfiguration : IEntityTypeConfiguration<VurderingReferanse>
+{
+    public void Configure(EntityTypeBuilder<VurderingReferanse> builder)
+    {
+        builder.ToTable("VurderingReferanse");
+        builder.HasKey(x => new { x.VurderingId, x.RefererteVurderingId });
+
+        builder.HasOne(x => x.Vurdering)
+            .WithMany(v => v.RefererteVurderinger)
+            .HasForeignKey(x => x.VurderingId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.RefererteVurdering)
+            .WithMany()
+            .HasForeignKey(x => x.RefererteVurderingId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+}

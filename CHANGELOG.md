@@ -2,6 +2,41 @@
 
 Alle vesentlige endringer i dette prosjektet dokumenteres i denne filen.
 
+## [1.2.0] — Vedtaksvirkninger, saksrelasjoner og kryss-sak-referanser
+
+### Endret domenemodell
+
+- **Ny entitet `Vedtaksvirkning`**: et `Vedtak` kan nå medføre flere, uavhengig tidsbegrensede virkninger (`VirkningType`: `Tillatelse`, `Plikt`, `OkonomiskYtelse`, `Tilskudd`), hver med egen `VarighetsType` (`Tidsbegrenset`, `Varig`, `LopendeInntilVilkarBrister`), gyldighetsperiode, beløp og sporbar kobling til hvilke `Vurdering`/`Faktum`-rader som fastsatte den.
+- **Ny entitet `SakRelasjon`**: kobler en ny/oppfølgende `Sak` til en relatert `Sak` (`SakRelasjonType`: `Tilbakekall`, `Revurdering`, `OppfolgingAvMelding`, `Klage`, `Kontroll`, `Annet`), uten å modifisere den opprinnelige saken. Modellen modellerer bevisst **ikke** saksflyt/tilstandsoverganger — en ny hendelse gir alltid en ny `Sak`.
+- **`Sak.UtlosendeHendelse`** (ny, obligatorisk): `HendelseType` (`Soknad`, `Innrapportering`, `Melding`, `Tilbakekall`, `Kontroll`, `Klage`, `Omgjoring`) som merker hvilken CPSV-AP-hendelse som utløste saken.
+- **`Vurdering.RefererteVurderingIder`** (ny, valgfri, mange-til-mange selvreferanse): lar en vurdering eksplisitt bygge på en (allerede frosset) vurdering fra en *annen* sak, uten å gjøre den om.
+- **`Vurdering.FaktumIder` kan nå peke til `Faktum` i en annen `Sak`** — tidligere implisitt begrenset til samme sak.
+- **Feltomdøping for CPSV-AP-NO/CCCEV-samsvar**: `Sak.TjenesteReferanse` → `Sak.CpsvTjenesteReferanse`, `Kilde.CpsvReferanse` → `Kilde.CccevReferanse`, `Regel.CpsvRuleReferanse` → `Regel.CpsvRegelReferanse`.
+
+### Nye forretningsregler
+
+- **Regel 3.10**: `Vedtaksvirkning` er append-only på samme måte som `Forklaringslogg` (ingen `PUT`/`DELETE` etter opprettelse). `GyldigTil` skal være `null` når `Varighet == Varig`. `RapporteringsFrekvens` skal kun være satt når `Type == Plikt`.
+- **Regel 3.11**: Kryss-sak-referanser (`Vurdering.RefererteVurderingIder`, og `Vurdering.FaktumIder`/`RettskildeIder` som peker til en annen sak) skal kun peke til rader som allerede er del av en frosset `Forklaringslogg` i den relaterte saken — en vurdering kan lese fra en annen sak, men skal aldri kunne endre den. Validert på API-nivå (409/423 ved brudd, samme mønster som append-only for øvrig).
+
+### Endrede API-kontrakter
+
+- `POST /api/saker`: nytt obligatorisk `utlosendeHendelse`-felt; `tjenesteReferanse` → `cpsvTjenesteReferanse`.
+- `POST /api/kilder`: `cpsvReferanse` → `cccevReferanse`.
+- `POST /api/regler`: `cpsvRuleReferanse` → `cpsvRegelReferanse`.
+- `POST /api/saker/{sakId}/vurderinger`: nytt valgfritt `refererteVurderingIder`-felt.
+- `POST /api/saker/{sakId}/vedtak`: nytt valgfritt `virkninger`-felt (liste av virkningsobjekter), opprettet i samme transaksjon som vedtaket.
+- Nye endepunkter: `GET/POST /api/saker/{sakId}/relasjoner`, `GET /api/vedtak/{id}/virkninger`.
+- `GET /api/vedtak/{id}/forklaring` inkluderer nå virkninger i den hydrerte responsen.
+
+### Migrasjon
+
+- Ny EF Core-migrasjon legger til `SakRelasjoner`, `Vedtaksvirkninger` + to koblingstabeller (`VedtaksvirkningVurdering`, `VedtaksvirkningFaktum`), en selvrefererende koblingstabell for `Vurdering.RefererteVurderingIder`, samt de omdøpte/nye kolonnene på `Sak`/`Kilde`/`Regel`.
+
+### Seed-data
+
+- Dagpenger-vedtaket får en `OkonomiskYtelse`-virkning (fra spesifikasjonens `POST .../vedtak`-eksempel i punkt 5).
+- Ny, andre `Sak` (`utlosendeHendelse: Melding`) demonstrerer `SakRelasjon` (`OppfolgingAvMelding`) og `Vurdering.RefererteVurderingIder` mot den opprinnelige skjønnsvurderingen, i tråd med meldingseksempelet i spesifikasjonens punkt 6.
+
 ## [1.1.0] — Rettskildekobling og CPSV-AP/CCCEV-sporbarhet
 
 ### Endret domenemodell

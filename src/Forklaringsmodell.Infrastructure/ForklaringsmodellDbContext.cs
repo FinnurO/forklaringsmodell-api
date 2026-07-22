@@ -10,6 +10,7 @@ public class ForklaringsmodellDbContext : DbContext
     }
 
     public DbSet<Sak> Saker => Set<Sak>();
+    public DbSet<SakRelasjon> SakRelasjoner => Set<SakRelasjon>();
     public DbSet<Kilde> Kilder => Set<Kilde>();
     public DbSet<Faktum> Faktum => Set<Faktum>();
     public DbSet<Rettskilde> Rettskilder => Set<Rettskilde>();
@@ -20,8 +21,12 @@ public class ForklaringsmodellDbContext : DbContext
     public DbSet<VurderingRettskilde> VurderingRettskilde => Set<VurderingRettskilde>();
     public DbSet<Vurdering> Vurderinger => Set<Vurdering>();
     public DbSet<VurderingFaktum> VurderingFaktum => Set<VurderingFaktum>();
+    public DbSet<VurderingReferanse> VurderingReferanse => Set<VurderingReferanse>();
     public DbSet<Partsmedvirkning> Partsmedvirkninger => Set<Partsmedvirkning>();
     public DbSet<Vedtak> Vedtak => Set<Vedtak>();
+    public DbSet<Vedtaksvirkning> Vedtaksvirkninger => Set<Vedtaksvirkning>();
+    public DbSet<VedtaksvirkningVurdering> VedtaksvirkningVurdering => Set<VedtaksvirkningVurdering>();
+    public DbSet<VedtaksvirkningFaktum> VedtaksvirkningFaktum => Set<VedtaksvirkningFaktum>();
     public DbSet<Forklaringslogg> Forklaringslogger => Set<Forklaringslogg>();
     public DbSet<ForklaringsloggOppforing> ForklaringsloggOppforinger => Set<ForklaringsloggOppforing>();
 

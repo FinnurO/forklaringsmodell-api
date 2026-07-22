@@ -49,7 +49,7 @@ public class KildeService
             Navn = dto.Navn,
             Type = dto.Type,
             Autoritativ = dto.Autoritativ,
-            CpsvReferanse = dto.CpsvReferanse
+            CccevReferanse = dto.CccevReferanse
         };
 
         foreach (var rettskilde in rettskilder)
@@ -85,7 +85,7 @@ public class KildeService
         Type = kilde.Type,
         Autoritativ = kilde.Autoritativ,
         RettskildeIder = kilde.KildeRettskilde.Select(kr => kr.RettskildeId).ToList(),
-        CpsvReferanse = kilde.CpsvReferanse,
+        CccevReferanse = kilde.CccevReferanse,
         ErLaast = await _repository.ErKildeReferertAsync(kilde.KildeId, ct)
     };
 }

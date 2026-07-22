@@ -17,6 +17,7 @@ public class OpprettVedtakDto
     public List<Guid> FaktumIder { get; set; } = new();
     public List<Guid> VurderingIder { get; set; } = new();
     public List<Guid> PartsmedvirkningIder { get; set; } = new();
+    public List<OpprettVedtaksvirkningDto> Virkninger { get; set; } = new();
 }
 
 public class ForklaringsloggOppforingDto
@@ -41,4 +42,5 @@ public class HydrertForklaringDto
     public List<FaktumDto> Faktum { get; set; } = new();
     public List<VurderingDto> Vurderinger { get; set; } = new();
     public List<PartsmedvirkningDto> Partsmedvirkninger { get; set; } = new();
+    public List<VedtaksvirkningDto> Virkninger { get; set; } = new();
 }

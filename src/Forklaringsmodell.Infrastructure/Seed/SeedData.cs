@@ -27,7 +27,8 @@ public static class SeedData
             Status = SakStatus.UnderBehandling,
             Opprettet = naa,
             SistEndret = naa,
-            TjenesteReferanse = "https://data.norge.no/services/dagpenger"
+            CpsvTjenesteReferanse = "https://data.norge.no/services/dagpenger",
+            UtlosendeHendelse = HendelseType.Soknad
         };
 
         // De tre rettskildene fra spesifikasjonens punkt 6.
@@ -69,7 +70,7 @@ public static class SeedData
             Navn = "A-ordningen",
             Type = KildeType.AutoritativtRegister,
             Autoritativ = true,
-            CpsvReferanse = "https://data.norge.no/evidences/inntektsopplysninger"
+            CccevReferanse = "https://data.norge.no/evidences/inntektsopplysninger"
         };
         kildeAOrdningen.KildeRettskilde.Add(new KildeRettskilde { KildeId = kildeAOrdningen.KildeId, RettskildeId = rettskildeInnhenting.RettskildeId });
 
@@ -221,6 +222,22 @@ public static class SeedData
         LeggTilOppforing(OppforingsType.Vurdering, vurderingGenerativKI.VurderingId);
         LeggTilOppforing(OppforingsType.Vurdering, vurderingSkjonn.VurderingId);
 
+        // Vedtaksvirkning fra "Body for POST .../vedtak"-eksempelet i spesifikasjonens
+        // punkt 5 (regel 3.10): den økonomiske ytelsen dagpenger-vedtaket faktisk medfører.
+        var virkningDagpenger = new Vedtaksvirkning
+        {
+            VirkningId = Guid.NewGuid(),
+            VedtakId = vedtak.VedtakId,
+            Type = VirkningType.OkonomiskYtelse,
+            Beskrivelse = "Dagpenger",
+            Varighet = VarighetsType.Tidsbegrenset,
+            GyldigFra = new DateTimeOffset(2026, 8, 1, 0, 0, 0, TimeSpan.Zero),
+            GyldigTil = new DateTimeOffset(2027, 1, 31, 0, 0, 0, TimeSpan.Zero),
+            Belop = 18500m
+        };
+        virkningDagpenger.VedtaksvirkningVurdering.Add(new VedtaksvirkningVurdering { VirkningId = virkningDagpenger.VirkningId, VurderingId = vurderingDeterministisk.VurderingId });
+        virkningDagpenger.VedtaksvirkningFaktum.Add(new VedtaksvirkningFaktum { VirkningId = virkningDagpenger.VirkningId, FaktumId = faktumInntekt.FaktumId });
+
         db.Saker.Add(sak);
         db.Rettskilder.AddRange(rettskildeInntektskrav, rettskildeRundskriv, rettskildeInnhenting, rettskildeOpplysningsplikt);
         db.Kilder.AddRange(kildeAOrdningen, kildeSoknad);
@@ -229,6 +246,69 @@ public static class SeedData
         db.Vurderinger.AddRange(vurderingDeterministisk, vurderingGenerativKI, vurderingSkjonn);
         db.Vedtak.Add(vedtak);
         db.Forklaringslogger.Add(logg);
+        db.Vedtaksvirkninger.Add(virkningDagpenger);
+
+        // Vedtaket (og dermed vurderingSkjonn) må være lagret og frosset før sak 2 kan
+        // kryss-sak-referere til det (regel 3.11), så denne lagres i et eget kall.
+        await db.SaveChangesAsync(ct);
+
+        // Tilleggseksempel fra spesifikasjonens punkt 6: melding om endret inntekt utløser
+        // en ny Sak som følger opp den opprinnelige via SakRelasjon, og gjenbruker den
+        // opprinnelige (nå frosne) skjønnsvurderingen av oppsigelsesgrunn via
+        // RefererteVurderingIder i stedet for å vurdere den på nytt.
+        var sakMelding = new Sak
+        {
+            SakId = Guid.NewGuid(),
+            Tittel = "Melding om endret inntekt",
+            Status = SakStatus.UnderBehandling,
+            Opprettet = naa,
+            SistEndret = naa,
+            UtlosendeHendelse = HendelseType.Melding
+        };
+
+        var relasjonTilOpprinneligSak = new SakRelasjon
+        {
+            RelasjonId = Guid.NewGuid(),
+            SakId = sakMelding.SakId,
+            RelatertSakId = sak.SakId,
+            Type = SakRelasjonType.OppfolgingAvMelding
+        };
+
+        var faktumNyInntekt = new Faktum
+        {
+            FaktumId = Guid.NewGuid(),
+            SakId = sakMelding.SakId,
+            KildeId = kildeSoknad.KildeId,
+            Type = FaktumType.Raatt,
+            Struktur = StrukturType.Strukturert,
+            Verdi = "480000",
+            InnhentetTidspunkt = naa
+        };
+
+        var vurderingRevurdertInntekt = new Vurdering
+        {
+            VurderingId = Guid.NewGuid(),
+            SakId = sakMelding.SakId,
+            RegelId = regelDeterministisk.RegelId,
+            Type = VurderingsType.Deterministisk,
+            Beregningsspor = "revurdert inntekt >= 1.5G => fortsatt oppfylt",
+            Eskalert = false
+        };
+        vurderingRevurdertInntekt.VurderingFaktum.Add(new VurderingFaktum
+        {
+            VurderingId = vurderingRevurdertInntekt.VurderingId,
+            FaktumId = faktumNyInntekt.FaktumId
+        });
+        vurderingRevurdertInntekt.RefererteVurderinger.Add(new VurderingReferanse
+        {
+            VurderingId = vurderingRevurdertInntekt.VurderingId,
+            RefererteVurderingId = vurderingSkjonn.VurderingId
+        });
+
+        db.Saker.Add(sakMelding);
+        db.SakRelasjoner.Add(relasjonTilOpprinneligSak);
+        db.Faktum.Add(faktumNyInntekt);
+        db.Vurderinger.Add(vurderingRevurdertInntekt);
 
         await db.SaveChangesAsync(ct);
     }

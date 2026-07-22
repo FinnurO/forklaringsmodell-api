@@ -12,4 +12,5 @@ public class Vedtak
 
     public Sak? Sak { get; set; }
     public Forklaringslogg? Forklaringslogg { get; set; }
+    public ICollection<Vedtaksvirkning> Virkninger { get; set; } = new List<Vedtaksvirkning>();
 }

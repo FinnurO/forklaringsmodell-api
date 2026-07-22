@@ -7,7 +7,7 @@ public class Regel
     public Guid RegelId { get; set; }
     public string Teknologi { get; set; } = string.Empty; // f.eks. "DMN", "Python", "LLM-prompt v3"
     public VurderingsType Type { get; set; }               // regelens konfigurerte type
-    public string? CpsvRuleReferanse { get; set; }          // valgfri URI til CPSV-AP Rule
+    public string? CpsvRegelReferanse { get; set; }          // valgfri IRI til cpsvno:Rule i CPSV-AP-NO
 
     /// <summary>
     /// Skrivebeskyttet fordi denne raden allerede er referert av minst én Vurdering (regel 3.4).
