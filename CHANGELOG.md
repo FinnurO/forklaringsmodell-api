@@ -2,6 +2,35 @@
 
 Alle vesentlige endringer i dette prosjektet dokumenteres i denne filen.
 
+## [1.3.0] — Vilkårskatalog og avledede virkninger
+
+### Endret domenemodell
+
+- **Ny entitet `Vilkar`**: en gjenbrukbar referansetabell (som `Regel`/`Rettskilde`/`Kilde`) for vilkårsdefinisjoner som går igjen på tvers av mange vedtak — fra statiske standardvilkår til parametriserte eller skjønnsbaserte vilkårstyper. Koblet til `Rettskilde` (mange-til-mange) og valgfritt til `Regel`.
+- **`Vedtaksvirkning.VilkarId`** (ny, valgfri): kobler en virkning til en katalogført `Vilkar`, uten at senere endringer i katalogoppføringen påvirker allerede opprettede virkninger (append-only-prinsippet gjelder også her).
+- **`Vedtaksvirkning.Fastsettelsesmate`** (ny, `FastsettelsesmateType`: `Statisk`, `Parametrisert`, `Skjonnsbasert`, `Avledet`): hvordan virkningens innhold ble fastsatt.
+- **`Vedtaksvirkning.AvledetFraVirkningId`** (ny, valgfri selvreferanse): lar en virkning være avledet av en annen — kan peke på tvers av `Vedtak` og `Sak` (f.eks. en åpningstid låst til en skjenkebevillings skjenketid).
+- **`VirkningType.Gebyr`** (ny enum-verdi): for virkninger der beløpet går *fra* mottaker, i motsetning til `OkonomiskYtelse`/`Tilskudd`.
+
+### Nye forretningsregler
+
+- **Regel 3.12**: `Vilkar` er referansedata — en `Vilkar`-rad referert av minst én `Vedtaksvirkning` skal ikke overskrives; endringer opprettes som en ny `Vilkar`-rad (samme append-only-mønster som `Regel`, regel 3.4).
+- **Regel 3.13**: `Vedtaksvirkning.AvledetFraVirkningId` skal kun peke til en virkning som allerede er del av et frosset vedtak — samme skrivebeskyttede kryss-referanse-prinsipp som regel 3.11, nå på virkningsnivå. Siden `Vedtaksvirkning` kun kan opprettes atomisk med sitt `Vedtak` (ingen frittstående opprettelse), er "allerede eksisterer i databasen" tilstrekkelig for å bekrefte at referansen er frosset.
+
+### Endrede API-kontrakter
+
+- Nytt endepunkt: `GET/POST /api/vilkar`.
+- `POST /api/saker/{sakId}/vedtak`: hver virkning i `virkninger`-listen tar nå imot valgfrie `vilkarId`, `fastsettelsesmate` og `avledetFraVirkningId`-felt.
+
+### Migrasjon
+
+- Ny EF Core-migrasjon legger til `Vilkar`-tabellen + koblingstabell mot `Rettskilde`, samt `VilkarId`/`Fastsettelsesmate`/`AvledetFraVirkningId`-kolonner på `Vedtaksvirkninger`.
+
+### Seed-data
+
+- Dagpenger-vedtakets virkning kobles til en ny `Vilkar`-katalogoppføring med `Fastsettelsesmate: Parametrisert`.
+- Et nytt, andre vedtak demonstrerer `AvledetFraVirkningId` på tvers av vedtak.
+
 ## [1.2.0] — Vedtaksvirkninger, saksrelasjoner og kryss-sak-referanser
 
 ### Endret domenemodell

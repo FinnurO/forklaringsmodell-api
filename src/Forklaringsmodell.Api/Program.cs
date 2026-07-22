@@ -50,6 +50,7 @@ builder.Services.AddScoped<IValidator<OpprettPartsmedvirkningDto>, OpprettPartsm
 builder.Services.AddScoped<IValidator<OpprettVedtakDto>, OpprettVedtakDtoValidator>();
 builder.Services.AddScoped<IValidator<OpprettSakRelasjonDto>, OpprettSakRelasjonDtoValidator>();
 builder.Services.AddScoped<IValidator<OpprettVedtaksvirkningDto>, OpprettVedtaksvirkningDtoValidator>();
+builder.Services.AddScoped<IValidator<OpprettVilkarDto>, OpprettVilkarDtoValidator>();
 
 // Use-case/service-klasser (Application-laget)
 builder.Services.AddScoped<SakService>();
@@ -57,6 +58,7 @@ builder.Services.AddScoped<SakRelasjonService>();
 builder.Services.AddScoped<KildeService>();
 builder.Services.AddScoped<RettskildeService>();
 builder.Services.AddScoped<RegelService>();
+builder.Services.AddScoped<VilkarService>();
 builder.Services.AddScoped<FaktumService>();
 builder.Services.AddScoped<VurderingService>();
 builder.Services.AddScoped<PartsmedvirkningService>();

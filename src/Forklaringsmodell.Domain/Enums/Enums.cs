@@ -71,7 +71,16 @@ public enum VirkningType
     Tillatelse,
     Plikt,
     OkonomiskYtelse,
-    Tilskudd
+    Tilskudd,
+    Gebyr
+}
+
+public enum FastsettelsesmateType
+{
+    Statisk,
+    Parametrisert,
+    Skjonnsbasert,
+    Avledet
 }
 
 public enum VarighetsType

@@ -140,8 +140,27 @@ public class ForklaringsmodellRepository : IForklaringsmodellRepository
         _db.Vedtaksvirkninger.Include(v => v.VedtaksvirkningVurdering).Include(v => v.VedtaksvirkningFaktum)
             .Where(v => v.VedtakId == vedtakId).ToListAsync(ct);
 
+    public Task<Vedtaksvirkning?> GetVedtaksvirkningAsync(Guid virkningId, CancellationToken ct = default) =>
+        _db.Vedtaksvirkninger.FirstOrDefaultAsync(v => v.VirkningId == virkningId, ct);
+
     public async Task AddVedtaksvirkningAsync(Vedtaksvirkning virkning, CancellationToken ct = default) =>
         await _db.Vedtaksvirkninger.AddAsync(virkning, ct);
+
+    // Vilkar
+    public Task<Vilkar?> GetVilkarAsync(Guid vilkarId, CancellationToken ct = default) =>
+        _db.Vilkar.Include(v => v.VilkarRettskilde).FirstOrDefaultAsync(v => v.VilkarId == vilkarId, ct);
+
+    public Task<List<Vilkar>> GetVilkarListAsync(CancellationToken ct = default) =>
+        _db.Vilkar.Include(v => v.VilkarRettskilde).OrderBy(v => v.Navn).ToListAsync(ct);
+
+    public Task<List<Vilkar>> GetVilkarByIderAsync(IEnumerable<Guid> vilkarIder, CancellationToken ct = default) =>
+        _db.Vilkar.Where(v => vilkarIder.Contains(v.VilkarId)).ToListAsync(ct);
+
+    public async Task AddVilkarAsync(Vilkar vilkar, CancellationToken ct = default) =>
+        await _db.Vilkar.AddAsync(vilkar, ct);
+
+    public Task<bool> ErVilkarReferertAsync(Guid vilkarId, CancellationToken ct = default) =>
+        _db.Vedtaksvirkninger.AnyAsync(v => v.VilkarId == vilkarId, ct);
 
     public Task<int> SaveChangesAsync(CancellationToken ct = default) => _db.SaveChangesAsync(ct);
 

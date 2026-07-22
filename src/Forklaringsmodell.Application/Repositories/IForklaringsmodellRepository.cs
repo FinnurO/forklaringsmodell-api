@@ -65,7 +65,15 @@ public interface IForklaringsmodellRepository
 
     // Vedtaksvirkning
     Task<List<Vedtaksvirkning>> GetVirkningerForVedtakAsync(Guid vedtakId, CancellationToken ct = default);
+    Task<Vedtaksvirkning?> GetVedtaksvirkningAsync(Guid virkningId, CancellationToken ct = default);
     Task AddVedtaksvirkningAsync(Vedtaksvirkning virkning, CancellationToken ct = default);
+
+    // Vilkar
+    Task<Vilkar?> GetVilkarAsync(Guid vilkarId, CancellationToken ct = default);
+    Task<List<Vilkar>> GetVilkarListAsync(CancellationToken ct = default);
+    Task<List<Vilkar>> GetVilkarByIderAsync(IEnumerable<Guid> vilkarIder, CancellationToken ct = default);
+    Task AddVilkarAsync(Vilkar vilkar, CancellationToken ct = default);
+    Task<bool> ErVilkarReferertAsync(Guid vilkarId, CancellationToken ct = default);
 
     Task<int> SaveChangesAsync(CancellationToken ct = default);
     Task<IAsyncDisposable> BeginTransactionAsync(CancellationToken ct = default);

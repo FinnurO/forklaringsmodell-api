@@ -14,4 +14,5 @@ public class Rettskilde
     public ICollection<KildeRettskilde> KildeRettskilde { get; set; } = new List<KildeRettskilde>();
     public ICollection<FaktumRettskilde> FaktumRettskilde { get; set; } = new List<FaktumRettskilde>();
     public ICollection<VurderingRettskilde> VurderingRettskilde { get; set; } = new List<VurderingRettskilde>();
+    public ICollection<VilkarRettskilde> VilkarRettskilde { get; set; } = new List<VilkarRettskilde>();
 }

@@ -222,13 +222,26 @@ public static class SeedData
         LeggTilOppforing(OppforingsType.Vurdering, vurderingGenerativKI.VurderingId);
         LeggTilOppforing(OppforingsType.Vurdering, vurderingSkjonn.VurderingId);
 
+        // Vilkar-katalogoppføring (regel 3.12) som dagpenger-virkningen er en instans av.
+        var vilkarDagpengesats = new Vilkar
+        {
+            VilkarId = Guid.NewGuid(),
+            Navn = "Dagpengesats basert på tidligere inntekt",
+            Type = VirkningType.OkonomiskYtelse,
+            Fastsettelsesmate = FastsettelsesmateType.Parametrisert,
+            StandardTekst = "Dagpenger utbetales med en sats beregnet av tidligere inntekt, jf. folketrygdloven § 4-5."
+        };
+        vilkarDagpengesats.VilkarRettskilde.Add(new VilkarRettskilde { VilkarId = vilkarDagpengesats.VilkarId, RettskildeId = rettskildeInntektskrav.RettskildeId });
+
         // Vedtaksvirkning fra "Body for POST .../vedtak"-eksempelet i spesifikasjonens
         // punkt 5 (regel 3.10): den økonomiske ytelsen dagpenger-vedtaket faktisk medfører.
         var virkningDagpenger = new Vedtaksvirkning
         {
             VirkningId = Guid.NewGuid(),
             VedtakId = vedtak.VedtakId,
+            VilkarId = vilkarDagpengesats.VilkarId,
             Type = VirkningType.OkonomiskYtelse,
+            Fastsettelsesmate = FastsettelsesmateType.Parametrisert,
             Beskrivelse = "Dagpenger",
             Varighet = VarighetsType.Tidsbegrenset,
             GyldigFra = new DateTimeOffset(2026, 8, 1, 0, 0, 0, TimeSpan.Zero),
@@ -238,6 +251,7 @@ public static class SeedData
         virkningDagpenger.VedtaksvirkningVurdering.Add(new VedtaksvirkningVurdering { VirkningId = virkningDagpenger.VirkningId, VurderingId = vurderingDeterministisk.VurderingId });
         virkningDagpenger.VedtaksvirkningFaktum.Add(new VedtaksvirkningFaktum { VirkningId = virkningDagpenger.VirkningId, FaktumId = faktumInntekt.FaktumId });
 
+        db.Vilkar.Add(vilkarDagpengesats);
         db.Saker.Add(sak);
         db.Rettskilder.AddRange(rettskildeInntektskrav, rettskildeRundskriv, rettskildeInnhenting, rettskildeOpplysningsplikt);
         db.Kilder.AddRange(kildeAOrdningen, kildeSoknad);
@@ -305,10 +319,62 @@ public static class SeedData
             RefererteVurderingId = vurderingSkjonn.VurderingId
         });
 
+        // Andre vedtak (på sakMelding) demonstrerer Vedtaksvirkning.AvledetFraVirkningId
+        // (regel 3.13): en justert dagpengesats avledet fra den opprinnelige virkningen på
+        // det første, allerede frosne vedtaket — på tvers av både Vedtak og Sak.
+        var vedtakMelding = new Vedtak
+        {
+            VedtakId = Guid.NewGuid(),
+            SakId = sakMelding.SakId,
+            Tidspunkt = naa,
+            Utfall = "Dagpengesats justert etter endret inntekt",
+            AutomatiseringsGrad = AutomatiseringsGrad.Helautomatisert
+        };
+
+        var loggMelding = new Forklaringslogg
+        {
+            LoggId = Guid.NewGuid(),
+            VedtakId = vedtakMelding.VedtakId
+        };
+        loggMelding.Oppforinger.Add(new ForklaringsloggOppforing
+        {
+            OppforingId = Guid.NewGuid(),
+            LoggId = loggMelding.LoggId,
+            Type = OppforingsType.Faktum,
+            ReferanseId = faktumNyInntekt.FaktumId
+        });
+        loggMelding.Oppforinger.Add(new ForklaringsloggOppforing
+        {
+            OppforingId = Guid.NewGuid(),
+            LoggId = loggMelding.LoggId,
+            Type = OppforingsType.Vurdering,
+            ReferanseId = vurderingRevurdertInntekt.VurderingId
+        });
+
+        var virkningJustertSats = new Vedtaksvirkning
+        {
+            VirkningId = Guid.NewGuid(),
+            VedtakId = vedtakMelding.VedtakId,
+            VilkarId = vilkarDagpengesats.VilkarId,
+            Type = VirkningType.OkonomiskYtelse,
+            Fastsettelsesmate = FastsettelsesmateType.Avledet,
+            Beskrivelse = "Justert dagpengesats etter endret inntekt",
+            Varighet = VarighetsType.Tidsbegrenset,
+            GyldigFra = new DateTimeOffset(2026, 11, 1, 0, 0, 0, TimeSpan.Zero),
+            GyldigTil = new DateTimeOffset(2027, 1, 31, 0, 0, 0, TimeSpan.Zero),
+            Belop = 21000m,
+            AvledetFraVirkningId = virkningDagpenger.VirkningId
+        };
+        virkningJustertSats.VedtaksvirkningVurdering.Add(new VedtaksvirkningVurdering { VirkningId = virkningJustertSats.VirkningId, VurderingId = vurderingRevurdertInntekt.VurderingId });
+        virkningJustertSats.VedtaksvirkningFaktum.Add(new VedtaksvirkningFaktum { VirkningId = virkningJustertSats.VirkningId, FaktumId = faktumNyInntekt.FaktumId });
+
         db.Saker.Add(sakMelding);
         db.SakRelasjoner.Add(relasjonTilOpprinneligSak);
         db.Faktum.Add(faktumNyInntekt);
         db.Vurderinger.Add(vurderingRevurdertInntekt);
+        db.Vedtak.Add(vedtakMelding);
+        db.Forklaringslogger.Add(loggMelding);
+        db.Vedtaksvirkninger.Add(virkningJustertSats);
 
         await db.SaveChangesAsync(ct);
     }

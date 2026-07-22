@@ -12,6 +12,7 @@ public class VedtaksvirkningConfiguration : IEntityTypeConfiguration<Vedtaksvirk
         builder.HasKey(x => x.VirkningId);
 
         builder.Property(x => x.Type).HasConversion<string>().HasMaxLength(50);
+        builder.Property(x => x.Fastsettelsesmate).HasConversion<string>().HasMaxLength(50);
         builder.Property(x => x.Beskrivelse).IsRequired().HasMaxLength(500);
         builder.Property(x => x.Varighet).HasConversion<string>().HasMaxLength(50);
         builder.Property(x => x.Belop).HasPrecision(18, 2);
@@ -23,7 +24,18 @@ public class VedtaksvirkningConfiguration : IEntityTypeConfiguration<Vedtaksvirk
             .HasForeignKey(x => x.VedtakId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasOne(x => x.Vilkar)
+            .WithMany(v => v.Vedtaksvirkninger)
+            .HasForeignKey(x => x.VilkarId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.AvledetFraVirkning)
+            .WithMany(x => x.AvledeteVirkninger)
+            .HasForeignKey(x => x.AvledetFraVirkningId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasIndex(x => x.VedtakId);
+        builder.HasIndex(x => x.VilkarId);
     }
 }
 

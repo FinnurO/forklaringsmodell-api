@@ -85,6 +85,22 @@ public class VedtakService
                 throw new NotFoundException($"Faktum {string.Join(", ", manglendeVirkningFaktum)} finnes ikke.");
             }
 
+            if (virkningDto.VilkarId.HasValue)
+            {
+                _ = await _repository.GetVilkarAsync(virkningDto.VilkarId.Value, ct)
+                    ?? throw new NotFoundException($"Vilkar {virkningDto.VilkarId} finnes ikke.");
+            }
+
+            // Regel 3.13: AvledetFraVirkningId skal kun peke til en virkning som allerede
+            // er del av et frosset vedtak. Vedtaksvirkning kan kun opprettes atomisk med
+            // sitt Vedtak (ingen frittstående opprettelse), så at raden eksisterer i det
+            // hele tatt er tilstrekkelig bevis på at den allerede er frosset.
+            if (virkningDto.AvledetFraVirkningId.HasValue)
+            {
+                _ = await _repository.GetVedtaksvirkningAsync(virkningDto.AvledetFraVirkningId.Value, ct)
+                    ?? throw new NotFoundException($"Vedtaksvirkning {virkningDto.AvledetFraVirkningId} finnes ikke eller er ikke frosset ennå.");
+            }
+
             virkningReferanser.Add((virkningDto, virkningVurderinger, virkningFaktum));
         }
 
@@ -144,14 +160,17 @@ public class VedtakService
             {
                 VirkningId = Guid.NewGuid(),
                 VedtakId = vedtak.VedtakId,
+                VilkarId = virkningDto.VilkarId,
                 Type = virkningDto.Type,
+                Fastsettelsesmate = virkningDto.Fastsettelsesmate,
                 Beskrivelse = virkningDto.Beskrivelse,
                 Varighet = virkningDto.Varighet,
                 GyldigFra = virkningDto.GyldigFra,
                 GyldigTil = virkningDto.GyldigTil,
                 Belop = virkningDto.Belop,
                 LopendeVilkar = virkningDto.LopendeVilkar,
-                RapporteringsFrekvens = virkningDto.RapporteringsFrekvens
+                RapporteringsFrekvens = virkningDto.RapporteringsFrekvens,
+                AvledetFraVirkningId = virkningDto.AvledetFraVirkningId
             };
 
             foreach (var vurdering in virkningVurderinger)
@@ -311,7 +330,9 @@ public class VedtakService
     {
         VirkningId = virkning.VirkningId,
         VedtakId = virkning.VedtakId,
+        VilkarId = virkning.VilkarId,
         Type = virkning.Type,
+        Fastsettelsesmate = virkning.Fastsettelsesmate,
         Beskrivelse = virkning.Beskrivelse,
         Varighet = virkning.Varighet,
         GyldigFra = virkning.GyldigFra,
@@ -319,6 +340,7 @@ public class VedtakService
         Belop = virkning.Belop,
         LopendeVilkar = virkning.LopendeVilkar,
         RapporteringsFrekvens = virkning.RapporteringsFrekvens,
+        AvledetFraVirkningId = virkning.AvledetFraVirkningId,
         VurderingIder = virkning.VedtaksvirkningVurdering.Select(vv => vv.VurderingId).ToList(),
         FaktumIder = virkning.VedtaksvirkningFaktum.Select(vf => vf.FaktumId).ToList()
     };

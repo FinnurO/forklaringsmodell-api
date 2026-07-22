@@ -80,3 +80,11 @@ public class OpprettVedtaksvirkningDtoValidator : AbstractValidator<OpprettVedta
             .When(x => x.Type != Forklaringsmodell.Domain.Enums.VirkningType.Plikt);
     }
 }
+
+public class OpprettVilkarDtoValidator : AbstractValidator<OpprettVilkarDto>
+{
+    public OpprettVilkarDtoValidator()
+    {
+        RuleFor(x => x.Navn).NotEmpty();
+    }
+}
