@@ -46,6 +46,7 @@ public class VurderingValidatorTests
         {
             RegelId = Guid.NewGuid(),
             Type = VurderingsType.Skjonn,
+            Utfall = UtfallType.Oppfylt,
             Hovedhensyn = "Dokumentert nedbemanning"
         };
 
@@ -94,7 +95,44 @@ public class VurderingValidatorTests
         {
             RegelId = Guid.NewGuid(),
             Type = VurderingsType.GenerativKI,
+            Utfall = UtfallType.Oppfylt,
             Konfidens = 0.62m
+        };
+
+        var result = await _validator.ValidateAsync(dto);
+
+        Assert.True(result.IsValid);
+    }
+
+    /// <summary>Regel 3.14: Utfall er obligatorisk selv når vilkåret ikke faktisk ble vurdert.</summary>
+    [Fact]
+    public async Task Vurdering_uten_utfall_gir_valideringsfeil()
+    {
+        var dto = new OpprettVurderingDto
+        {
+            RegelId = Guid.NewGuid(),
+            Type = VurderingsType.Deterministisk,
+            Utfall = null
+        };
+
+        var result = await _validator.ValidateAsync(dto);
+
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.PropertyName == nameof(OpprettVurderingDto.Utfall));
+    }
+
+    [Theory]
+    [InlineData(UtfallType.Uaktuelt)]
+    [InlineData(UtfallType.IkkeVurdert)]
+    [InlineData(UtfallType.Uavklart)]
+    public async Task Vurdering_med_ikke_konkluderende_utfall_er_gyldig(UtfallType utfall)
+    {
+        var dto = new OpprettVurderingDto
+        {
+            RegelId = Guid.NewGuid(),
+            Type = VurderingsType.Deterministisk,
+            Utfall = utfall,
+            Beregningsspor = "Dokumentert årsak til at vilkåret ikke ble vurdert"
         };
 
         var result = await _validator.ValidateAsync(dto);

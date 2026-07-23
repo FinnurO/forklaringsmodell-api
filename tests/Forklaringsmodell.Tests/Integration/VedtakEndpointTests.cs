@@ -102,6 +102,7 @@ public class VedtakEndpointTests : IClassFixture<CustomWebApplicationFactory>
         {
             regelId = regel!.RegelId,
             type = "Deterministisk",
+            utfall = "Oppfylt",
             beregningsspor = "test",
             eskalert = false,
             faktumIder = new[] { faktum!.FaktumId }

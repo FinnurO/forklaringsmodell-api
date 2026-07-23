@@ -81,10 +81,20 @@ public class OpprettVedtaksvirkningDtoValidator : AbstractValidator<OpprettVedta
     }
 }
 
+/// <summary>Regel 3.15: Vilkar.Grunnlagstype skal ikke blandes sammen.</summary>
 public class OpprettVilkarDtoValidator : AbstractValidator<OpprettVilkarDto>
 {
     public OpprettVilkarDtoValidator()
     {
         RuleFor(x => x.Navn).NotEmpty();
+
+        RuleFor(x => x.Grunnlagstype)
+            .NotNull()
+            .WithMessage("Grunnlagstype er obligatorisk.");
+
+        RuleFor(x => x.RettskildeIder)
+            .NotEmpty()
+            .WithMessage("Vilkar med Grunnlagstype == Rettslig må ha minst én tilknyttet Rettskilde.")
+            .When(x => x.Grunnlagstype == Forklaringsmodell.Domain.Enums.GrunnlagsType.Rettslig);
     }
 }

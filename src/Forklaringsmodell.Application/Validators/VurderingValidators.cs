@@ -15,6 +15,13 @@ public class OpprettVurderingDtoValidator : AbstractValidator<OpprettVurderingDt
     {
         RuleFor(x => x.RegelId).NotEmpty();
 
+        // Regel 3.14: en Vurdering-rad skal opprettes selv når vilkåret ikke faktisk ble
+        // vurdert, og Utfall skiller reell manglende vurdering fra reelle konklusjoner —
+        // feltet er derfor obligatorisk, ikke bare et nullable "hvis du vil".
+        RuleFor(x => x.Utfall)
+            .NotNull()
+            .WithMessage("Utfall er obligatorisk.");
+
         RuleFor(x => x.Hovedhensyn)
             .NotEmpty()
             .WithMessage("Hovedhensyn er obligatorisk når Vurdering.Type == Skjonn.")

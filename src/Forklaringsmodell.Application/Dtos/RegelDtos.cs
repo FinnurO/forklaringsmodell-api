@@ -9,6 +9,7 @@ public class RegelDto
     public string Teknologi { get; set; } = string.Empty;
     public VurderingsType Type { get; set; }
     public string? CpsvRegelReferanse { get; set; }
+    public string? RegeldefinisjonReferanse { get; set; }
     public bool ErLaast { get; set; }
 }
 
@@ -18,4 +19,5 @@ public class OpprettRegelDto
     public string Teknologi { get; set; } = string.Empty;
     public VurderingsType Type { get; set; }
     public string? CpsvRegelReferanse { get; set; }
+    public string? RegeldefinisjonReferanse { get; set; }
 }

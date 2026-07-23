@@ -41,7 +41,7 @@ Innhenting av faktum er også en hjemmelsregulert handling, atskilt fra hjemmele
 
 Ett vedtak kan medføre flere, uavhengig tidsbegrensede virkninger samtidig — en tillatelse med egen gyldighetsperiode, en løpende plikt, et beløp avhengig av et faktum. `Vedtaksvirkning` fanger dette som egne rader under `Vedtak`, hver med sin egen varighet og sporbar kobling til hvilken `Vurdering`/`Faktum` som fastsatte den.
 
-Mange virkninger er ikke unike for én sak — samme vilkårstekst, samme parametriserte beregning eller samme rettslige hjemmel går igjen på tvers av tusenvis av vedtak av samme type. `Vilkar` er en generell referansetabell (som `Regel`/`Rettskilde`/`Kilde`) for slike gjenbrukbare vilkårsdefinisjoner — den er bevisst ikke begrenset til statiske standardvilkår, men kan romme alt fra en fast, alltid-gjeldende betingelse til en parametrisert eller skjønnsbasert vilkårstype. `Vedtaksvirkning.VilkarId` er valgfri: sett den når virkningen er en instans av noe katalogført, la den stå null for helt skreddersydde virkninger. Selve `Vedtaksvirkning`-raden er uansett den autoritative posten for hva som faktisk gjaldt i det konkrete vedtaket — endres `Vilkar`-katalogoppføringen senere, skal ikke allerede opprettede `Vedtaksvirkning`-rader påvirkes (samme append-only-prinsipp som for `Regel`, se punkt 3.4).
+Mange virkninger er ikke unike for én sak — samme vilkårstekst, samme parametriserte beregning eller samme rettslige hjemmel går igjen på tvers av tusenvis av vedtak av samme type. `Vilkar` er en generell referansetabell (som `Regel`/`Rettskilde`/`Kilde`) for slike gjenbrukbare vilkårsdefinisjoner — den er bevisst *ikke* begrenset til statiske standardvilkår, men kan romme alt fra en fast, alltid-gjeldende betingelse til en parametrisert eller skjønnsbasert vilkårstype. `Vedtaksvirkning.VilkarId` er valgfri: sett den når virkningen er en instans av noe katalogført, la den stå null for helt skreddersydde virkninger. Selve `Vedtaksvirkning`-raden er uansett den autoritative posten for hva som faktisk gjaldt i det konkrete vedtaket — endres `Vilkar`-katalogoppføringen senere, skal ikke allerede opprettede `Vedtaksvirkning`-rader påvirkes (samme append-only-prinsipp som for `Regel`, se punkt 3.4).
 
 Denne modellen skal **ikke** modellere saksflyt eller tilstandsoverganger — det er en CPSV-AP-hendelse (søknad, innrapportering, tilbakekall, melding) som utløser en *ny* `Sak`, og den nye saken kan lese fra en relatert sak uten å modifisere den. `Sak.UtlosendeHendelse` merker hvorfor saken oppstod, `SakRelasjon` kobler den til en sak den følger opp, og `Vurdering.RefererteVurderingIder` lar en ny vurdering eksplisitt bygge på en vurdering fra en annen (allerede frosset) sak — for eksempel når en melding om endret inntekt utløser en ny vurdering på nytt faktum, i sin egen sak, som gjenbruker den opprinnelige vurderingen av grunnvilkåret. Tilsvarende kan én `Vedtaksvirkning` være avledet av en annen — f.eks. et serveringssteds åpningstid låst til en tilknyttet skjenkebevillings skjenketid — via `Vedtaksvirkning.AvledetFraVirkningId`, som kan peke på tvers av både `Vedtak` og `Sak`.
 
@@ -53,6 +53,8 @@ public enum StrukturType { Strukturert, Ustrukturert }
 public enum KildeType { AutoritativtRegister, Soknad, TredjepartsUttalelse, AnnenKilde }
 public enum RettskildeType { Lov, Forskrift, Rundskriv, Forarbeider, Rettspraksis, InternasjonalRett, Forvaltningspraksis }
 public enum VurderingsType { Deterministisk, GenerativKI, Skjonn }
+public enum UtfallType { Oppfylt, IkkeOppfylt, Uaktuelt, IkkeVurdert, Uavklart }
+public enum GrunnlagsType { Rettslig, InternPraksis, Datakvalitet }
 public enum AutomatiseringsGrad { Helautomatisert, DelvisAutomatisert, Manuell }
 public enum PartsmedvirkningType { Forhaandsvarsel, Kommentar, InnsynsKrav }
 public enum OppforingsType { Faktum, Vurdering, Partsmedvirkning }
@@ -125,6 +127,7 @@ public class Regel
     public string Teknologi { get; set; }           // f.eks. "DMN", "Python", "LLM-prompt v3"
     public VurderingsType Type { get; set; }        // regelens konfigurerte type
     public string CpsvRegelReferanse { get; set; }  // IRI til cpsvno:Rule i CPSV-AP-NO, valgfri
+    public string RegeldefinisjonReferanse { get; set; } // URI til selve regelartefaktet (f.eks. DMN-XML i et regelrepo), valgfri — se punkt 3.16
 }
 
 public class Vurdering
@@ -133,7 +136,8 @@ public class Vurdering
     public Guid SakId { get; set; }
     public Guid RegelId { get; set; }
     public VurderingsType Type { get; set; }        // faktisk brukt type (kan avvike fra Regel.Type ved eskalering)
-    public string Beregningsspor { get; set; }
+    public UtfallType Utfall { get; set; }          // Oppfylt/IkkeOppfylt/Uaktuelt/IkkeVurdert — se punkt 3.14
+    public string Beregningsspor { get; set; }      // kan være strukturert JSON (input/output/mellomverdier), ikke bare fritekst
     public decimal? Konfidens { get; set; }         // 0.0–1.0, kun relevant for GenerativKI
     public bool Eskalert { get; set; }
     public string Hovedhensyn { get; set; }         // obligatorisk når Type == Skjonn
@@ -184,11 +188,15 @@ public class Vilkar
 {
     public Guid VilkarId { get; set; }
     public string Navn { get; set; }                      // f.eks. "Innrapporteringsplikt for omsetning", "Skjenketid gruppe 3 innendørs"
+    public string Kode { get; set; }                       // f.eks. "FP_VK_41", strukturert kode fra kildesystemets kodeverk
+    public string Kodeverk { get; set; }                   // f.eks. "VILKAR_TYPE" — hvilket kodeverk Kode er hentet fra
     public VirkningType Type { get; set; }                 // typisk/forventet type for dette vilkåret
+    public GrunnlagsType Grunnlagstype { get; set; }       // rettslig / intern praksis / datakvalitet — se punkt 3.15
     public FastsettelsesmateType Fastsettelsesmate { get; set; } // typisk fastsettelsesmåte for dette vilkåret
     public string StandardTekst { get; set; }              // fritekst-mal, kan inneholde plassholdere for parametrisert innhold
-    public ICollection<Guid> RettskildeIder { get; set; }  // hjemmel for selve vilkåret, mange-til-mange (samme mønster som Regel, punkt 3.7)
+    public ICollection<Guid> RettskildeIder { get; set; }  // hjemmel for selve vilkåret, mange-til-mange (samme mønster som Regel, punkt 3.7) — tom for InternPraksis/Datakvalitet
     public Guid? RegelId { get; set; }                     // valgfri kobling til Regel, hvis vilkåret er en direkte konsekvens av en operasjonalisert regel
+    public string CpsvTjenesteReferanse { get; set; }      // IRI til cpsvno:Service — hvilken(e) tjeneste(r) vilkåret kan inngå i, se punkt 3.14
 }
 
 public class Forklaringslogg
@@ -222,6 +230,9 @@ public class ForklaringsloggOppforing
 11. **Denne modellen skal ikke modellere saksflyt eller tilstandsoverganger.** `Sak.UtlosendeHendelse` og `SakRelasjon` er rene referanser til at én sak oppsto fra eller følger opp en annen — ikke en prosessmotor eller tilstandsmaskin. Cross-sak-referanser (`Vurdering.RefererteVurderingIder`, og `Vurdering.FaktumIder` som kan peke til `Faktum` i en annen `Sak`) skal kun peke til rader som allerede er del av en frosset `Forklaringslogg` i den relaterte saken, og er alltid skrivebeskyttede: en `Vurdering` kan lese fra en annen sak, men skal aldri kunne endre den.
 12. **`Vilkar` er referansedata, ikke en internt eid del av vedtaket.** Den kan gjenbrukes av mange `Vedtaksvirkning`-rader på tvers av saker og vedtak. En `Vilkar`-rad som er referert av minst én `Vedtaksvirkning`, skal ikke overskrives — endringer (f.eks. ny `StandardTekst`) opprettes som en ny `Vilkar`-rad, i tråd med append-only-prinsippet i punkt 3.4.
 13. **`Vedtaksvirkning.AvledetFraVirkningId` skal kun peke til en virkning som allerede er del av et frosset vedtak** (i samme eller et annet `Vedtak`/`Sak`) — samme skrivebeskyttede cross-referanse-prinsipp som i punkt 3.11, nå på virkningsnivå i stedet for vurderingsnivå.
+14. **En `Vurdering`-rad skal opprettes selv når vilkåret ikke faktisk ble vurdert.** `Utfall` skiller `Oppfylt`/`IkkeOppfylt` (vilkåret ble vurdert til en konklusjon) fra `Uaktuelt` (vilkåret var ikke relevant gitt sakens fakta, f.eks. et fornyelsesvilkår i en førstegangssøknad), `IkkeVurdert` (behandlingen stoppet før vilkåret ble nådd, f.eks. fordi et tidligere vilkår i treet allerede avgjorde utfallet) og `Uavklart` (en automatisert vurdering produserte et resultat, men under konfidensterskelen — se `Eskalert` — og ble derfor ikke lagt til grunn alene). Fraværet av en rad skal aldri være den eneste dokumentasjonen på at et vilkår ikke ble vurdert — årsaken skal fremgå av `Beregningsspor`. Kombinert med `Vurdering.FaktumIder` er dette også svaret på hvilke fakta som gjorde at et vilkår ikke ble oppfylt: se på `FaktumIder` for raden der `Utfall == IkkeOppfylt`.
+15. **`Vilkar.Grunnlagstype` skal ikke blandes sammen.** Et vilkår med `Grunnlagstype == Rettslig` skal ha minst én `RettskildeIder`; `InternPraksis` og `Datakvalitet` krever det ikke, siden de ikke er forankret i en rettskilde, men i henholdsvis forvaltningspraksis og tekniske datakvalitetskontroller. `Kode`/`Kodeverk` er valgfrie, men bør fylles ut når vilkåret stammer fra et kildesystem med eget kodeverk (f.eks. NAVs `VILKAR_TYPE`), slik at katalogen kan matches maskinelt mot kildesystemet.
+16. **`Regel.RegeldefinisjonReferanse` er en ekstern pekepinn, ikke en kopi.** Selve regelartefaktet (f.eks. DMN-XML) skal ikke lagres i denne modellen — feltet peker bare til hvor det faktisk ligger (regelrepo, versjonskontroll). Kombinert med append-only-prinsippet i punkt 3.4 (ny `Regel`-rad per versjon) gir dette full sporbarhet til nøyaktig hvilken regelversjon som ble kjørt, uten å duplisere regelmotorens eget lagringsansvar.
 
 ## 4. Foreslått løsningsarkitektur (.NET)
 
@@ -297,9 +308,9 @@ Serveren bygger `Forklaringslogg` og dens `ForklaringsloggOppforing`-rader fra d
     { "type": "Raatt", "struktur": "Ustrukturert", "verdi": "Fikk ikke fornyet vikariat, arbeidsgiver nedbemannet", "kilde": { "navn": "Søknad", "type": "Soknad", "autoritativ": false } }
   ],
   "vurderinger": [
-    { "type": "Deterministisk", "beregningsspor": "inntekt >= 1.5G => oppfylt", "eskalert": false, "rettskildeReferanser": ["folketrygdloven § 4-5"] },
-    { "type": "GenerativKI", "konfidens": 0.62, "eskalert": true, "beregningsspor": "klassifisert som 'uklar'" },
-    { "type": "Skjonn", "hovedhensyn": "Dokumentert nedbemanning hos arbeidsgiver", "forkastedeUtfall": "Selvforskyldt oppsigelse", "rettskildeReferanser": ["NAV rundskriv til § 4-5, pkt. 4.5.3 (selvforskyldt oppsigelse)"] }
+    { "type": "Deterministisk", "utfall": "Oppfylt", "beregningsspor": "inntekt >= 1.5G => oppfylt", "eskalert": false, "rettskildeReferanser": ["folketrygdloven § 4-5"] },
+    { "type": "GenerativKI", "utfall": "Uavklart", "konfidens": 0.62, "eskalert": true, "beregningsspor": "klassifisert som 'uklar', under terskel 0,80 => eskalert til skjønn" },
+    { "type": "Skjonn", "utfall": "Oppfylt", "hovedhensyn": "Dokumentert nedbemanning hos arbeidsgiver", "forkastedeUtfall": "Selvforskyldt oppsigelse", "rettskildeReferanser": ["NAV rundskriv til § 4-5, pkt. 4.5.3 (selvforskyldt oppsigelse)"] }
   ],
   "vedtak": { "utfall": "Dagpenger tilkjent", "automatiseringsGrad": "DelvisAutomatisert" }
 }
@@ -309,8 +320,8 @@ Serveren bygger `Forklaringslogg` og dens `ForklaringsloggOppforing`-rader fra d
 
 ```json
 "vilkar": [
-  { "navn": "Opphør av konsum 30 min etter skjenketid", "type": "Plikt", "fastsettelsesmate": "Statisk", "standardTekst": "Konsum av alkoholholdig drikk må opphøre senest 30 minutter etter skjenketidens utløp.", "rettskildeReferanser": ["alkoholloven § 4-4"] },
-  { "navn": "Skjenketid gruppe 3 innendørs", "type": "Tillatelse", "fastsettelsesmate": "Parametrisert", "regelId": "<regel for kommunal skjenketid-oppslag>" }
+  { "navn": "Opphør av konsum 30 min etter skjenketid", "kode": "ALK_OPPHOR_30MIN", "kodeverk": "KOMMUNALT_VILKAR_TYPE", "type": "Plikt", "grunnlagstype": "Rettslig", "fastsettelsesmate": "Statisk", "standardTekst": "Konsum av alkoholholdig drikk må opphøre senest 30 minutter etter skjenketidens utløp.", "rettskildeReferanser": ["alkoholloven § 4-4"] },
+  { "navn": "Skjenketid gruppe 3 innendørs", "kode": "ALK_SKJENKETID_G3_INNE", "kodeverk": "KOMMUNALT_VILKAR_TYPE", "type": "Tillatelse", "grunnlagstype": "Rettslig", "fastsettelsesmate": "Parametrisert", "regelId": "<regel for kommunal skjenketid-oppslag>" }
 ],
 "virkninger": [
   { "type": "Tillatelse", "vilkarId": "<skjenketid gruppe 3>", "fastsettelsesmate": "Parametrisert", "beskrivelse": "Skjenkebevilling, gruppe 3 innendørs 13:00–02:00", "varighet": "Tidsbegrenset", "gyldigFra": "2026-09-01", "gyldigTil": "2030-08-31" },
@@ -321,14 +332,27 @@ Serveren bygger `Forklaringslogg` og dens `ForklaringsloggOppforing`-rader fra d
 ]
 ```
 
-Legg merke til at den skjønnsbaserte innrapporteringsplikten bevisst ikke er koblet til noen `Vilkar` — den er kommunal policy tilpasset situasjonen (jf. kategori D i DMN-modellen), ikke et katalogført standardvilkår.
+Legg merke til at den skjønnsbaserte innrapporteringsplikten bevisst *ikke* er koblet til noen `Vilkar` — den er kommunal policy tilpasset situasjonen (jf. kategori D i DMN-modellen), ikke et katalogført standardvilkår.
 
 **Tilleggseksempel — saksrelasjon (melding om endret inntekt):** en ny `Sak` med `utlosendeHendelse: "Melding"` opprettes når søker melder endret inntekt. Den kobles til den opprinnelige saken via `SakRelasjon { type: "OppfolgingAvMelding", relatertSakId: <opprinnelig sak> }`, og dens nye `Vurdering` av inntektsvilkåret setter `refererteVurderingIder: [<vurdering-id for opprinnelig skjønnsvurdering av oppsigelsesgrunn>]` — den opprinnelige vurderingen av selve oppsigelsesgrunnen gjøres ikke på nytt, kun inntektsvilkåret revurderes på nytt faktum.
+
+**Tilleggseksempel — `Uaktuelt`/`IkkeVurdert` og `Datakvalitet`-vilkår (statsborgerskapssak):** flere `Vurdering`-rader for samme `Sak` kan se slik ut:
+
+```json
+"vurderinger": [
+  { "type": "Deterministisk", "utfall": "Oppfylt", "beregningsspor": "Samtykke registrert i førstelinjens kontrolliste" },
+  { "type": "Deterministisk", "utfall": "Oppfylt", "beregningsspor": "Ikke registrert død i Folkeregisteret" },
+  { "type": "Deterministisk", "utfall": "Uaktuelt", "beregningsspor": "Uaktuelt: saken gjelder førstegangserverv, ikke fornyelse" },
+  { "type": "Deterministisk", "utfall": "IkkeOppfylt", "beregningsspor": "DUF-nummeret er registrert som alias av et annet DUF-nummer", "faktumIder": ["<faktum-id for DUF-oppslag>"] }
+]
+```
+
+Det siste vilkåret ("DUF-nummeret er ikke et alias") er et godt eksempel på `Vilkar.Grunnlagstype == Datakvalitet` — det er ikke et rettslig krav i statsborgerloven, men en teknisk kontroll av at identiteten ikke er dobbeltregistrert, og bør derfor ikke ha noen `RettskildeIder`.
 
 ## 7. Ikke-funksjonelle krav
 
 - OpenAPI-spesifikasjon eksponert på `/swagger` i utviklingsmiljø.
-- Enhetstester for forretningsreglene i punkt 3 (spesielt: skjønn uten hovedhensyn skal gi valideringsfeil; forsøk på å endre et referert faktum skal gi 409/423; forsøk på `PUT`/`DELETE` på vedtak skal gi 405).
+- Enhetstester for forretningsreglene i punkt 3 (spesielt: skjønn uten hovedhensyn skal gi valideringsfeil; forsøk på å endre et referert faktum skal gi 409/423; forsøk på `PUT`/`DELETE` på vedtak skal gi 405; en `Vilkar` med `Grunnlagstype == Rettslig` uten `RettskildeIder` skal gi valideringsfeil; en `Vedtaksvirkning.AvledetFraVirkningId` som peker til en ikke-frosset virkning skal avvises).
 - Migreringer via EF Core (`dotnet ef migrations`), ikke manuelt SQL.
 - Autentisering er ikke spesifisert her — legg inn som eget punkt når løsningen skal kobles til ID-porten/Maskinporten for reell bruk.
 

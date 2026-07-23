@@ -12,9 +12,13 @@ public class VilkarConfiguration : IEntityTypeConfiguration<Vilkar>
         builder.HasKey(x => x.VilkarId);
 
         builder.Property(x => x.Navn).IsRequired().HasMaxLength(300);
+        builder.Property(x => x.Kode).HasMaxLength(100);
+        builder.Property(x => x.Kodeverk).HasMaxLength(100);
         builder.Property(x => x.Type).HasConversion<string>().HasMaxLength(50);
+        builder.Property(x => x.Grunnlagstype).HasConversion<string>().HasMaxLength(50);
         builder.Property(x => x.Fastsettelsesmate).HasConversion<string>().HasMaxLength(50);
         builder.Property(x => x.StandardTekst).HasMaxLength(2000);
+        builder.Property(x => x.CpsvTjenesteReferanse).HasMaxLength(500);
 
         builder.HasOne(x => x.Regel)
             .WithMany()

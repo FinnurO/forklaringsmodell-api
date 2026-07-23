@@ -38,6 +38,22 @@ public enum VurderingsType
     Skjonn
 }
 
+public enum UtfallType
+{
+    Oppfylt,
+    IkkeOppfylt,
+    Uaktuelt,
+    IkkeVurdert,
+    Uavklart
+}
+
+public enum GrunnlagsType
+{
+    Rettslig,
+    InternPraksis,
+    Datakvalitet
+}
+
 public enum AutomatiseringsGrad
 {
     Helautomatisert,

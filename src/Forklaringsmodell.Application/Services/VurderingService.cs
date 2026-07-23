@@ -129,6 +129,7 @@ public class VurderingService
             SakId = sak.SakId,
             RegelId = regel.RegelId,
             Type = dto.Type,
+            Utfall = dto.Utfall!.Value, // validator sikrer NotNull før vi kommer hit
             Beregningsspor = dto.Beregningsspor,
             Konfidens = dto.Konfidens,
             Eskalert = eskalert,
@@ -176,6 +177,7 @@ public class VurderingService
         SakId = vurdering.SakId,
         RegelId = vurdering.RegelId,
         Type = vurdering.Type,
+        Utfall = vurdering.Utfall,
         Beregningsspor = vurdering.Beregningsspor,
         Konfidens = vurdering.Konfidens,
         Eskalert = vurdering.Eskalert,

@@ -55,10 +55,14 @@ public class VilkarService
         {
             VilkarId = Guid.NewGuid(),
             Navn = dto.Navn,
+            Kode = dto.Kode,
+            Kodeverk = dto.Kodeverk,
             Type = dto.Type,
+            Grunnlagstype = dto.Grunnlagstype!.Value, // validator sikrer NotNull før vi kommer hit
             Fastsettelsesmate = dto.Fastsettelsesmate,
             StandardTekst = dto.StandardTekst,
-            RegelId = dto.RegelId
+            RegelId = dto.RegelId,
+            CpsvTjenesteReferanse = dto.CpsvTjenesteReferanse
         };
 
         foreach (var rettskilde in rettskilder)
@@ -90,11 +94,15 @@ public class VilkarService
     {
         VilkarId = vilkar.VilkarId,
         Navn = vilkar.Navn,
+        Kode = vilkar.Kode,
+        Kodeverk = vilkar.Kodeverk,
         Type = vilkar.Type,
+        Grunnlagstype = vilkar.Grunnlagstype,
         Fastsettelsesmate = vilkar.Fastsettelsesmate,
         StandardTekst = vilkar.StandardTekst,
         RettskildeIder = vilkar.VilkarRettskilde.Select(vr => vr.RettskildeId).ToList(),
         RegelId = vilkar.RegelId,
+        CpsvTjenesteReferanse = vilkar.CpsvTjenesteReferanse,
         ErLaast = await _repository.ErVilkarReferertAsync(vilkar.VilkarId, ct)
     };
 }

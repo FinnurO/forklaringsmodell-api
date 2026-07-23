@@ -48,7 +48,8 @@ public class RegelService
             RegelId = Guid.NewGuid(),
             Teknologi = dto.Teknologi,
             Type = dto.Type,
-            CpsvRegelReferanse = dto.CpsvRegelReferanse
+            CpsvRegelReferanse = dto.CpsvRegelReferanse,
+            RegeldefinisjonReferanse = dto.RegeldefinisjonReferanse
         };
 
         foreach (var rettskilde in rettskilder)
@@ -68,6 +69,7 @@ public class RegelService
         Teknologi = regel.Teknologi,
         Type = regel.Type,
         CpsvRegelReferanse = regel.CpsvRegelReferanse,
+        RegeldefinisjonReferanse = regel.RegeldefinisjonReferanse,
         ErLaast = await _repository.ErRegelReferertAsync(regel.RegelId, ct)
     };
 }

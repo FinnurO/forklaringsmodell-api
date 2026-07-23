@@ -8,6 +8,7 @@ public class Vurdering
     public Guid SakId { get; set; }
     public Guid RegelId { get; set; }
     public VurderingsType Type { get; set; }        // faktisk brukt type (kan avvike fra Regel.Type ved eskalering)
+    public UtfallType Utfall { get; set; }          // Oppfylt/IkkeOppfylt/Uaktuelt/IkkeVurdert/Uavklart, se regel 3.14
     public string? Beregningsspor { get; set; }
     public decimal? Konfidens { get; set; }          // 0.0-1.0, kun relevant for GenerativKI
     public bool Eskalert { get; set; }

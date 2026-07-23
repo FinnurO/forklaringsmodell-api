@@ -111,7 +111,8 @@ public static class SeedData
         {
             RegelId = Guid.NewGuid(),
             Teknologi = "DMN",
-            Type = VurderingsType.Deterministisk
+            Type = VurderingsType.Deterministisk,
+            RegeldefinisjonReferanse = "https://regelrepo.example.test/dagpenger/inntektskrav/v3.dmn"
         };
         regelDeterministisk.RegelRettskilde.Add(new RegelRettskilde { RegelId = regelDeterministisk.RegelId, RettskildeId = rettskildeInntektskrav.RettskildeId });
 
@@ -137,6 +138,7 @@ public static class SeedData
             SakId = sak.SakId,
             RegelId = regelDeterministisk.RegelId,
             Type = VurderingsType.Deterministisk,
+            Utfall = UtfallType.Oppfylt,
             Beregningsspor = "inntekt >= 1.5G => oppfylt",
             Eskalert = false
         };
@@ -157,9 +159,10 @@ public static class SeedData
             SakId = sak.SakId,
             RegelId = regelGenerativKI.RegelId,
             Type = VurderingsType.GenerativKI,
+            Utfall = UtfallType.Uavklart,
             Konfidens = 0.62m,
             Eskalert = true,
-            Beregningsspor = "klassifisert som 'uklar'"
+            Beregningsspor = "klassifisert som 'uklar', under terskel 0,80 => eskalert til skjønn"
         };
         vurderingGenerativKI.VurderingFaktum.Add(new VurderingFaktum
         {
@@ -173,6 +176,7 @@ public static class SeedData
             SakId = sak.SakId,
             RegelId = regelSkjonn.RegelId,
             Type = VurderingsType.Skjonn,
+            Utfall = UtfallType.Oppfylt,
             Hovedhensyn = "Dokumentert nedbemanning hos arbeidsgiver",
             ForkastedeUtfall = "Selvforskyldt oppsigelse",
             Eskalert = false
@@ -227,11 +231,29 @@ public static class SeedData
         {
             VilkarId = Guid.NewGuid(),
             Navn = "Dagpengesats basert på tidligere inntekt",
+            Kode = "DP_SATS_INNTEKT",
+            Kodeverk = "NAV_VILKAR_TYPE",
             Type = VirkningType.OkonomiskYtelse,
+            Grunnlagstype = GrunnlagsType.Rettslig,
             Fastsettelsesmate = FastsettelsesmateType.Parametrisert,
             StandardTekst = "Dagpenger utbetales med en sats beregnet av tidligere inntekt, jf. folketrygdloven § 4-5."
         };
         vilkarDagpengesats.VilkarRettskilde.Add(new VilkarRettskilde { VilkarId = vilkarDagpengesats.VilkarId, RettskildeId = rettskildeInntektskrav.RettskildeId });
+
+        // Regel 3.15: et Vilkar med Grunnlagstype == Datakvalitet er en teknisk kontroll,
+        // ikke et rettslig krav, og har derfor bevisst ingen RettskildeIder (jf. DUF-
+        // aliaseksempelet i spesifikasjonens punkt 6).
+        var vilkarDatakvalitetKontroll = new Vilkar
+        {
+            VilkarId = Guid.NewGuid(),
+            Navn = "Identitet er ikke dobbeltregistrert",
+            Kode = "DP_IDENTITET_UNIK",
+            Kodeverk = "NAV_VILKAR_TYPE",
+            Type = VirkningType.Tillatelse,
+            Grunnlagstype = GrunnlagsType.Datakvalitet,
+            Fastsettelsesmate = FastsettelsesmateType.Statisk,
+            StandardTekst = "Kontrollerer at søkerens identitet ikke er registrert som alias av en annen identitet."
+        };
 
         // Vedtaksvirkning fra "Body for POST .../vedtak"-eksempelet i spesifikasjonens
         // punkt 5 (regel 3.10): den økonomiske ytelsen dagpenger-vedtaket faktisk medfører.
@@ -251,13 +273,38 @@ public static class SeedData
         virkningDagpenger.VedtaksvirkningVurdering.Add(new VedtaksvirkningVurdering { VirkningId = virkningDagpenger.VirkningId, VurderingId = vurderingDeterministisk.VurderingId });
         virkningDagpenger.VedtaksvirkningFaktum.Add(new VedtaksvirkningFaktum { VirkningId = virkningDagpenger.VirkningId, FaktumId = faktumInntekt.FaktumId });
 
-        db.Vilkar.Add(vilkarDagpengesats);
+        // Regel 3.14: to ureferert (ikke-frosne) Vurdering-rader som demonstrerer at et
+        // vilkår kan dokumenteres som ikke faktisk vurdert, uten at fraværet av en rad er
+        // den eneste dokumentasjonen — årsaken fremgår av Beregningsspor.
+        var vurderingUaktuelt = new Vurdering
+        {
+            VurderingId = Guid.NewGuid(),
+            SakId = sak.SakId,
+            RegelId = regelDeterministisk.RegelId,
+            Type = VurderingsType.Deterministisk,
+            Utfall = UtfallType.Uaktuelt,
+            Beregningsspor = "Uaktuelt: saken gjelder førstegangssøknad, ikke fornyelse av tidligere dagpengeperiode",
+            Eskalert = false
+        };
+
+        var vurderingIkkeVurdert = new Vurdering
+        {
+            VurderingId = Guid.NewGuid(),
+            SakId = sak.SakId,
+            RegelId = regelDeterministisk.RegelId,
+            Type = VurderingsType.Deterministisk,
+            Utfall = UtfallType.IkkeVurdert,
+            Beregningsspor = "IkkeVurdert: behandlingen stoppet ved inntektsvilkåret, som allerede avgjorde utfallet",
+            Eskalert = false
+        };
+
+        db.Vilkar.AddRange(vilkarDagpengesats, vilkarDatakvalitetKontroll);
         db.Saker.Add(sak);
         db.Rettskilder.AddRange(rettskildeInntektskrav, rettskildeRundskriv, rettskildeInnhenting, rettskildeOpplysningsplikt);
         db.Kilder.AddRange(kildeAOrdningen, kildeSoknad);
         db.Faktum.AddRange(faktumInntekt, faktumBegrunnelse);
         db.Regler.AddRange(regelDeterministisk, regelGenerativKI, regelSkjonn);
-        db.Vurderinger.AddRange(vurderingDeterministisk, vurderingGenerativKI, vurderingSkjonn);
+        db.Vurderinger.AddRange(vurderingDeterministisk, vurderingGenerativKI, vurderingSkjonn, vurderingUaktuelt, vurderingIkkeVurdert);
         db.Vedtak.Add(vedtak);
         db.Forklaringslogger.Add(logg);
         db.Vedtaksvirkninger.Add(virkningDagpenger);
@@ -305,6 +352,7 @@ public static class SeedData
             SakId = sakMelding.SakId,
             RegelId = regelDeterministisk.RegelId,
             Type = VurderingsType.Deterministisk,
+            Utfall = UtfallType.Oppfylt,
             Beregningsspor = "revurdert inntekt >= 1.5G => fortsatt oppfylt",
             Eskalert = false
         };

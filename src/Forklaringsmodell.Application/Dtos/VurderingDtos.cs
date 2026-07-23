@@ -8,6 +8,7 @@ public class VurderingDto
     public Guid SakId { get; set; }
     public Guid RegelId { get; set; }
     public VurderingsType Type { get; set; }
+    public UtfallType Utfall { get; set; }
     public string? Beregningsspor { get; set; }
     public decimal? Konfidens { get; set; }
     public bool Eskalert { get; set; }
@@ -23,6 +24,12 @@ public class OpprettVurderingDto
 {
     public Guid RegelId { get; set; }
     public VurderingsType Type { get; set; }
+
+    /// <summary>
+    /// Nullable for at FluentValidation faktisk kan håndheve at feltet er obligatorisk
+    /// (regel 3.14) — se tilsvarende kommentar på OpprettSakDto.UtlosendeHendelse.
+    /// </summary>
+    public UtfallType? Utfall { get; set; }
     public string? Beregningsspor { get; set; }
     public decimal? Konfidens { get; set; }
     public bool Eskalert { get; set; }

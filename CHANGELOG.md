@@ -2,6 +2,32 @@
 
 Alle vesentlige endringer i dette prosjektet dokumenteres i denne filen.
 
+## [1.4.0] — Utfallstyper og vilkårets rettslige/interne/tekniske grunnlag
+
+### Endret domenemodell
+
+- **`Vurdering.Utfall`** (ny, obligatorisk, `UtfallType`: `Oppfylt`, `IkkeOppfylt`, `Uaktuelt`, `IkkeVurdert`, `Uavklart`): en `Vurdering`-rad skal opprettes selv når vilkåret faktisk ikke ble vurdert — fraværet av en rad skal aldri være den eneste dokumentasjonen på det.
+- **`Vilkar.Grunnlagstype`** (ny, obligatorisk, `GrunnlagsType`: `Rettslig`, `InternPraksis`, `Datakvalitet`): skiller vilkår forankret i en rettskilde fra vilkår forankret i forvaltningspraksis eller tekniske datakvalitetskontroller.
+- **`Vilkar.Kode`/`Vilkar.Kodeverk`** (nye, valgfrie): strukturert kode fra et kildesystems eget kodeverk (f.eks. NAVs `VILKAR_TYPE`), for maskinell matching mot kildesystemet.
+- **`Vilkar.CpsvTjenesteReferanse`** (ny, valgfri): IRI til hvilken(e) CPSV-AP-NO-tjeneste(r) vilkåret kan inngå i.
+- **`Regel.RegeldefinisjonReferanse`** (ny, valgfri): ekstern URI til selve regelartefaktet (f.eks. DMN-XML i et regelrepo) — en pekepinn, ikke en kopi; regelmotorens eget lagringsansvar dupliseres ikke.
+
+### Nye forretningsregler
+
+- **Regel 3.14**: `Vurdering.Utfall` skiller reell manglende vurdering (`Uaktuelt`, `IkkeVurdert`) fra reelle konklusjoner (`Oppfylt`/`IkkeOppfylt`) og lav-konfidens-resultater (`Uavklart`). Årsaken skal alltid fremgå av `Beregningsspor`.
+- **Regel 3.15**: `Vilkar` med `Grunnlagstype == Rettslig` må ha minst én `RettskildeIder`; validert på API-nivå. `InternPraksis`/`Datakvalitet` krever det ikke.
+- **Regel 3.16**: `Regel.RegeldefinisjonReferanse` er en ekstern, ikke-validert pekepinn — samme mønster som CPSV-AP-NO/CCCEV-referansene i regel 3.9.
+
+### Migrasjon
+
+- Ny EF Core-migrasjon legger til `Utfall`-kolonnen på `Vurderinger`, `RegeldefinisjonReferanse` på `Regler`, og `Kode`/`Kodeverk`/`Grunnlagstype`/`CpsvTjenesteReferanse` på `Vilkar`.
+
+### Seed-data
+
+- Alle tre dagpenger-vurderingene får satt `Utfall` i tråd med det oppdaterte eksempelet i punkt 6 (`Oppfylt`/`Uavklart`/`Oppfylt`).
+- Dagpengesats-vilkåret får `Grunnlagstype: Rettslig` (har allerede en rettskilde) og `Kode`/`Kodeverk`.
+- To nye, ureferert `Vurdering`-rader demonstrerer `Uaktuelt` og `IkkeVurdert` (regel 3.14), og en ny `Vilkar` med `Grunnlagstype: Datakvalitet` og uten `RettskildeIder` demonstrerer unntaket i regel 3.15.
+
 ## [1.3.0] — Vilkårskatalog og avledede virkninger
 
 ### Endret domenemodell

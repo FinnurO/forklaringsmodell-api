@@ -12,6 +12,7 @@ public class VurderingConfiguration : IEntityTypeConfiguration<Vurdering>
         builder.HasKey(x => x.VurderingId);
 
         builder.Property(x => x.Type).HasConversion<string>().HasMaxLength(50);
+        builder.Property(x => x.Utfall).HasConversion<string>().HasMaxLength(50);
         builder.Property(x => x.Konfidens).HasPrecision(3, 2); // 0.00-1.00
         builder.Property(x => x.Eskalert).IsRequired();
 
