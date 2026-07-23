@@ -86,6 +86,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Serverer den enkle utforskings-/seed-siden i wwwroot/ (index.html) sammen med API-et.
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseAuthorization();
 
 app.MapControllers();

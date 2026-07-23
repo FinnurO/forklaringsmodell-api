@@ -16,6 +16,10 @@ public class SakVedtakController : ControllerBase
         _vedtakService = vedtakService;
     }
 
+    [HttpGet]
+    public async Task<ActionResult<List<VedtakDto>>> List(Guid sakId, CancellationToken ct) =>
+        Ok(await _vedtakService.ListForSakAsync(sakId, ct));
+
     [HttpPost]
     public async Task<ActionResult<VedtakDto>> Opprett(Guid sakId, [FromBody] OpprettVedtakDto dto, CancellationToken ct)
     {

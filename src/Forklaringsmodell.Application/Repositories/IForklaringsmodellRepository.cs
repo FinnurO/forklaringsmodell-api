@@ -60,6 +60,7 @@ public interface IForklaringsmodellRepository
 
     // Vedtak / Forklaringslogg
     Task<Vedtak?> GetVedtakAsync(Guid vedtakId, CancellationToken ct = default);
+    Task<List<Vedtak>> GetVedtakForSakAsync(Guid sakId, CancellationToken ct = default);
     Task<Forklaringslogg?> GetForklaringsloggAsync(Guid vedtakId, CancellationToken ct = default);
     Task AddVedtakMedForklaringsloggAsync(Vedtak vedtak, Forklaringslogg logg, CancellationToken ct = default);
 

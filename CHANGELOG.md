@@ -2,6 +2,17 @@
 
 Alle vesentlige endringer i dette prosjektet dokumenteres i denne filen.
 
+## [Unreleased]
+
+### Lagt til
+
+- Enkel HTML/JS-utforskerside (`wwwroot/index.html`), servert sammen med API-et via `UseStaticFiles`. Lister saker, viser vedtak per sak, og henter hydrert forklaring — samt et skjema for å opprette nye saker (nyttig for å lage flere "seeds" manuelt).
+- Nytt endepunkt `GET /api/saker/{sakId}/vedtak` (samme mønster som de andre `Sak{Entitet}`-listene) — nødvendig for at siden skal kunne oppdage et vedtaks ID uten at det allerede er kjent.
+
+### Fikset
+
+- `GET /api/vedtak/{id}/forklaring` manglet flere felt i sin hydrerte `Faktum`/`Vurdering`-projeksjon som var lagt til `FaktumDto`/`VurderingDto` i tidligere versjoner (`RettskildeIder` fra v1.1, `RefererteVurderingIder` fra v1.2, `Utfall` fra v1.4) — feltene ble aldri mappet inn i denne spesifikke responsen, og viste derfor stille default-verdier (f.eks. `Utfall: Oppfylt` for alle vurderinger uansett faktisk verdi). Oppdaget under manuell verifisering av utforskersiden.
+
 ## [1.4.0] — Utfallstyper og vilkårets rettslige/interne/tekniske grunnlag
 
 ### Endret domenemodell

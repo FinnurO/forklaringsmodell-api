@@ -203,6 +203,14 @@ public class VedtakService
         return ToDto(vedtak);
     }
 
+    /// <summary>Lister alle Vedtak for en sak (GET /api/saker/{sakId}/vedtak).</summary>
+    public async Task<List<VedtakDto>> ListForSakAsync(Guid sakId, CancellationToken ct = default)
+    {
+        _ = await _repository.GetSakAsync(sakId, ct) ?? throw new NotFoundException($"Sak {sakId} finnes ikke.");
+        var vedtak = await _repository.GetVedtakForSakAsync(sakId, ct);
+        return vedtak.Select(ToDto).ToList();
+    }
+
     /// <summary>Lister alle Vedtaksvirkning-rader for et vedtak (GET /api/vedtak/{id}/virkninger).</summary>
     public async Task<List<VedtaksvirkningDto>> GetVirkningerAsync(Guid vedtakId, CancellationToken ct = default)
     {
@@ -250,6 +258,7 @@ public class VedtakService
                 Verdi = f.Verdi,
                 AvledetFraFaktumId = f.AvledetFraFaktumId,
                 InnhentetTidspunkt = f.InnhentetTidspunkt,
+                RettskildeIder = f.FaktumRettskilde.Select(fr => fr.RettskildeId).ToList(),
                 ErLaast = true
             }).ToList(),
             Vurderinger = vurderingRader.Select(v => new VurderingDto
@@ -258,13 +267,16 @@ public class VedtakService
                 SakId = v.SakId,
                 RegelId = v.RegelId,
                 Type = v.Type,
+                Utfall = v.Utfall,
                 Beregningsspor = v.Beregningsspor,
                 Konfidens = v.Konfidens,
                 Eskalert = v.Eskalert,
                 Hovedhensyn = v.Hovedhensyn,
                 ForkastedeUtfall = v.ForkastedeUtfall,
                 ErLaast = true,
-                FaktumIder = v.VurderingFaktum.Select(vf => vf.FaktumId).ToList()
+                FaktumIder = v.VurderingFaktum.Select(vf => vf.FaktumId).ToList(),
+                RettskildeIder = v.VurderingRettskilde.Select(vr => vr.RettskildeId).ToList(),
+                RefererteVurderingIder = v.RefererteVurderinger.Select(r => r.RefererteVurderingId).ToList()
             }).ToList(),
             Partsmedvirkninger = partsmedvirkningRader.Select(p => new PartsmedvirkningDto
             {

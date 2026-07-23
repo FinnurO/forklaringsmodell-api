@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Forklaringsmodell – utforsker</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --fg: #1a1a1a;
+    --muted: #6b6b6b;
+    --border: #dcdcdc;
+    --accent: #2b5fb0;
+    --card-bg: #f7f8fa;
+    --code-bg: #eef0f3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #17181c;
+      --fg: #eaeaea;
+      --muted: #9a9a9a;
+      --border: #3a3b40;
+      --accent: #7aa7e8;
+      --card-bg: #1f2024;
+      --code-bg: #24262b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    margin: 0;
+    padding: 1.5rem;
+    max-width: 960px;
+    margin-inline: auto;
+    line-height: 1.4;
+  }
+  h1 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+  h2 { font-size: 1.1rem; margin-top: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.35rem; }
+  h3 { font-size: 0.95rem; margin: 1rem 0 0.4rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+  p.lede { color: var(--muted); margin-top: 0; }
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  .clickable { cursor: pointer; }
+  .clickable:hover { border-color: var(--accent); }
+  .row-title { font-weight: 600; }
+  .row-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.15rem; }
+  .badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    background: var(--code-bg);
+    color: var(--muted);
+    margin-left: 0.4rem;
+  }
+  .empty { color: var(--muted); font-style: italic; }
+  .error { color: #c0392b; }
+  form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.6rem;
+    align-items: end;
+  }
+  label { display: flex; flex-direction: column; font-size: 0.8rem; color: var(--muted); gap: 0.25rem; }
+  input, select {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--fg);
+  }
+  button {
+    font-size: 0.9rem;
+    padding: 0.45rem 0.9rem;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    background: var(--accent);
+    color: white;
+    cursor: pointer;
+    height: fit-content;
+  }
+  button:hover { opacity: 0.9; }
+  button.secondary {
+    background: transparent;
+    color: var(--accent);
+  }
+  pre {
+    background: var(--code-bg);
+    padding: 0.6rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 0.8rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .kv { display: grid; grid-template-columns: max-content 1fr; gap: 0.2rem 0.75rem; font-size: 0.85rem; }
+  .kv dt { color: var(--muted); }
+  .kv dd { margin: 0; }
+</style>
+</head>
+<body>
+
+<h1>Forklaringsmodell – utforsker</h1>
+<p class="lede">Enkel side for å se og opprette saker mot <a href="/swagger">API-et</a> lokalt.</p>
+
+<h2>Opprett ny sak</h2>
+<form id="ny-sak-form">
+  <label>Tittel
+    <input type="text" name="tittel" required placeholder="F.eks. Søknad om dagpenger" />
+  </label>
+  <label>Status
+    <select name="status">
+      <option value="UnderBehandling">UnderBehandling</option>
+      <option value="Avsluttet">Avsluttet</option>
+      <option value="Klaget">Klaget</option>
+    </select>
+  </label>
+  <label>Utløsende hendelse
+    <select name="utlosendeHendelse">
+      <option value="Soknad">Soknad</option>
+      <option value="Innrapportering">Innrapportering</option>
+      <option value="Melding">Melding</option>
+      <option value="Tilbakekall">Tilbakekall</option>
+      <option value="Kontroll">Kontroll</option>
+      <option value="Klage">Klage</option>
+      <option value="Omgjoring">Omgjoring</option>
+    </select>
+  </label>
+  <label>CPSV-tjenestereferanse (valgfri)
+    <input type="text" name="cpsvTjenesteReferanse" placeholder="https://data.norge.no/services/..." />
+  </label>
+  <button type="submit">Opprett sak</button>
+</form>
+<p id="ny-sak-status"></p>
+
+<h2>Saker</h2>
+<div id="saker-liste"><p class="empty">Laster …</p></div>
+
+<h2>Vedtak</h2>
+<div id="vedtak-seksjon"><p class="empty">Velg en sak over for å se dens vedtak.</p></div>
+
+<h2>Hydrert forklaring</h2>
+<div id="forklaring-seksjon"><p class="empty">Velg et vedtak over for å se forklaringen utfoldet.</p></div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+
+  function escapeHtml(value) {
+    if (value === null || value === undefined) return '';
+    return String(value)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;');
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '–';
+    const d = new Date(iso);
+    return isNaN(d) ? iso : d.toLocaleString('nb-NO');
+  }
+
+  async function api(path, options) {
+    const res = await fetch(path, options);
+    if (!res.ok) {
+      let detail = res.statusText;
+      try {
+        const body = await res.json();
+        detail = body.detail || body.title || JSON.stringify(body.errors || body);
+      } catch { /* ignore, ikke JSON */ }
+      throw new Error(`${res.status}: ${detail}`);
+    }
+    if (res.status === 204) return null;
+    return res.json();
+  }
+
+  // ---- Saker ----
+
+  async function lastSaker() {
+    const container = $('saker-liste');
+    container.innerHTML = '<p class="empty">Laster …</p>';
+    try {
+      const saker = await api('/api/saker');
+      if (saker.length === 0) {
+        container.innerHTML = '<p class="empty">Ingen saker registrert ennå.</p>';
+        return;
+      }
+      container.innerHTML = saker.map(sak => `
+        <div class="card clickable" data-sak-id="${sak.sakId}">
+          <div class="row-title">${escapeHtml(sak.tittel)}
+            <span class="badge">${escapeHtml(sak.status)}</span>
+            <span class="badge">${escapeHtml(sak.utlosendeHendelse)}</span>
+          </div>
+          <div class="row-meta">Opprettet ${formatDate(sak.opprettet)} · ${sak.sakId}</div>
+        </div>
+      `).join('');
+      container.querySelectorAll('[data-sak-id]').forEach(el =>
+        el.addEventListener('click', () => velgSak(el.dataset.sakId, el.querySelector('.row-title').textContent.trim())));
+    } catch (err) {
+      container.innerHTML = `<p class="error">Kunne ikke laste saker: ${escapeHtml(err.message)}</p>`;
+    }
+  }
+
+  $('ny-sak-form').addEventListener('submit', async (evt) => {
+    evt.preventDefault();
+    const form = evt.target;
+    const status = $('ny-sak-status');
+    const body = {
+      tittel: form.tittel.value,
+      status: form.status.value,
+      utlosendeHendelse: form.utlosendeHendelse.value,
+      cpsvTjenesteReferanse: form.cpsvTjenesteReferanse.value || null
+    };
+    status.textContent = 'Oppretter …';
+    status.className = '';
+    try {
+      const sak = await api('/api/saker', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      status.textContent = `Opprettet sak "${sak.tittel}".`;
+      form.reset();
+      await lastSaker();
+    } catch (err) {
+      status.textContent = `Feil: ${err.message}`;
+      status.className = 'error';
+    }
+  });
+
+  // ---- Vedtak for valgt sak ----
+
+  async function velgSak(sakId, sakTittel) {
+    const container = $('vedtak-seksjon');
+    container.innerHTML = '<p class="empty">Laster …</p>';
+    $('forklaring-seksjon').innerHTML = '<p class="empty">Velg et vedtak over for å se forklaringen utfoldet.</p>';
+    try {
+      const vedtak = await api(`/api/saker/${sakId}/vedtak`);
+      const heading = `<p class="row-meta">Sak: ${escapeHtml(sakTittel)}</p>`;
+      if (vedtak.length === 0) {
+        container.innerHTML = heading + '<p class="empty">Denne saken har ingen vedtak ennå.</p>';
+        return;
+      }
+      container.innerHTML = heading + vedtak.map(v => `
+        <div class="card clickable" data-vedtak-id="${v.vedtakId}">
+          <div class="row-title">${escapeHtml(v.utfall)} <span class="badge">${escapeHtml(v.automatiseringsGrad)}</span></div>
+          <div class="row-meta">${formatDate(v.tidspunkt)} · ${v.vedtakId}</div>
+        </div>
+      `).join('');
+      container.querySelectorAll('[data-vedtak-id]').forEach(el =>
+        el.addEventListener('click', () => velgVedtak(el.dataset.vedtakId)));
+    } catch (err) {
+      container.innerHTML = `<p class="error">Kunne ikke laste vedtak: ${escapeHtml(err.message)}</p>`;
+    }
+  }
+
+  // ---- Hydrert forklaring ----
+
+  function listeAvRader(rader, renderRad, tomtekst) {
+    if (!rader || rader.length === 0) return `<p class="empty">${tomtekst}</p>`;
+    return rader.map(renderRad).join('');
+  }
+
+  async function velgVedtak(vedtakId) {
+    const container = $('forklaring-seksjon');
+    container.innerHTML = '<p class="empty">Laster …</p>';
+    try {
+      const f = await api(`/api/vedtak/${vedtakId}/forklaring`);
+
+      const faktumHtml = listeAvRader(f.faktum, ff => `
+        <div class="card">
+          <div class="row-title">${escapeHtml(ff.type)} / ${escapeHtml(ff.struktur)}</div>
+          <pre>${escapeHtml(ff.verdi)}</pre>
+          <div class="row-meta">Innhentet ${formatDate(ff.innhentetTidspunkt)}${ff.erLaast ? ' · låst' : ''}</div>
+        </div>
+      `, 'Ingen faktum referert.');
+
+      const vurderingHtml = listeAvRader(f.vurderinger, v => `
+        <div class="card">
+          <div class="row-title">${escapeHtml(v.type)} <span class="badge">${escapeHtml(v.utfall)}</span></div>
+          ${v.beregningsspor ? `<pre>${escapeHtml(v.beregningsspor)}</pre>` : ''}
+          <dl class="kv">
+            ${v.hovedhensyn ? `<dt>Hovedhensyn</dt><dd>${escapeHtml(v.hovedhensyn)}</dd>` : ''}
+            ${v.forkastedeUtfall ? `<dt>Forkastede utfall</dt><dd>${escapeHtml(v.forkastedeUtfall)}</dd>` : ''}
+            ${v.konfidens !== null && v.konfidens !== undefined ? `<dt>Konfidens</dt><dd>${v.konfidens}</dd>` : ''}
+            <dt>Eskalert</dt><dd>${v.eskalert ? 'Ja' : 'Nei'}</dd>
+          </dl>
+        </div>
+      `, 'Ingen vurderinger referert.');
+
+      const partsmedvirkningHtml = listeAvRader(f.partsmedvirkninger, p => `
+        <div class="card">
+          <div class="row-title">${escapeHtml(p.type)}</div>
+          <pre>${escapeHtml(p.innhold)}</pre>
+          <div class="row-meta">${formatDate(p.tidspunkt)}</div>
+        </div>
+      `, 'Ingen partsmedvirkning registrert.');
+
+      const virkningHtml = listeAvRader(f.virkninger, vv => `
+        <div class="card">
+          <div class="row-title">${escapeHtml(vv.beskrivelse)} <span class="badge">${escapeHtml(vv.type)}</span></div>
+          <dl class="kv">
+            <dt>Fastsettelsesmåte</dt><dd>${escapeHtml(vv.fastsettelsesmate)}</dd>
+            <dt>Varighet</dt><dd>${escapeHtml(vv.varighet)}</dd>
+            ${vv.gyldigFra ? `<dt>Gyldig fra</dt><dd>${formatDate(vv.gyldigFra)}</dd>` : ''}
+            ${vv.gyldigTil ? `<dt>Gyldig til</dt><dd>${formatDate(vv.gyldigTil)}</dd>` : ''}
+            ${vv.belop !== null && vv.belop !== undefined ? `<dt>Beløp</dt><dd>${vv.belop}</dd>` : ''}
+          </dl>
+        </div>
+      `, 'Ingen virkninger.');
+
+      container.innerHTML = `
+        <div class="card">
+          <div class="row-title">${escapeHtml(f.vedtak.utfall)} <span class="badge">${escapeHtml(f.vedtak.automatiseringsGrad)}</span></div>
+          <div class="row-meta">${formatDate(f.vedtak.tidspunkt)} · ${f.vedtak.vedtakId}</div>
+        </div>
+        <h3>Faktum</h3>
+        ${faktumHtml}
+        <h3>Vurderinger</h3>
+        ${vurderingHtml}
+        <h3>Partsmedvirkning</h3>
+        ${partsmedvirkningHtml}
+        <h3>Virkninger</h3>
+        ${virkningHtml}
+      `;
+    } catch (err) {
+      container.innerHTML = `<p class="error">Kunne ikke laste forklaring: ${escapeHtml(err.message)}</p>`;
+    }
+  }
+
+  lastSaker();
+</script>
+</body>
+</html>

@@ -126,6 +126,10 @@ public class ForklaringsmodellRepository : IForklaringsmodellRepository
     public Task<Vedtak?> GetVedtakAsync(Guid vedtakId, CancellationToken ct = default) =>
         _db.Vedtak.FirstOrDefaultAsync(v => v.VedtakId == vedtakId, ct);
 
+    // Se kommentar ved GetSakerAsync ang. klientsidig sortering på DateTimeOffset.
+    public async Task<List<Vedtak>> GetVedtakForSakAsync(Guid sakId, CancellationToken ct = default) =>
+        (await _db.Vedtak.Where(v => v.SakId == sakId).ToListAsync(ct)).OrderByDescending(v => v.Tidspunkt).ToList();
+
     public Task<Forklaringslogg?> GetForklaringsloggAsync(Guid vedtakId, CancellationToken ct = default) =>
         _db.Forklaringslogger.Include(l => l.Oppforinger).FirstOrDefaultAsync(l => l.VedtakId == vedtakId, ct);
 
