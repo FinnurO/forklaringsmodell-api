@@ -236,7 +236,7 @@ public class ForklaringsloggOppforing
 
 ## 4. Foreslått løsningsarkitektur (.NET)
 
-- ASP.NET Core Web API (.NET 8+), C#.
+- ASP.NET Core Web API (.NET 10), C#.
 - EF Core mot PostgreSQL eller SQL Server (foreslå SQLite kun for lokal utvikling/tester).
 - Lagdeling: `Domain` (entiteter + forretningsregler over), `Application` (DTO-er, validering, use cases), `Infrastructure` (EF Core, repositories), `Api` (kontrollere, OpenAPI).
 - `FluentValidation` eller innebygd `DataAnnotations` for reglene i punkt 3.2–3.3.
