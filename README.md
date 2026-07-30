@@ -59,7 +59,7 @@ Alle 16 regler er beskrevet i spesifikasjonen; de viktigste prinsippene:
 
 ## Arkitektur
 
-Lagdelt .NET 8-løsning:
+Lagdelt .NET 10-løsning:
 
 ```
 src/
