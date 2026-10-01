@@ -16,10 +16,11 @@ public class Vilkar
     public VirkningType Type { get; set; }
     public GrunnlagsType Grunnlagstype { get; set; } // rettslig/intern praksis/datakvalitet, se regel 3.15
     public FastsettelsesmateType Fastsettelsesmate { get; set; }
-    public string? StandardTekst { get; set; }
+    public Guid? StandardTekstId { get; set; }
     public Guid? RegelId { get; set; }
     public string? CpsvTjenesteReferanse { get; set; }
 
+    public FlerspraakligTekst? StandardTekst { get; set; }
     public Regel? Regel { get; set; }
     public ICollection<VilkarRettskilde> VilkarRettskilde { get; set; } = new List<VilkarRettskilde>();
     public ICollection<Vedtaksvirkning> Vedtaksvirkninger { get; set; } = new List<Vedtaksvirkning>();

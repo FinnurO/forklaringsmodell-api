@@ -92,14 +92,20 @@ public class ForklaringsmodellRepository : IForklaringsmodellRepository
     // Vurdering
     public Task<Vurdering?> GetVurderingAsync(Guid vurderingId, CancellationToken ct = default) =>
         _db.Vurderinger.Include(v => v.VurderingFaktum).Include(v => v.VurderingRettskilde).Include(v => v.RefererteVurderinger)
+            .Include(v => v.HovedhensynTekst).ThenInclude(t => t!.Varianter)
+            .Include(v => v.ForkastedeUtfallTekst).ThenInclude(t => t!.Varianter)
             .FirstOrDefaultAsync(v => v.VurderingId == vurderingId, ct);
 
     public Task<List<Vurdering>> GetVurderingerForSakAsync(Guid sakId, CancellationToken ct = default) =>
         _db.Vurderinger.Include(v => v.VurderingFaktum).Include(v => v.VurderingRettskilde).Include(v => v.RefererteVurderinger)
+            .Include(v => v.HovedhensynTekst).ThenInclude(t => t!.Varianter)
+            .Include(v => v.ForkastedeUtfallTekst).ThenInclude(t => t!.Varianter)
             .Where(v => v.SakId == sakId).ToListAsync(ct);
 
     public Task<List<Vurdering>> GetVurderingerByIderAsync(IEnumerable<Guid> vurderingIder, CancellationToken ct = default) =>
         _db.Vurderinger.Include(v => v.VurderingFaktum).Include(v => v.VurderingRettskilde).Include(v => v.RefererteVurderinger)
+            .Include(v => v.HovedhensynTekst).ThenInclude(t => t!.Varianter)
+            .Include(v => v.ForkastedeUtfallTekst).ThenInclude(t => t!.Varianter)
             .Where(v => vurderingIder.Contains(v.VurderingId)).ToListAsync(ct);
 
     public async Task AddVurderingAsync(Vurdering vurdering, CancellationToken ct = default) =>
@@ -142,6 +148,8 @@ public class ForklaringsmodellRepository : IForklaringsmodellRepository
     // Vedtaksvirkning
     public Task<List<Vedtaksvirkning>> GetVirkningerForVedtakAsync(Guid vedtakId, CancellationToken ct = default) =>
         _db.Vedtaksvirkninger.Include(v => v.VedtaksvirkningVurdering).Include(v => v.VedtaksvirkningFaktum)
+            .Include(v => v.BeskrivelseTekst).ThenInclude(t => t!.Varianter)
+            .Include(v => v.LopendeVilkarTekst).ThenInclude(t => t!.Varianter)
             .Where(v => v.VedtakId == vedtakId).ToListAsync(ct);
 
     public Task<Vedtaksvirkning?> GetVedtaksvirkningAsync(Guid virkningId, CancellationToken ct = default) =>
@@ -152,10 +160,14 @@ public class ForklaringsmodellRepository : IForklaringsmodellRepository
 
     // Vilkar
     public Task<Vilkar?> GetVilkarAsync(Guid vilkarId, CancellationToken ct = default) =>
-        _db.Vilkar.Include(v => v.VilkarRettskilde).FirstOrDefaultAsync(v => v.VilkarId == vilkarId, ct);
+        _db.Vilkar.Include(v => v.VilkarRettskilde)
+            .Include(v => v.StandardTekst).ThenInclude(t => t!.Varianter)
+            .FirstOrDefaultAsync(v => v.VilkarId == vilkarId, ct);
 
     public Task<List<Vilkar>> GetVilkarListAsync(CancellationToken ct = default) =>
-        _db.Vilkar.Include(v => v.VilkarRettskilde).OrderBy(v => v.Navn).ToListAsync(ct);
+        _db.Vilkar.Include(v => v.VilkarRettskilde)
+            .Include(v => v.StandardTekst).ThenInclude(t => t!.Varianter)
+            .OrderBy(v => v.Navn).ToListAsync(ct);
 
     public Task<List<Vilkar>> GetVilkarByIderAsync(IEnumerable<Guid> vilkarIder, CancellationToken ct = default) =>
         _db.Vilkar.Where(v => vilkarIder.Contains(v.VilkarId)).ToListAsync(ct);

@@ -1,4 +1,6 @@
+using Forklaringsmodell.Application.Dtos;
 using Forklaringsmodell.Application.Exceptions;
+using Forklaringsmodell.Application.Mapping;
 using Forklaringsmodell.Application.Services;
 using Forklaringsmodell.Application.Validators;
 using Forklaringsmodell.Domain.Entities;
@@ -29,6 +31,8 @@ public class VilkarAppendOnlyTests : IDisposable
         _referertVilkar = new Vilkar { VilkarId = Guid.NewGuid(), Navn = "Referert vilkår", Type = VirkningType.Tillatelse, Fastsettelsesmate = FastsettelsesmateType.Statisk };
         _ureferertVilkar = new Vilkar { VilkarId = Guid.NewGuid(), Navn = "Ureferert vilkår", Type = VirkningType.Tillatelse, Fastsettelsesmate = FastsettelsesmateType.Statisk };
 
+        var beskrivelseTekst = FlerspraakligTekstMapper.TilEntitet(new List<TekstVariantDto> { new() { SpraakKode = "nb", Verdi = "Test-virkning" } })!;
+
         var virkning = new Vedtaksvirkning
         {
             VirkningId = Guid.NewGuid(),
@@ -36,7 +40,8 @@ public class VilkarAppendOnlyTests : IDisposable
             VilkarId = _referertVilkar.VilkarId,
             Type = VirkningType.Tillatelse,
             Fastsettelsesmate = FastsettelsesmateType.Statisk,
-            Beskrivelse = "Test-virkning",
+            BeskrivelseTekstId = beskrivelseTekst.FlerspraakligTekstId,
+            BeskrivelseTekst = beskrivelseTekst,
             Varighet = VarighetsType.Varig
         };
 

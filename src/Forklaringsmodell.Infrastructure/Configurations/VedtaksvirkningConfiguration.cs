@@ -13,10 +13,8 @@ public class VedtaksvirkningConfiguration : IEntityTypeConfiguration<Vedtaksvirk
 
         builder.Property(x => x.Type).HasConversion<string>().HasMaxLength(50);
         builder.Property(x => x.Fastsettelsesmate).HasConversion<string>().HasMaxLength(50);
-        builder.Property(x => x.Beskrivelse).IsRequired().HasMaxLength(500);
         builder.Property(x => x.Varighet).HasConversion<string>().HasMaxLength(50);
         builder.Property(x => x.Belop).HasPrecision(18, 2);
-        builder.Property(x => x.LopendeVilkar).HasMaxLength(500);
         builder.Property(x => x.RapporteringsFrekvens).HasMaxLength(100);
 
         builder.HasOne(x => x.Vedtak)
@@ -32,6 +30,16 @@ public class VedtaksvirkningConfiguration : IEntityTypeConfiguration<Vedtaksvirk
         builder.HasOne(x => x.AvledetFraVirkning)
             .WithMany(x => x.AvledeteVirkninger)
             .HasForeignKey(x => x.AvledetFraVirkningId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.BeskrivelseTekst)
+            .WithMany()
+            .HasForeignKey(x => x.BeskrivelseTekstId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.LopendeVilkarTekst)
+            .WithMany()
+            .HasForeignKey(x => x.LopendeVilkarTekstId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasIndex(x => x.VedtakId);

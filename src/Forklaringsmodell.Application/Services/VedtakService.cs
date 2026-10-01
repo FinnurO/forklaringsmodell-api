@@ -1,5 +1,6 @@
 using Forklaringsmodell.Application.Dtos;
 using Forklaringsmodell.Application.Exceptions;
+using Forklaringsmodell.Application.Mapping;
 using Forklaringsmodell.Application.Repositories;
 using Forklaringsmodell.Domain.Entities;
 using Forklaringsmodell.Domain.Enums;
@@ -156,6 +157,11 @@ public class VedtakService
 
         foreach (var (virkningDto, virkningVurderinger, virkningFaktum) in virkningReferanser)
         {
+            // Beskrivelse er påkrevd (valideres NotEmpty i OpprettVedtaksvirkningDtoValidator),
+            // så TilEntitet garanteres å returnere en faktisk FlerspraakligTekst her.
+            var beskrivelseTekst = FlerspraakligTekstMapper.TilEntitet(virkningDto.Beskrivelse)!;
+            var lopendeVilkarTekst = FlerspraakligTekstMapper.TilEntitet(virkningDto.LopendeVilkar);
+
             var virkning = new Vedtaksvirkning
             {
                 VirkningId = Guid.NewGuid(),
@@ -163,12 +169,14 @@ public class VedtakService
                 VilkarId = virkningDto.VilkarId,
                 Type = virkningDto.Type,
                 Fastsettelsesmate = virkningDto.Fastsettelsesmate,
-                Beskrivelse = virkningDto.Beskrivelse,
+                BeskrivelseTekstId = beskrivelseTekst.FlerspraakligTekstId,
+                BeskrivelseTekst = beskrivelseTekst,
                 Varighet = virkningDto.Varighet,
                 GyldigFra = virkningDto.GyldigFra,
                 GyldigTil = virkningDto.GyldigTil,
                 Belop = virkningDto.Belop,
-                LopendeVilkar = virkningDto.LopendeVilkar,
+                LopendeVilkarTekstId = lopendeVilkarTekst?.FlerspraakligTekstId,
+                LopendeVilkarTekst = lopendeVilkarTekst,
                 RapporteringsFrekvens = virkningDto.RapporteringsFrekvens,
                 AvledetFraVirkningId = virkningDto.AvledetFraVirkningId
             };
@@ -271,8 +279,8 @@ public class VedtakService
                 Beregningsspor = v.Beregningsspor,
                 Konfidens = v.Konfidens,
                 Eskalert = v.Eskalert,
-                Hovedhensyn = v.Hovedhensyn,
-                ForkastedeUtfall = v.ForkastedeUtfall,
+                Hovedhensyn = FlerspraakligTekstMapper.TilDto(v.HovedhensynTekst),
+                ForkastedeUtfall = FlerspraakligTekstMapper.TilDto(v.ForkastedeUtfallTekst),
                 ErLaast = true,
                 FaktumIder = v.VurderingFaktum.Select(vf => vf.FaktumId).ToList(),
                 RettskildeIder = v.VurderingRettskilde.Select(vr => vr.RettskildeId).ToList(),
@@ -345,12 +353,12 @@ public class VedtakService
         VilkarId = virkning.VilkarId,
         Type = virkning.Type,
         Fastsettelsesmate = virkning.Fastsettelsesmate,
-        Beskrivelse = virkning.Beskrivelse,
+        Beskrivelse = FlerspraakligTekstMapper.TilDto(virkning.BeskrivelseTekst),
         Varighet = virkning.Varighet,
         GyldigFra = virkning.GyldigFra,
         GyldigTil = virkning.GyldigTil,
         Belop = virkning.Belop,
-        LopendeVilkar = virkning.LopendeVilkar,
+        LopendeVilkar = FlerspraakligTekstMapper.TilDto(virkning.LopendeVilkarTekst),
         RapporteringsFrekvens = virkning.RapporteringsFrekvens,
         AvledetFraVirkningId = virkning.AvledetFraVirkningId,
         VurderingIder = virkning.VedtaksvirkningVurdering.Select(vv => vv.VurderingId).ToList(),

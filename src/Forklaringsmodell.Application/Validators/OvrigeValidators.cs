@@ -68,6 +68,15 @@ public class OpprettVedtaksvirkningDtoValidator : AbstractValidator<OpprettVedta
     public OpprettVedtaksvirkningDtoValidator()
     {
         RuleFor(x => x.Beskrivelse).NotEmpty();
+        RuleFor(x => x.Beskrivelse)
+            .Must(TekstVariantDtoValidator.IngenDuplikateSpraakkoder)
+            .WithMessage("Beskrivelse kan ikke ha flere varianter for samme språk.");
+        RuleForEach(x => x.Beskrivelse).SetValidator(new TekstVariantDtoValidator());
+
+        RuleFor(x => x.LopendeVilkar)
+            .Must(TekstVariantDtoValidator.IngenDuplikateSpraakkoder)
+            .WithMessage("LopendeVilkar kan ikke ha flere varianter for samme språk.");
+        RuleForEach(x => x.LopendeVilkar).SetValidator(new TekstVariantDtoValidator());
 
         RuleFor(x => x.GyldigTil)
             .Null()
@@ -96,5 +105,10 @@ public class OpprettVilkarDtoValidator : AbstractValidator<OpprettVilkarDto>
             .NotEmpty()
             .WithMessage("Vilkar med Grunnlagstype == Rettslig må ha minst én tilknyttet Rettskilde.")
             .When(x => x.Grunnlagstype == Forklaringsmodell.Domain.Enums.GrunnlagsType.Rettslig);
+
+        RuleFor(x => x.StandardTekst)
+            .Must(TekstVariantDtoValidator.IngenDuplikateSpraakkoder)
+            .WithMessage("StandardTekst kan ikke ha flere varianter for samme språk.");
+        RuleForEach(x => x.StandardTekst).SetValidator(new TekstVariantDtoValidator());
     }
 }

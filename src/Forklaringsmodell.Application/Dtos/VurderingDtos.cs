@@ -12,8 +12,8 @@ public class VurderingDto
     public string? Beregningsspor { get; set; }
     public decimal? Konfidens { get; set; }
     public bool Eskalert { get; set; }
-    public string? Hovedhensyn { get; set; }
-    public string? ForkastedeUtfall { get; set; }
+    public List<TekstVariantDto> Hovedhensyn { get; set; } = new();
+    public List<TekstVariantDto> ForkastedeUtfall { get; set; } = new();
     public bool ErLaast { get; set; }
     public List<Guid> FaktumIder { get; set; } = new();
     public List<Guid> RettskildeIder { get; set; } = new();
@@ -33,8 +33,8 @@ public class OpprettVurderingDto
     public string? Beregningsspor { get; set; }
     public decimal? Konfidens { get; set; }
     public bool Eskalert { get; set; }
-    public string? Hovedhensyn { get; set; }
-    public string? ForkastedeUtfall { get; set; }
+    public List<TekstVariantDto> Hovedhensyn { get; set; } = new();
+    public List<TekstVariantDto> ForkastedeUtfall { get; set; } = new();
     public List<Guid> FaktumIder { get; set; } = new();
     public List<Guid> RettskildeIder { get; set; } = new();
     public List<Guid> RefererteVurderingIder { get; set; } = new();

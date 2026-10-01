@@ -1,4 +1,5 @@
 using Forklaringsmodell.Application.Dtos;
+using Forklaringsmodell.Application.Mapping;
 using Forklaringsmodell.Application.Services;
 using Forklaringsmodell.Application.Validators;
 using Forklaringsmodell.Domain.Entities;
@@ -45,6 +46,10 @@ public class VedtakServiceTests : IDisposable
 
     private Vurdering LeggTilVurdering(VurderingsType type, bool eskalert)
     {
+        var hovedhensynTekst = type == VurderingsType.Skjonn
+            ? FlerspraakligTekstMapper.TilEntitet(new List<TekstVariantDto> { new() { SpraakKode = "nb", Verdi = "Test hovedhensyn" } })
+            : null;
+
         var vurdering = new Vurdering
         {
             VurderingId = Guid.NewGuid(),
@@ -52,7 +57,8 @@ public class VedtakServiceTests : IDisposable
             RegelId = _regel.RegelId,
             Type = type,
             Eskalert = eskalert,
-            Hovedhensyn = type == VurderingsType.Skjonn ? "Test hovedhensyn" : null
+            HovedhensynTekstId = hovedhensynTekst?.FlerspraakligTekstId,
+            HovedhensynTekst = hovedhensynTekst
         };
         _db.Vurderinger.Add(vurdering);
         _db.SaveChanges();

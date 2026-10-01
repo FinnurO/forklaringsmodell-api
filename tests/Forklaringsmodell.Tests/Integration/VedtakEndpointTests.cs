@@ -121,7 +121,7 @@ public class VedtakEndpointTests : IClassFixture<CustomWebApplicationFactory>
                 new
                 {
                     type = "OkonomiskYtelse",
-                    beskrivelse = "Test-ytelse",
+                    beskrivelse = new[] { new { spraakKode = "nb", verdi = "Test-ytelse" } },
                     varighet = "Tidsbegrenset",
                     gyldigFra = DateTimeOffset.UtcNow,
                     gyldigTil = DateTimeOffset.UtcNow.AddMonths(6),
@@ -146,7 +146,7 @@ public class VedtakEndpointTests : IClassFixture<CustomWebApplicationFactory>
         virkningerResponse.EnsureSuccessStatusCode();
         var virkninger = await virkningerResponse.Content.ReadFromJsonAsync<List<VirkningResult>>();
         Assert.Single(virkninger!);
-        Assert.Equal("Test-ytelse", virkninger![0].Beskrivelse);
+        Assert.Contains(virkninger![0].Beskrivelse, v => v.Verdi == "Test-ytelse");
     }
 
     private record KildeResult(Guid KildeId);
@@ -156,5 +156,6 @@ public class VedtakEndpointTests : IClassFixture<CustomWebApplicationFactory>
     private record RegelResult(Guid RegelId);
     private record VurderingResult(Guid VurderingId);
     private record VedtakResult(Guid VedtakId, string AutomatiseringsGrad);
-    private record VirkningResult(Guid VirkningId, string Beskrivelse);
+    private record TekstVariantResult(string SpraakKode, string Verdi);
+    private record VirkningResult(Guid VirkningId, List<TekstVariantResult> Beskrivelse);
 }

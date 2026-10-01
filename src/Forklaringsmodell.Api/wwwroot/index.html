@@ -163,6 +163,16 @@
       .replaceAll('"', '&quot;');
   }
 
+  function formatFlerspraaklig(varianter) {
+    if (!varianter || varianter.length === 0) return '';
+    return varianter.map(v => `<span class="badge">${escapeHtml(v.spraakKode)}</span> ${escapeHtml(v.verdi)}`).join('<br>');
+  }
+
+  function forsteTekst(varianter) {
+    if (!varianter || varianter.length === 0) return '';
+    return varianter[0].verdi;
+  }
+
   function formatDate(iso) {
     if (!iso) return '–';
     const d = new Date(iso);
@@ -289,8 +299,8 @@
           <div class="row-title">${escapeHtml(v.type)} <span class="badge">${escapeHtml(v.utfall)}</span></div>
           ${v.beregningsspor ? `<pre>${escapeHtml(v.beregningsspor)}</pre>` : ''}
           <dl class="kv">
-            ${v.hovedhensyn ? `<dt>Hovedhensyn</dt><dd>${escapeHtml(v.hovedhensyn)}</dd>` : ''}
-            ${v.forkastedeUtfall ? `<dt>Forkastede utfall</dt><dd>${escapeHtml(v.forkastedeUtfall)}</dd>` : ''}
+            ${v.hovedhensyn && v.hovedhensyn.length > 0 ? `<dt>Hovedhensyn</dt><dd>${formatFlerspraaklig(v.hovedhensyn)}</dd>` : ''}
+            ${v.forkastedeUtfall && v.forkastedeUtfall.length > 0 ? `<dt>Forkastede utfall</dt><dd>${formatFlerspraaklig(v.forkastedeUtfall)}</dd>` : ''}
             ${v.konfidens !== null && v.konfidens !== undefined ? `<dt>Konfidens</dt><dd>${v.konfidens}</dd>` : ''}
             <dt>Eskalert</dt><dd>${v.eskalert ? 'Ja' : 'Nei'}</dd>
           </dl>
@@ -307,13 +317,15 @@
 
       const virkningHtml = listeAvRader(f.virkninger, vv => `
         <div class="card">
-          <div class="row-title">${escapeHtml(vv.beskrivelse)} <span class="badge">${escapeHtml(vv.type)}</span></div>
+          <div class="row-title">${escapeHtml(forsteTekst(vv.beskrivelse))} <span class="badge">${escapeHtml(vv.type)}</span></div>
           <dl class="kv">
+            <dt>Beskrivelse</dt><dd>${formatFlerspraaklig(vv.beskrivelse)}</dd>
             <dt>Fastsettelsesmåte</dt><dd>${escapeHtml(vv.fastsettelsesmate)}</dd>
             <dt>Varighet</dt><dd>${escapeHtml(vv.varighet)}</dd>
             ${vv.gyldigFra ? `<dt>Gyldig fra</dt><dd>${formatDate(vv.gyldigFra)}</dd>` : ''}
             ${vv.gyldigTil ? `<dt>Gyldig til</dt><dd>${formatDate(vv.gyldigTil)}</dd>` : ''}
             ${vv.belop !== null && vv.belop !== undefined ? `<dt>Beløp</dt><dd>${vv.belop}</dd>` : ''}
+            ${vv.lopendeVilkar && vv.lopendeVilkar.length > 0 ? `<dt>Løpende vilkår</dt><dd>${formatFlerspraaklig(vv.lopendeVilkar)}</dd>` : ''}
           </dl>
         </div>
       `, 'Ingen virkninger.');

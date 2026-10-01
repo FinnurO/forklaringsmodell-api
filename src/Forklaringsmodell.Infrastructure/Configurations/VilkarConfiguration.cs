@@ -17,12 +17,16 @@ public class VilkarConfiguration : IEntityTypeConfiguration<Vilkar>
         builder.Property(x => x.Type).HasConversion<string>().HasMaxLength(50);
         builder.Property(x => x.Grunnlagstype).HasConversion<string>().HasMaxLength(50);
         builder.Property(x => x.Fastsettelsesmate).HasConversion<string>().HasMaxLength(50);
-        builder.Property(x => x.StandardTekst).HasMaxLength(2000);
         builder.Property(x => x.CpsvTjenesteReferanse).HasMaxLength(500);
 
         builder.HasOne(x => x.Regel)
             .WithMany()
             .HasForeignKey(x => x.RegelId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.StandardTekst)
+            .WithMany()
+            .HasForeignKey(x => x.StandardTekstId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

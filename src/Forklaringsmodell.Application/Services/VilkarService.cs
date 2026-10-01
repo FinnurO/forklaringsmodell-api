@@ -1,5 +1,6 @@
 using Forklaringsmodell.Application.Dtos;
 using Forklaringsmodell.Application.Exceptions;
+using Forklaringsmodell.Application.Mapping;
 using Forklaringsmodell.Application.Repositories;
 using Forklaringsmodell.Domain.Entities;
 using FluentValidation;
@@ -51,6 +52,8 @@ public class VilkarService
                 ?? throw new NotFoundException($"Regel {dto.RegelId} finnes ikke.");
         }
 
+        var standardTekst = FlerspraakligTekstMapper.TilEntitet(dto.StandardTekst);
+
         var vilkar = new Vilkar
         {
             VilkarId = Guid.NewGuid(),
@@ -60,7 +63,8 @@ public class VilkarService
             Type = dto.Type,
             Grunnlagstype = dto.Grunnlagstype!.Value, // validator sikrer NotNull før vi kommer hit
             Fastsettelsesmate = dto.Fastsettelsesmate,
-            StandardTekst = dto.StandardTekst,
+            StandardTekstId = standardTekst?.FlerspraakligTekstId,
+            StandardTekst = standardTekst,
             RegelId = dto.RegelId,
             CpsvTjenesteReferanse = dto.CpsvTjenesteReferanse
         };
@@ -99,7 +103,7 @@ public class VilkarService
         Type = vilkar.Type,
         Grunnlagstype = vilkar.Grunnlagstype,
         Fastsettelsesmate = vilkar.Fastsettelsesmate,
-        StandardTekst = vilkar.StandardTekst,
+        StandardTekst = FlerspraakligTekstMapper.TilDto(vilkar.StandardTekst),
         RettskildeIder = vilkar.VilkarRettskilde.Select(vr => vr.RettskildeId).ToList(),
         RegelId = vilkar.RegelId,
         CpsvTjenesteReferanse = vilkar.CpsvTjenesteReferanse,

@@ -2,16 +2,33 @@
 
 Alle vesentlige endringer i dette prosjektet dokumenteres i denne filen.
 
-## [Unreleased]
+## [1.5.0] — Flerspråklige forklaringstekster
 
 ### Lagt til
 
+- **Ny entitet `FlerspraakligTekst` + `TekstVariant`**: en gjenbrukbar beholder for tekst på flere språk (`SpraakKode` er en fri streng, ikke en enum — nye språk er bare nye rader, ikke en skjemaendring). `Vilkar.StandardTekst`, `Vurdering.Hovedhensyn`/`ForkastedeUtfall` og `Vedtaksvirkning.Beskrivelse`/`LopendeVilkar` peker nå på én `FlerspraakligTekst` hver, i stedet for å være plain `string`-felt (regel 3.17). Interne/tekniske felt (`Sak.Tittel`, `Vedtak.Utfall`, `Faktum.Verdi`, `Vurdering.Beregningsspor` m.fl.) er bevisst holdt utenfor — kun det som faktisk inngår i begrunnelsen overfor en part er flerspråkliggjort.
 - Enkel HTML/JS-utforskerside (`wwwroot/index.html`), servert sammen med API-et via `UseStaticFiles`. Lister saker, viser vedtak per sak, og henter hydrert forklaring — samt et skjema for å opprette nye saker (nyttig for å lage flere "seeds" manuelt).
 - Nytt endepunkt `GET /api/saker/{sakId}/vedtak` (samme mønster som de andre `Sak{Entitet}`-listene) — nødvendig for at siden skal kunne oppdage et vedtaks ID uten at det allerede er kjent.
+
+### Endrede API-kontrakter
+
+- `standardTekst` (vilkår), `hovedhensyn`/`forkastedeUtfall` (vurderinger) og `beskrivelse`/`lopendeVilkar` (virkninger) tar nå imot/returnerer en liste av `{ spraakKode, verdi }` i stedet for en enkelt streng.
 
 ### Fikset
 
 - `GET /api/vedtak/{id}/forklaring` manglet flere felt i sin hydrerte `Faktum`/`Vurdering`-projeksjon som var lagt til `FaktumDto`/`VurderingDto` i tidligere versjoner (`RettskildeIder` fra v1.1, `RefererteVurderingIder` fra v1.2, `Utfall` fra v1.4) — feltene ble aldri mappet inn i denne spesifikke responsen, og viste derfor stille default-verdier (f.eks. `Utfall: Oppfylt` for alle vurderinger uansett faktisk verdi). Oppdaget under manuell verifisering av utforskersiden.
+
+### Migrasjon
+
+- Ny EF Core-migrasjon (`FlerspraakligTekst`) oppretter `FlerspraakligeTekster`/`TekstVarianter`, og erstatter de fem gamle `string`-kolonnene med `Guid`/`Guid?`-fremmednøkler.
+
+### Seed-data
+
+- Skjønnsvurderingens `Hovedhensyn` seedes med både `nb`- og `nn`-variant, for å bevise flerspråkligheten ende-til-ende; øvrige forklaringstekster får kun `nb` foreløpig.
+
+### Tester
+
+- Nye validatortester for regel 3.17 (duplikate språkkoder avvises, variant uten verdi avvises, case-insensitiv dedup).
 
 ## [1.4.0] — Utfallstyper og vilkårets rettslige/interne/tekniske grunnlag
 

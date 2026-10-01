@@ -15,7 +15,7 @@ public class VedtaksvirkningValidatorTests
         var dto = new OpprettVedtaksvirkningDto
         {
             Type = VirkningType.Tillatelse,
-            Beskrivelse = "Test",
+            Beskrivelse = new List<TekstVariantDto> { new() { SpraakKode = "nb", Verdi = "Test" } },
             Varighet = VarighetsType.Varig,
             GyldigTil = DateTimeOffset.UtcNow
         };
@@ -32,7 +32,7 @@ public class VedtaksvirkningValidatorTests
         var dto = new OpprettVedtaksvirkningDto
         {
             Type = VirkningType.Tillatelse,
-            Beskrivelse = "Test",
+            Beskrivelse = new List<TekstVariantDto> { new() { SpraakKode = "nb", Verdi = "Test" } },
             Varighet = VarighetsType.Varig
         };
 
@@ -47,7 +47,7 @@ public class VedtaksvirkningValidatorTests
         var dto = new OpprettVedtaksvirkningDto
         {
             Type = VirkningType.Tillatelse,
-            Beskrivelse = "Test",
+            Beskrivelse = new List<TekstVariantDto> { new() { SpraakKode = "nb", Verdi = "Test" } },
             Varighet = VarighetsType.Tidsbegrenset,
             RapporteringsFrekvens = "Kvartalsvis"
         };
@@ -64,7 +64,7 @@ public class VedtaksvirkningValidatorTests
         var dto = new OpprettVedtaksvirkningDto
         {
             Type = VirkningType.Plikt,
-            Beskrivelse = "Test",
+            Beskrivelse = new List<TekstVariantDto> { new() { SpraakKode = "nb", Verdi = "Test" } },
             Varighet = VarighetsType.LopendeInntilVilkarBrister,
             RapporteringsFrekvens = "Kvartalsvis"
         };

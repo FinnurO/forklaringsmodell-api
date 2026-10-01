@@ -15,7 +15,7 @@ public class VurderingValidatorTests
         {
             RegelId = Guid.NewGuid(),
             Type = VurderingsType.Skjonn,
-            Hovedhensyn = null
+            Hovedhensyn = new List<TekstVariantDto>()
         };
 
         var result = await _validator.ValidateAsync(dto);
@@ -25,13 +25,13 @@ public class VurderingValidatorTests
     }
 
     [Fact]
-    public async Task Skjonn_med_tom_streng_hovedhensyn_gir_valideringsfeil()
+    public async Task Skjonn_med_tom_liste_hovedhensyn_gir_valideringsfeil()
     {
         var dto = new OpprettVurderingDto
         {
             RegelId = Guid.NewGuid(),
             Type = VurderingsType.Skjonn,
-            Hovedhensyn = ""
+            Hovedhensyn = new List<TekstVariantDto>()
         };
 
         var result = await _validator.ValidateAsync(dto);
@@ -47,7 +47,7 @@ public class VurderingValidatorTests
             RegelId = Guid.NewGuid(),
             Type = VurderingsType.Skjonn,
             Utfall = UtfallType.Oppfylt,
-            Hovedhensyn = "Dokumentert nedbemanning"
+            Hovedhensyn = new List<TekstVariantDto> { new() { SpraakKode = "nb", Verdi = "Dokumentert nedbemanning" } }
         };
 
         var result = await _validator.ValidateAsync(dto);

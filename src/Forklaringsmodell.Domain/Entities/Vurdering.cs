@@ -12,8 +12,8 @@ public class Vurdering
     public string? Beregningsspor { get; set; }
     public decimal? Konfidens { get; set; }          // 0.0-1.0, kun relevant for GenerativKI
     public bool Eskalert { get; set; }
-    public string? Hovedhensyn { get; set; }         // obligatorisk når Type == Skjonn
-    public string? ForkastedeUtfall { get; set; }    // kontrastiv forklaring for skjønn
+    public Guid? HovedhensynTekstId { get; set; }       // obligatorisk når Type == Skjonn
+    public Guid? ForkastedeUtfallTekstId { get; set; }  // kontrastiv forklaring for skjønn
 
     /// <summary>
     /// Skrivebeskyttet fordi denne raden allerede er referert av en ForklaringsloggOppforing.
@@ -23,6 +23,8 @@ public class Vurdering
 
     public Sak? Sak { get; set; }
     public Regel? Regel { get; set; }
+    public FlerspraakligTekst? HovedhensynTekst { get; set; }
+    public FlerspraakligTekst? ForkastedeUtfallTekst { get; set; }
     public ICollection<VurderingFaktum> VurderingFaktum { get; set; } = new List<VurderingFaktum>();
     public ICollection<VurderingRettskilde> VurderingRettskilde { get; set; } = new List<VurderingRettskilde>();
 

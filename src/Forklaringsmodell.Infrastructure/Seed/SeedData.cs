@@ -1,3 +1,5 @@
+using Forklaringsmodell.Application.Dtos;
+using Forklaringsmodell.Application.Mapping;
 using Forklaringsmodell.Domain.Entities;
 using Forklaringsmodell.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -170,6 +172,18 @@ public static class SeedData
             FaktumId = faktumBegrunnelse.FaktumId
         });
 
+        // Regel 3.17: demonstrerer flerspråklig forklaringstekst med både bokmål og
+        // nynorsk på Hovedhensyn, slik at seed-dataen beviser funksjonen ende-til-ende.
+        var hovedhensynSkjonnTekst = FlerspraakligTekstMapper.TilEntitet(new List<TekstVariantDto>
+        {
+            new() { SpraakKode = "nb", Verdi = "Dokumentert nedbemanning hos arbeidsgiver" },
+            new() { SpraakKode = "nn", Verdi = "Dokumentert nedbemanning hos arbeidsgivar" }
+        });
+        var forkastedeUtfallSkjonnTekst = FlerspraakligTekstMapper.TilEntitet(new List<TekstVariantDto>
+        {
+            new() { SpraakKode = "nb", Verdi = "Selvforskyldt oppsigelse" }
+        });
+
         var vurderingSkjonn = new Vurdering
         {
             VurderingId = Guid.NewGuid(),
@@ -177,8 +191,10 @@ public static class SeedData
             RegelId = regelSkjonn.RegelId,
             Type = VurderingsType.Skjonn,
             Utfall = UtfallType.Oppfylt,
-            Hovedhensyn = "Dokumentert nedbemanning hos arbeidsgiver",
-            ForkastedeUtfall = "Selvforskyldt oppsigelse",
+            HovedhensynTekstId = hovedhensynSkjonnTekst?.FlerspraakligTekstId,
+            HovedhensynTekst = hovedhensynSkjonnTekst,
+            ForkastedeUtfallTekstId = forkastedeUtfallSkjonnTekst?.FlerspraakligTekstId,
+            ForkastedeUtfallTekst = forkastedeUtfallSkjonnTekst,
             Eskalert = false
         };
         vurderingSkjonn.VurderingFaktum.Add(new VurderingFaktum
@@ -227,6 +243,11 @@ public static class SeedData
         LeggTilOppforing(OppforingsType.Vurdering, vurderingSkjonn.VurderingId);
 
         // Vilkar-katalogoppføring (regel 3.12) som dagpenger-virkningen er en instans av.
+        var standardTekstDagpengesats = FlerspraakligTekstMapper.TilEntitet(new List<TekstVariantDto>
+        {
+            new() { SpraakKode = "nb", Verdi = "Dagpenger utbetales med en sats beregnet av tidligere inntekt, jf. folketrygdloven § 4-5." }
+        });
+
         var vilkarDagpengesats = new Vilkar
         {
             VilkarId = Guid.NewGuid(),
@@ -236,13 +257,19 @@ public static class SeedData
             Type = VirkningType.OkonomiskYtelse,
             Grunnlagstype = GrunnlagsType.Rettslig,
             Fastsettelsesmate = FastsettelsesmateType.Parametrisert,
-            StandardTekst = "Dagpenger utbetales med en sats beregnet av tidligere inntekt, jf. folketrygdloven § 4-5."
+            StandardTekstId = standardTekstDagpengesats?.FlerspraakligTekstId,
+            StandardTekst = standardTekstDagpengesats
         };
         vilkarDagpengesats.VilkarRettskilde.Add(new VilkarRettskilde { VilkarId = vilkarDagpengesats.VilkarId, RettskildeId = rettskildeInntektskrav.RettskildeId });
 
         // Regel 3.15: et Vilkar med Grunnlagstype == Datakvalitet er en teknisk kontroll,
         // ikke et rettslig krav, og har derfor bevisst ingen RettskildeIder (jf. DUF-
         // aliaseksempelet i spesifikasjonens punkt 6).
+        var standardTekstDatakvalitetKontroll = FlerspraakligTekstMapper.TilEntitet(new List<TekstVariantDto>
+        {
+            new() { SpraakKode = "nb", Verdi = "Kontrollerer at søkerens identitet ikke er registrert som alias av en annen identitet." }
+        });
+
         var vilkarDatakvalitetKontroll = new Vilkar
         {
             VilkarId = Guid.NewGuid(),
@@ -252,11 +279,17 @@ public static class SeedData
             Type = VirkningType.Tillatelse,
             Grunnlagstype = GrunnlagsType.Datakvalitet,
             Fastsettelsesmate = FastsettelsesmateType.Statisk,
-            StandardTekst = "Kontrollerer at søkerens identitet ikke er registrert som alias av en annen identitet."
+            StandardTekstId = standardTekstDatakvalitetKontroll?.FlerspraakligTekstId,
+            StandardTekst = standardTekstDatakvalitetKontroll
         };
 
         // Vedtaksvirkning fra "Body for POST .../vedtak"-eksempelet i spesifikasjonens
         // punkt 5 (regel 3.10): den økonomiske ytelsen dagpenger-vedtaket faktisk medfører.
+        var beskrivelseDagpenger = FlerspraakligTekstMapper.TilEntitet(new List<TekstVariantDto>
+        {
+            new() { SpraakKode = "nb", Verdi = "Dagpenger" }
+        })!;
+
         var virkningDagpenger = new Vedtaksvirkning
         {
             VirkningId = Guid.NewGuid(),
@@ -264,7 +297,8 @@ public static class SeedData
             VilkarId = vilkarDagpengesats.VilkarId,
             Type = VirkningType.OkonomiskYtelse,
             Fastsettelsesmate = FastsettelsesmateType.Parametrisert,
-            Beskrivelse = "Dagpenger",
+            BeskrivelseTekstId = beskrivelseDagpenger.FlerspraakligTekstId,
+            BeskrivelseTekst = beskrivelseDagpenger,
             Varighet = VarighetsType.Tidsbegrenset,
             GyldigFra = new DateTimeOffset(2026, 8, 1, 0, 0, 0, TimeSpan.Zero),
             GyldigTil = new DateTimeOffset(2027, 1, 31, 0, 0, 0, TimeSpan.Zero),
@@ -399,6 +433,11 @@ public static class SeedData
             ReferanseId = vurderingRevurdertInntekt.VurderingId
         });
 
+        var beskrivelseJustertSats = FlerspraakligTekstMapper.TilEntitet(new List<TekstVariantDto>
+        {
+            new() { SpraakKode = "nb", Verdi = "Justert dagpengesats etter endret inntekt" }
+        })!;
+
         var virkningJustertSats = new Vedtaksvirkning
         {
             VirkningId = Guid.NewGuid(),
@@ -406,7 +445,8 @@ public static class SeedData
             VilkarId = vilkarDagpengesats.VilkarId,
             Type = VirkningType.OkonomiskYtelse,
             Fastsettelsesmate = FastsettelsesmateType.Avledet,
-            Beskrivelse = "Justert dagpengesats etter endret inntekt",
+            BeskrivelseTekstId = beskrivelseJustertSats.FlerspraakligTekstId,
+            BeskrivelseTekst = beskrivelseJustertSats,
             Varighet = VarighetsType.Tidsbegrenset,
             GyldigFra = new DateTimeOffset(2026, 11, 1, 0, 0, 0, TimeSpan.Zero),
             GyldigTil = new DateTimeOffset(2027, 1, 31, 0, 0, 0, TimeSpan.Zero),

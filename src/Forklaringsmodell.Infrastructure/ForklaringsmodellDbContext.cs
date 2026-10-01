@@ -31,6 +31,8 @@ public class ForklaringsmodellDbContext : DbContext
     public DbSet<VedtaksvirkningFaktum> VedtaksvirkningFaktum => Set<VedtaksvirkningFaktum>();
     public DbSet<Forklaringslogg> Forklaringslogger => Set<Forklaringslogg>();
     public DbSet<ForklaringsloggOppforing> ForklaringsloggOppforinger => Set<ForklaringsloggOppforing>();
+    public DbSet<FlerspraakligTekst> FlerspraakligeTekster => Set<FlerspraakligTekst>();
+    public DbSet<TekstVariant> TekstVarianter => Set<TekstVariant>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

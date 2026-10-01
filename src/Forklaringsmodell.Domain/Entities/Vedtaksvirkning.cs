@@ -13,15 +13,17 @@ public class Vedtaksvirkning
     public Guid? VilkarId { get; set; } // valgfri kobling til katalogen, se Vilkar (regel 3.12)
     public VirkningType Type { get; set; }
     public FastsettelsesmateType Fastsettelsesmate { get; set; }
-    public string Beskrivelse { get; set; } = string.Empty;
+    public Guid BeskrivelseTekstId { get; set; }
     public VarighetsType Varighet { get; set; }
     public DateTimeOffset? GyldigFra { get; set; }
     public DateTimeOffset? GyldigTil { get; set; } // skal være null når Varighet == Varig
     public decimal? Belop { get; set; }             // for OkonomiskYtelse/Tilskudd (til mottaker) eller Gebyr (fra mottaker)
-    public string? LopendeVilkar { get; set; }
+    public Guid? LopendeVilkarTekstId { get; set; }
     public string? RapporteringsFrekvens { get; set; } // kun relevant når Type == Plikt
     public Guid? AvledetFraVirkningId { get; set; } // selvreferanse, kan peke på tvers av Vedtak/Sak (regel 3.13)
 
+    public FlerspraakligTekst? BeskrivelseTekst { get; set; }
+    public FlerspraakligTekst? LopendeVilkarTekst { get; set; }
     public Vedtak? Vedtak { get; set; }
     public Vilkar? Vilkar { get; set; }
     public Vedtaksvirkning? AvledetFraVirkning { get; set; }

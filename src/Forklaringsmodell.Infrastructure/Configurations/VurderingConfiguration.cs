@@ -20,6 +20,16 @@ public class VurderingConfiguration : IEntityTypeConfiguration<Vurdering>
 
         builder.HasIndex(x => x.SakId);
         builder.HasIndex(x => x.RegelId);
+
+        builder.HasOne(x => x.HovedhensynTekst)
+            .WithMany()
+            .HasForeignKey(x => x.HovedhensynTekstId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.ForkastedeUtfallTekst)
+            .WithMany()
+            .HasForeignKey(x => x.ForkastedeUtfallTekstId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
 

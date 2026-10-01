@@ -11,7 +11,7 @@ public class VilkarDto
     public VirkningType Type { get; set; }
     public GrunnlagsType Grunnlagstype { get; set; }
     public FastsettelsesmateType Fastsettelsesmate { get; set; }
-    public string? StandardTekst { get; set; }
+    public List<TekstVariantDto> StandardTekst { get; set; } = new();
     public List<Guid> RettskildeIder { get; set; } = new();
     public Guid? RegelId { get; set; }
     public string? CpsvTjenesteReferanse { get; set; }
@@ -31,7 +31,7 @@ public class OpprettVilkarDto
     /// </summary>
     public GrunnlagsType? Grunnlagstype { get; set; }
     public FastsettelsesmateType Fastsettelsesmate { get; set; }
-    public string? StandardTekst { get; set; }
+    public List<TekstVariantDto> StandardTekst { get; set; } = new();
     public List<Guid> RettskildeIder { get; set; } = new();
     public Guid? RegelId { get; set; }
     public string? CpsvTjenesteReferanse { get; set; }

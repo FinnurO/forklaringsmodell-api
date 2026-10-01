@@ -31,6 +31,10 @@ erDiagram
   VILKAR }o--o| REGEL : baserer_pa
   SAK }o--o{ SAK : relaterer_til
   VURDERING }o--o{ VURDERING : bygger_pa
+  VILKAR }o--o| FLERSPRAAKLIG_TEKST : har_forklaringstekst
+  VURDERING }o--o| FLERSPRAAKLIG_TEKST : har_forklaringstekst
+  VEDTAKSVIRKNING }o--o| FLERSPRAAKLIG_TEKST : har_forklaringstekst
+  FLERSPRAAKLIG_TEKST ||--o{ TEKST_VARIANT : bestar_av
 ```
 
 `FORKLARINGSLOGG_OPPFORING` er en generisk referanserad (`OppforingsType`: Faktum / Vurdering / Partsmedvirkning + `ReferanseId`) som gjør at loggen kan peke på nøyaktig hvilke rader som forklarer vedtaket, uten å måtte modellere tre separate mange-til-mange-tabeller.
@@ -44,6 +48,8 @@ Ett vedtak kan medføre flere, uavhengig tidsbegrensede virkninger samtidig — 
 Mange virkninger er ikke unike for én sak — samme vilkårstekst, samme parametriserte beregning eller samme rettslige hjemmel går igjen på tvers av tusenvis av vedtak av samme type. `Vilkar` er en generell referansetabell (som `Regel`/`Rettskilde`/`Kilde`) for slike gjenbrukbare vilkårsdefinisjoner — den er bevisst *ikke* begrenset til statiske standardvilkår, men kan romme alt fra en fast, alltid-gjeldende betingelse til en parametrisert eller skjønnsbasert vilkårstype. `Vedtaksvirkning.VilkarId` er valgfri: sett den når virkningen er en instans av noe katalogført, la den stå null for helt skreddersydde virkninger. Selve `Vedtaksvirkning`-raden er uansett den autoritative posten for hva som faktisk gjaldt i det konkrete vedtaket — endres `Vilkar`-katalogoppføringen senere, skal ikke allerede opprettede `Vedtaksvirkning`-rader påvirkes (samme append-only-prinsipp som for `Regel`, se punkt 3.4).
 
 Denne modellen skal **ikke** modellere saksflyt eller tilstandsoverganger — det er en CPSV-AP-hendelse (søknad, innrapportering, tilbakekall, melding) som utløser en *ny* `Sak`, og den nye saken kan lese fra en relatert sak uten å modifisere den. `Sak.UtlosendeHendelse` merker hvorfor saken oppstod, `SakRelasjon` kobler den til en sak den følger opp, og `Vurdering.RefererteVurderingIder` lar en ny vurdering eksplisitt bygge på en vurdering fra en annen (allerede frosset) sak — for eksempel når en melding om endret inntekt utløser en ny vurdering på nytt faktum, i sin egen sak, som gjenbruker den opprinnelige vurderingen av grunnvilkåret. Tilsvarende kan én `Vedtaksvirkning` være avledet av en annen — f.eks. et serveringssteds åpningstid låst til en tilknyttet skjenkebevillings skjenketid — via `Vedtaksvirkning.AvledetFraVirkningId`, som kan peke på tvers av både `Vedtak` og `Sak`.
+
+Forklaringstekstene som faktisk når en part — `Vilkar.StandardTekst`, `Vurdering.Hovedhensyn`/`ForkastedeUtfall`, `Vedtaksvirkning.Beskrivelse`/`LopendeVilkar` — skal kunne foreligge på flere språk samtidig (minimum bokmål og nynorsk, men ikke begrenset til disse). `FlerspraakligTekst` er en gjenbrukbar beholder for dette: hvert av de nevnte feltene peker på én `FlerspraakligTekst`-rad, som igjen har én `TekstVariant` per språk. Løsningen er bevisst *ikke* et fast sett med `XNynorsk`-kolonner (slik enkelte kildesystemer gjør det) — det ville krevd skjemaendring for hvert nye språk. Interne/tekniske felt (`Sak.Tittel`, `Vedtak.Utfall`, `Faktum.Verdi`, `Vurdering.Beregningsspor`, `Vilkar.Navn`, `Rettskilde.Henvisning` m.fl.) forblir enkeltspråklige — det er kun den delen av modellen som er en direkte del av begrunnelsen overfor en part, som flerspråkliggjøres.
 
 ### Enumer
 
@@ -140,8 +146,8 @@ public class Vurdering
     public string Beregningsspor { get; set; }      // kan være strukturert JSON (input/output/mellomverdier), ikke bare fritekst
     public decimal? Konfidens { get; set; }         // 0.0–1.0, kun relevant for GenerativKI
     public bool Eskalert { get; set; }
-    public string Hovedhensyn { get; set; }         // obligatorisk når Type == Skjonn
-    public string ForkastedeUtfall { get; set; }    // kontrastiv forklaring for skjønn
+    public Guid? HovedhensynTekstId { get; set; }       // -> FlerspraakligTekst, obligatorisk når Type == Skjonn, se punkt 3.17
+    public Guid? ForkastedeUtfallTekstId { get; set; }  // -> FlerspraakligTekst, kontrastiv forklaring for skjønn, se punkt 3.17
     public ICollection<Guid> FaktumIder { get; set; }     // mange-til-mange via VurderingFaktum — kan peke til Faktum i en annen Sak, se punkt 3.11
     public ICollection<Guid> RettskildeIder { get; set; } // saksspesifikke kilder ut over Regel — se punkt 3.7
     public ICollection<Guid> RefererteVurderingIder { get; set; } // vurderinger fra andre (frosne) saker denne bygger på, se punkt 3.11
@@ -172,12 +178,12 @@ public class Vedtaksvirkning
     public Guid? VilkarId { get; set; }                   // valgfri kobling til katalogen, se Vilkar under
     public VirkningType Type { get; set; }
     public FastsettelsesmateType Fastsettelsesmate { get; set; } // hvordan innholdet ble fastsatt: statisk, parametrisert, skjønnsbasert eller avledet
-    public string Beskrivelse { get; set; }              // f.eks. "Skjenkebevilling", "Innrapportering av omsetning", "Flerbarnstillegg"
+    public Guid BeskrivelseTekstId { get; set; }          // -> FlerspraakligTekst, f.eks. "Skjenkebevilling", "Innrapportering av omsetning", se punkt 3.17
     public VarighetsType Varighet { get; set; }
     public DateTimeOffset? GyldigFra { get; set; }
     public DateTimeOffset? GyldigTil { get; set; }        // skal være null når Varighet == Varig
     public decimal? Belop { get; set; }                   // for OkonomiskYtelse/Tilskudd (til mottaker) eller Gebyr (fra mottaker)
-    public string LopendeVilkar { get; set; }             // vilkår som må fortsette å være oppfylt, f.eks. "varig funksjonsnedsettelse"
+    public Guid? LopendeVilkarTekstId { get; set; }       // -> FlerspraakligTekst, vilkår som må fortsette å være oppfylt, f.eks. "varig funksjonsnedsettelse"
     public string RapporteringsFrekvens { get; set; }     // f.eks. "Kvartalsvis" — kun relevant når Type == Plikt
     public Guid? AvledetFraVirkningId { get; set; }       // selvreferanse, kan peke på tvers av Vedtak/Sak — kat. E: avledet av en annen bevilling
     public ICollection<Guid> VurderingIder { get; set; }  // hvilke(n) vurdering(er) fastsatte denne virkningen
@@ -193,10 +199,23 @@ public class Vilkar
     public VirkningType Type { get; set; }                 // typisk/forventet type for dette vilkåret
     public GrunnlagsType Grunnlagstype { get; set; }       // rettslig / intern praksis / datakvalitet — se punkt 3.15
     public FastsettelsesmateType Fastsettelsesmate { get; set; } // typisk fastsettelsesmåte for dette vilkåret
-    public string StandardTekst { get; set; }              // fritekst-mal, kan inneholde plassholdere for parametrisert innhold
+    public Guid? StandardTekstId { get; set; }             // -> FlerspraakligTekst, fritekst-mal, kan inneholde plassholdere for parametrisert innhold, se punkt 3.17
     public ICollection<Guid> RettskildeIder { get; set; }  // hjemmel for selve vilkåret, mange-til-mange (samme mønster som Regel, punkt 3.7) — tom for InternPraksis/Datakvalitet
     public Guid? RegelId { get; set; }                     // valgfri kobling til Regel, hvis vilkåret er en direkte konsekvens av en operasjonalisert regel
     public string CpsvTjenesteReferanse { get; set; }      // IRI til cpsvno:Service — hvilken(e) tjeneste(r) vilkåret kan inngå i, se punkt 3.14
+}
+
+public class FlerspraakligTekst
+{
+    public Guid FlerspraakligTekstId { get; set; }
+    public ICollection<TekstVariant> Varianter { get; set; } // én per språk, se punkt 3.17
+}
+
+public class TekstVariant
+{
+    public Guid FlerspraakligTekstId { get; set; }
+    public string SpraakKode { get; set; }   // fri streng, ikke enum — f.eks. "nb", "nn", "en"; nye språk krever ingen skjemaendring
+    public string Verdi { get; set; }
 }
 
 public class Forklaringslogg
@@ -233,6 +252,7 @@ public class ForklaringsloggOppforing
 14. **En `Vurdering`-rad skal opprettes selv når vilkåret ikke faktisk ble vurdert.** `Utfall` skiller `Oppfylt`/`IkkeOppfylt` (vilkåret ble vurdert til en konklusjon) fra `Uaktuelt` (vilkåret var ikke relevant gitt sakens fakta, f.eks. et fornyelsesvilkår i en førstegangssøknad), `IkkeVurdert` (behandlingen stoppet før vilkåret ble nådd, f.eks. fordi et tidligere vilkår i treet allerede avgjorde utfallet) og `Uavklart` (en automatisert vurdering produserte et resultat, men under konfidensterskelen — se `Eskalert` — og ble derfor ikke lagt til grunn alene). Fraværet av en rad skal aldri være den eneste dokumentasjonen på at et vilkår ikke ble vurdert — årsaken skal fremgå av `Beregningsspor`. Kombinert med `Vurdering.FaktumIder` er dette også svaret på hvilke fakta som gjorde at et vilkår ikke ble oppfylt: se på `FaktumIder` for raden der `Utfall == IkkeOppfylt`.
 15. **`Vilkar.Grunnlagstype` skal ikke blandes sammen.** Et vilkår med `Grunnlagstype == Rettslig` skal ha minst én `RettskildeIder`; `InternPraksis` og `Datakvalitet` krever det ikke, siden de ikke er forankret i en rettskilde, men i henholdsvis forvaltningspraksis og tekniske datakvalitetskontroller. `Kode`/`Kodeverk` er valgfrie, men bør fylles ut når vilkåret stammer fra et kildesystem med eget kodeverk (f.eks. NAVs `VILKAR_TYPE`), slik at katalogen kan matches maskinelt mot kildesystemet.
 16. **`Regel.RegeldefinisjonReferanse` er en ekstern pekepinn, ikke en kopi.** Selve regelartefaktet (f.eks. DMN-XML) skal ikke lagres i denne modellen — feltet peker bare til hvor det faktisk ligger (regelrepo, versjonskontroll). Kombinert med append-only-prinsippet i punkt 3.4 (ny `Regel`-rad per versjon) gir dette full sporbarhet til nøyaktig hvilken regelversjon som ble kjørt, uten å duplisere regelmotorens eget lagringsansvar.
+17. **Forklaringstekster skal kunne foreligge på flere språk uten skjemaendring.** `Vilkar.StandardTekst`, `Vurdering.Hovedhensyn`/`ForkastedeUtfall` og `Vedtaksvirkning.Beskrivelse`/`LopendeVilkar` peker på en `FlerspraakligTekst` med én `TekstVariant` per språk, i stedet for faste `XNynorsk`-kolonner. `TekstVariant.SpraakKode` valideres ikke mot noen fast liste (nye språk er bare nye rader), men skal være unik per `FlerspraakligTekst` (maks én variant per språk). Et påkrevd tekstfelt (`Vedtaksvirkning.Beskrivelse`) krever minst én `TekstVariant`; et valgfritt tekstfelt (`Hovedhensyn` når `Type != Skjonn`, `ForkastedeUtfall`, `LopendeVilkar`, `Vilkar.StandardTekst`) kan stå helt uten `FlerspraakligTekst`. Interne/tekniske felt flerspråkliggjøres ikke, se punkt 2 (bakgrunn).
 
 ## 4. Foreslått løsningsarkitektur (.NET)
 
@@ -265,7 +285,7 @@ public class ForklaringsloggOppforing
 | GET | `/api/vedtak/{id}/forklaring` | Les hydrert forklaring: vedtak + alle refererte faktum/vurdering/partsmedvirkning-rader utfoldet, inkludert virkninger |
 | GET | `/api/vedtak/{id}/virkninger` | List alle `Vedtaksvirkning`-rader for et vedtak |
 
-Ingen `DELETE` på `vedtak`, `forklaringslogg`- eller `vedtaksvirkning`-relaterte ressurser. `PUT`/`DELETE` på `faktum`, `vurderinger`, `regler`, `kilder` skal avvises (409/423) dersom raden allerede er referert av en `ForklaringsloggOppforing`. `POST /api/regler`, `POST /api/saker/{sakId}/vurderinger` og `POST /api/kilder` tar imot `rettskildeIder` som en liste i request-body (mange-til-mange, ikke enkeltverdi) — se punkt 3.7–3.8. `POST /api/saker/{sakId}/faktum` tar imot `rettskildeIder` som valgfritt tilleggsfelt. `POST /api/saker/{sakId}/vurderinger` tar imot `refererteVurderingIder` som valgfritt tilleggsfelt — se punkt 3.11.
+Ingen `DELETE` på `vedtak`, `forklaringslogg`- eller `vedtaksvirkning`-relaterte ressurser. `PUT`/`DELETE` på `faktum`, `vurderinger`, `regler`, `kilder` skal avvises (409/423) dersom raden allerede er referert av en `ForklaringsloggOppforing`. `POST /api/regler`, `POST /api/saker/{sakId}/vurderinger` og `POST /api/kilder` tar imot `rettskildeIder` som en liste i request-body (mange-til-mange, ikke enkeltverdi) — se punkt 3.7–3.8. `POST /api/saker/{sakId}/faktum` tar imot `rettskildeIder` som valgfritt tilleggsfelt. `POST /api/saker/{sakId}/vurderinger` tar imot `refererteVurderingIder` som valgfritt tilleggsfelt — se punkt 3.11. De flerspråklige feltene (`standardTekst` på vilkår, `hovedhensyn`/`forkastedeUtfall` på vurderinger, `beskrivelse`/`lopendeVilkar` på virkninger) tar imot/returnerer en liste av `{ spraakKode, verdi }` i stedet for en enkelt streng — se punkt 3.17.
 
 **Body for `POST /api/saker/{sakId}/vedtak`:**
 
@@ -310,7 +330,7 @@ Serveren bygger `Forklaringslogg` og dens `ForklaringsloggOppforing`-rader fra d
   "vurderinger": [
     { "type": "Deterministisk", "utfall": "Oppfylt", "beregningsspor": "inntekt >= 1.5G => oppfylt", "eskalert": false, "rettskildeReferanser": ["folketrygdloven § 4-5"] },
     { "type": "GenerativKI", "utfall": "Uavklart", "konfidens": 0.62, "eskalert": true, "beregningsspor": "klassifisert som 'uklar', under terskel 0,80 => eskalert til skjønn" },
-    { "type": "Skjonn", "utfall": "Oppfylt", "hovedhensyn": "Dokumentert nedbemanning hos arbeidsgiver", "forkastedeUtfall": "Selvforskyldt oppsigelse", "rettskildeReferanser": ["NAV rundskriv til § 4-5, pkt. 4.5.3 (selvforskyldt oppsigelse)"] }
+    { "type": "Skjonn", "utfall": "Oppfylt", "hovedhensyn": [{ "spraakKode": "nb", "verdi": "Dokumentert nedbemanning hos arbeidsgiver" }, { "spraakKode": "nn", "verdi": "Dokumentert nedbemanning hos arbeidsgivar" }], "forkastedeUtfall": [{ "spraakKode": "nb", "verdi": "Selvforskyldt oppsigelse" }], "rettskildeReferanser": ["NAV rundskriv til § 4-5, pkt. 4.5.3 (selvforskyldt oppsigelse)"] }
   ],
   "vedtak": { "utfall": "Dagpenger tilkjent", "automatiseringsGrad": "DelvisAutomatisert" }
 }
@@ -320,7 +340,7 @@ Serveren bygger `Forklaringslogg` og dens `ForklaringsloggOppforing`-rader fra d
 
 ```json
 "vilkar": [
-  { "navn": "Opphør av konsum 30 min etter skjenketid", "kode": "ALK_OPPHOR_30MIN", "kodeverk": "KOMMUNALT_VILKAR_TYPE", "type": "Plikt", "grunnlagstype": "Rettslig", "fastsettelsesmate": "Statisk", "standardTekst": "Konsum av alkoholholdig drikk må opphøre senest 30 minutter etter skjenketidens utløp.", "rettskildeReferanser": ["alkoholloven § 4-4"] },
+  { "navn": "Opphør av konsum 30 min etter skjenketid", "kode": "ALK_OPPHOR_30MIN", "kodeverk": "KOMMUNALT_VILKAR_TYPE", "type": "Plikt", "grunnlagstype": "Rettslig", "fastsettelsesmate": "Statisk", "standardTekst": [{ "spraakKode": "nb", "verdi": "Konsum av alkoholholdig drikk må opphøre senest 30 minutter etter skjenketidens utløp." }, { "spraakKode": "nn", "verdi": "Konsum av alkoholhaldig drikk må opphøyre seinast 30 minutt etter skjenketidas utløp." }], "rettskildeReferanser": ["alkoholloven § 4-4"] },
   { "navn": "Skjenketid gruppe 3 innendørs", "kode": "ALK_SKJENKETID_G3_INNE", "kodeverk": "KOMMUNALT_VILKAR_TYPE", "type": "Tillatelse", "grunnlagstype": "Rettslig", "fastsettelsesmate": "Parametrisert", "regelId": "<regel for kommunal skjenketid-oppslag>" }
 ],
 "virkninger": [

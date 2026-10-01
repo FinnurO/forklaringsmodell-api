@@ -27,6 +27,18 @@ public class OpprettVurderingDtoValidator : AbstractValidator<OpprettVurderingDt
             .WithMessage("Hovedhensyn er obligatorisk når Vurdering.Type == Skjonn.")
             .When(x => x.Type == VurderingsType.Skjonn);
 
+        // Regel 3.17: flerspråklig tekst — ingen duplikate språkkoder, og hver variant må
+        // ha både språkkode og verdi utfylt.
+        RuleFor(x => x.Hovedhensyn)
+            .Must(TekstVariantDtoValidator.IngenDuplikateSpraakkoder)
+            .WithMessage("Hovedhensyn kan ikke ha flere varianter for samme språk.");
+        RuleForEach(x => x.Hovedhensyn).SetValidator(new TekstVariantDtoValidator());
+
+        RuleFor(x => x.ForkastedeUtfall)
+            .Must(TekstVariantDtoValidator.IngenDuplikateSpraakkoder)
+            .WithMessage("ForkastedeUtfall kan ikke ha flere varianter for samme språk.");
+        RuleForEach(x => x.ForkastedeUtfall).SetValidator(new TekstVariantDtoValidator());
+
         RuleFor(x => x.Konfidens)
             .InclusiveBetween(0m, 1m)
             .WithMessage("Konfidens skal være mellom 0 og 1.")

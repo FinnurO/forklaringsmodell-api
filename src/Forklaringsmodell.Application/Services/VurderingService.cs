@@ -1,5 +1,6 @@
 using Forklaringsmodell.Application.Dtos;
 using Forklaringsmodell.Application.Exceptions;
+using Forklaringsmodell.Application.Mapping;
 using Forklaringsmodell.Application.Options;
 using Forklaringsmodell.Application.Repositories;
 using Forklaringsmodell.Domain.Entities;
@@ -123,6 +124,9 @@ public class VurderingService
             }
         }
 
+        var hovedhensynTekst = FlerspraakligTekstMapper.TilEntitet(dto.Hovedhensyn);
+        var forkastedeUtfallTekst = FlerspraakligTekstMapper.TilEntitet(dto.ForkastedeUtfall);
+
         var vurdering = new Vurdering
         {
             VurderingId = Guid.NewGuid(),
@@ -133,8 +137,10 @@ public class VurderingService
             Beregningsspor = dto.Beregningsspor,
             Konfidens = dto.Konfidens,
             Eskalert = eskalert,
-            Hovedhensyn = dto.Hovedhensyn,
-            ForkastedeUtfall = dto.ForkastedeUtfall
+            HovedhensynTekstId = hovedhensynTekst?.FlerspraakligTekstId,
+            HovedhensynTekst = hovedhensynTekst,
+            ForkastedeUtfallTekstId = forkastedeUtfallTekst?.FlerspraakligTekstId,
+            ForkastedeUtfallTekst = forkastedeUtfallTekst
         };
 
         foreach (var faktum in faktumRader)
@@ -181,8 +187,8 @@ public class VurderingService
         Beregningsspor = vurdering.Beregningsspor,
         Konfidens = vurdering.Konfidens,
         Eskalert = vurdering.Eskalert,
-        Hovedhensyn = vurdering.Hovedhensyn,
-        ForkastedeUtfall = vurdering.ForkastedeUtfall,
+        Hovedhensyn = FlerspraakligTekstMapper.TilDto(vurdering.HovedhensynTekst),
+        ForkastedeUtfall = FlerspraakligTekstMapper.TilDto(vurdering.ForkastedeUtfallTekst),
         ErLaast = await _repository.ErVurderingReferertAsync(vurdering.VurderingId, ct),
         FaktumIder = vurdering.VurderingFaktum.Select(vf => vf.FaktumId).ToList(),
         RettskildeIder = vurdering.VurderingRettskilde.Select(vr => vr.RettskildeId).ToList(),
