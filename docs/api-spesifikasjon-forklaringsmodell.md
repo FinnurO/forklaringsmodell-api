@@ -31,6 +31,8 @@ erDiagram
   VILKAR }o--o| REGEL : baserer_pa
   SAK }o--o{ SAK : relaterer_til
   VURDERING }o--o{ VURDERING : bygger_pa
+  VURDERING }o--o| VURDERING : er_delvurdering_av
+  VURDERING }o--o| VILKAR : gjelder
   VILKAR }o--o| FLERSPRAAKLIG_TEKST : har_forklaringstekst
   VURDERING }o--o| FLERSPRAAKLIG_TEKST : har_forklaringstekst
   VEDTAKSVIRKNING }o--o| FLERSPRAAKLIG_TEKST : har_forklaringstekst
@@ -50,6 +52,8 @@ Mange virkninger er ikke unike for én sak — samme vilkårstekst, samme parame
 Denne modellen skal **ikke** modellere saksflyt eller tilstandsoverganger — det er en CPSV-AP-hendelse (søknad, innrapportering, tilbakekall, melding) som utløser en *ny* `Sak`, og den nye saken kan lese fra en relatert sak uten å modifisere den. `Sak.UtlosendeHendelse` merker hvorfor saken oppstod, `SakRelasjon` kobler den til en sak den følger opp, og `Vurdering.RefererteVurderingIder` lar en ny vurdering eksplisitt bygge på en vurdering fra en annen (allerede frosset) sak — for eksempel når en melding om endret inntekt utløser en ny vurdering på nytt faktum, i sin egen sak, som gjenbruker den opprinnelige vurderingen av grunnvilkåret. Tilsvarende kan én `Vedtaksvirkning` være avledet av en annen — f.eks. et serveringssteds åpningstid låst til en tilknyttet skjenkebevillings skjenketid — via `Vedtaksvirkning.AvledetFraVirkningId`, som kan peke på tvers av både `Vedtak` og `Sak`.
 
 Forklaringstekstene som faktisk når en part — `Vilkar.StandardTekst`, `Vurdering.Hovedhensyn`/`ForkastedeUtfall`, `Vedtaksvirkning.Beskrivelse`/`LopendeVilkar` — skal kunne foreligge på flere språk samtidig (minimum bokmål og nynorsk, men ikke begrenset til disse). `FlerspraakligTekst` er en gjenbrukbar beholder for dette: hvert av de nevnte feltene peker på én `FlerspraakligTekst`-rad, som igjen har én `TekstVariant` per språk. Løsningen er bevisst *ikke* et fast sett med `XNynorsk`-kolonner (slik enkelte kildesystemer gjør det) — det ville krevd skjemaendring for hvert nye språk. Interne/tekniske felt (`Sak.Tittel`, `Vedtak.Utfall`, `Faktum.Verdi`, `Vurdering.Beregningsspor`, `Vilkar.Navn`, `Rettskilde.Henvisning` m.fl.) forblir enkeltspråklige — det er kun den delen av modellen som er en direkte del av begrunnelsen overfor en part, som flerspråkliggjøres.
+
+Et vilkår kan i praksis være sammensatt av flere delvurderinger (et undervilkår som må være oppfylt, et alternativ som ble vurdert og forkastet, en gren som var uaktuell). `Vurdering.ForelderVurderingId` lar en vurdering peke til en annen vurdering *i samme sak* som sin logiske forelder, slik at hele beslutningstreet — ikke bare bunnlinjekonklusjonen — kan gjengis i ettertid. `Vurdering.VilkarId` merker i tillegg hvilket katalogvilkår (`Vilkar`) vurderingen gjelder. Modellen håndhever bevisst **ingen** fast nedbrytingsmal for dette — det er det kallende systemets regelmotor/saksbehandler/KI som avgjør hvordan et vilkår faktisk ble brutt ned i en konkret sak, og modellens eneste jobb er å gjengi akkurat den strukturen trofast. Se også forskjellen fra `RefererteVurderingIder` i punkt 3.11: `ForelderVurderingId` er et intra-sak tre (forelderen trenger ikke være frosset), `RefererteVurderingIder` er en skrivebeskyttet sitering av en frossen rad i en *annen* sak.
 
 ### Enumer
 
@@ -148,9 +152,12 @@ public class Vurdering
     public bool Eskalert { get; set; }
     public Guid? HovedhensynTekstId { get; set; }       // -> FlerspraakligTekst, obligatorisk når Type == Skjonn, se punkt 3.17
     public Guid? ForkastedeUtfallTekstId { get; set; }  // -> FlerspraakligTekst, kontrastiv forklaring for skjønn, se punkt 3.17
+    public Guid? VilkarId { get; set; }             // hvilket katalogvilkår denne vurderingen gjelder, ren merking — se punkt 3.18
+    public Guid? ForelderVurderingId { get; set; }  // intra-sak foreldre-vurdering, ingen håndhevet mal — se punkt 3.18
     public ICollection<Guid> FaktumIder { get; set; }     // mange-til-mange via VurderingFaktum — kan peke til Faktum i en annen Sak, se punkt 3.11
     public ICollection<Guid> RettskildeIder { get; set; } // saksspesifikke kilder ut over Regel — se punkt 3.7
     public ICollection<Guid> RefererteVurderingIder { get; set; } // vurderinger fra andre (frosne) saker denne bygger på, se punkt 3.11
+    public ICollection<Guid> DelvurderingIder { get; set; } // beregnet: vurderinger i samme sak med ForelderVurderingId == denne, se punkt 3.18
 }
 
 public class Partsmedvirkning
@@ -253,6 +260,7 @@ public class ForklaringsloggOppforing
 15. **`Vilkar.Grunnlagstype` skal ikke blandes sammen.** Et vilkår med `Grunnlagstype == Rettslig` skal ha minst én `RettskildeIder`; `InternPraksis` og `Datakvalitet` krever det ikke, siden de ikke er forankret i en rettskilde, men i henholdsvis forvaltningspraksis og tekniske datakvalitetskontroller. `Kode`/`Kodeverk` er valgfrie, men bør fylles ut når vilkåret stammer fra et kildesystem med eget kodeverk (f.eks. NAVs `VILKAR_TYPE`), slik at katalogen kan matches maskinelt mot kildesystemet.
 16. **`Regel.RegeldefinisjonReferanse` er en ekstern pekepinn, ikke en kopi.** Selve regelartefaktet (f.eks. DMN-XML) skal ikke lagres i denne modellen — feltet peker bare til hvor det faktisk ligger (regelrepo, versjonskontroll). Kombinert med append-only-prinsippet i punkt 3.4 (ny `Regel`-rad per versjon) gir dette full sporbarhet til nøyaktig hvilken regelversjon som ble kjørt, uten å duplisere regelmotorens eget lagringsansvar.
 17. **Forklaringstekster skal kunne foreligge på flere språk uten skjemaendring.** `Vilkar.StandardTekst`, `Vurdering.Hovedhensyn`/`ForkastedeUtfall` og `Vedtaksvirkning.Beskrivelse`/`LopendeVilkar` peker på en `FlerspraakligTekst` med én `TekstVariant` per språk, i stedet for faste `XNynorsk`-kolonner. `TekstVariant.SpraakKode` valideres ikke mot noen fast liste (nye språk er bare nye rader), men skal være unik per `FlerspraakligTekst` (maks én variant per språk). Et påkrevd tekstfelt (`Vedtaksvirkning.Beskrivelse`) krever minst én `TekstVariant`; et valgfritt tekstfelt (`Hovedhensyn` når `Type != Skjonn`, `ForkastedeUtfall`, `LopendeVilkar`, `Vilkar.StandardTekst`) kan stå helt uten `FlerspraakligTekst`. Interne/tekniske felt flerspråkliggjøres ikke, se punkt 2 (bakgrunn).
+18. **`Vurdering` kan ha en intra-sak foreldre-vurdering og en katalogvilkår-merking — uten at modellen håndhever noen fast mal.** `Vurdering.VilkarId` merker hvilket katalogvilkår en vurdering gjelder (ren sporbarhet, ingen validering av struktur — samme kategori som `RettskildeIder`). `Vurdering.ForelderVurderingId` lar en vurdering være en delvurdering av en annen, i *samme* (fortsatt åpne) sak — forelderen må tilhøre samme `Sak`, men trenger ikke være frosset. Dette er bevisst forskjellig fra `RefererteVurderingIder` (regel 3.11), som kun peker til frosne rader i *andre* saker: foreldre-vurdering er et tre innad i én sak, kryss-sak-referanse er en skrivebeskyttet sitering av en annen, avsluttet sak. Hvordan et vilkår faktisk ble brutt ned i delvurderinger (og hvorfor en gren ble `Uaktuelt`/`IkkeVurdert`) er alene det kallende systemets valg — modellen verken foreskriver eller validerer noen fasit-struktur, den gjengir kun trofast det som faktisk skjedde.
 
 ## 4. Foreslått løsningsarkitektur (.NET)
 

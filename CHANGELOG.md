@@ -2,6 +2,31 @@
 
 Alle vesentlige endringer i dette prosjektet dokumenteres i denne filen.
 
+## [1.6.0] — Intra-sak vurderingshierarki og vilkårsmerking
+
+### Lagt til
+
+- **`Vurdering.VilkarId`** (ny, valgfri FK til `Vilkar`): ren sporbarhetsmerking av hvilket katalogvilkår en vurdering gjelder — ingen håndhevet validering, samme kategori som `RettskildeIder`.
+- **`Vurdering.ForelderVurderingId`** (ny, valgfri selvreferanse, intra-sak): lar en vurdering være en delvurdering av en annen, i samme (fortsatt åpne) sak. Forelderen må tilhøre samme `Sak`, men trenger ikke være frosset — til forskjell fra `RefererteVurderingIder` (regel 3.11), som kun peker til frosne rader i *andre* saker. Modellen håndhever bevisst ingen fast nedbrytingsmal: det er det kallende systemet som avgjør hvordan et vilkår faktisk ble brutt ned, og modellen gjengir det trofast (regel 3.18).
+- **`VurderingDto.DelvurderingIder`** (ny, beregnet): lar en klient lese ut hele treet av delvurderinger uten å måtte liste alle vurderinger i saken og filtrere selv.
+
+### Endrede API-kontrakter
+
+- `OpprettVurderingDto` tar nå imot valgfrie `vilkarId` og `forelderVurderingId`.
+- `VurderingDto` returnerer nå `vilkarId`, `forelderVurderingId` og `delvurderingIder`.
+
+### Migrasjon
+
+- Ny EF Core-migrasjon (`VurderingHierarkiOgVilkarReferanse`) legger til `VilkarId`/`ForelderVurderingId` på `Vurderinger` — rent additiv, ingen datatap.
+
+### Seed-data
+
+- `vurderingDeterministisk` merkes med `VilkarId` mot `DP_SATS_INNTEKT`-vilkåret, og får en ny delvurdering (`Uaktuelt`, siste 36 måneders inntektsgrunnlag) som demonstrerer treet ende-til-ende.
+
+### Tester
+
+- Nye tester for `VilkarId`-eksistenssjekk, delvurdering-lenking og at `ForelderVurderingId` avvises på tvers av saker.
+
 ## [1.5.0] — Flerspråklige forklaringstekster
 
 ### Lagt til

@@ -20,6 +20,8 @@ public class VurderingConfiguration : IEntityTypeConfiguration<Vurdering>
 
         builder.HasIndex(x => x.SakId);
         builder.HasIndex(x => x.RegelId);
+        builder.HasIndex(x => x.VilkarId);
+        builder.HasIndex(x => x.ForelderVurderingId);
 
         builder.HasOne(x => x.HovedhensynTekst)
             .WithMany()
@@ -29,6 +31,17 @@ public class VurderingConfiguration : IEntityTypeConfiguration<Vurdering>
         builder.HasOne(x => x.ForkastedeUtfallTekst)
             .WithMany()
             .HasForeignKey(x => x.ForkastedeUtfallTekstId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.Vilkar)
+            .WithMany()
+            .HasForeignKey(x => x.VilkarId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Regel 3.18: intra-sak tre, ikke en håndhevet mal — se kommentar på Vurdering.ForelderVurderingId.
+        builder.HasOne(x => x.ForelderVurdering)
+            .WithMany(x => x.Delvurderinger)
+            .HasForeignKey(x => x.ForelderVurderingId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

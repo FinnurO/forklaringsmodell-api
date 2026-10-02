@@ -106,6 +106,26 @@ public class VurderingService
             throw new NotFoundException($"Rettskilde {string.Join(", ", manglendeRettskilder)} finnes ikke.");
         }
 
+        if (dto.VilkarId.HasValue)
+        {
+            _ = await _repository.GetVilkarAsync(dto.VilkarId.Value, ct)
+                ?? throw new NotFoundException($"Vilkar {dto.VilkarId} finnes ikke.");
+        }
+
+        // Regel 3.18: ForelderVurderingId er et intra-sak tre, ikke en kryss-sak-referanse
+        // (som RefererteVurderingIder, regel 3.11) — foreldrevurderingen må derfor tilhøre
+        // samme sak, men trenger ikke være frosset ennå.
+        if (dto.ForelderVurderingId.HasValue)
+        {
+            var forelderVurdering = await _repository.GetVurderingAsync(dto.ForelderVurderingId.Value, ct)
+                ?? throw new NotFoundException($"Vurdering {dto.ForelderVurderingId} finnes ikke.");
+            if (forelderVurdering.SakId != sakId)
+            {
+                throw new NotFoundException(
+                    $"Vurdering {dto.ForelderVurderingId} finnes ikke i sak {sakId} — ForelderVurderingId kan ikke peke på tvers av saker.");
+            }
+        }
+
         var eskalert = dto.Eskalert;
 
         // Pragmatisk tolkning av regel 3.3: terskelen for eskalering leses fra
@@ -140,7 +160,9 @@ public class VurderingService
             HovedhensynTekstId = hovedhensynTekst?.FlerspraakligTekstId,
             HovedhensynTekst = hovedhensynTekst,
             ForkastedeUtfallTekstId = forkastedeUtfallTekst?.FlerspraakligTekstId,
-            ForkastedeUtfallTekst = forkastedeUtfallTekst
+            ForkastedeUtfallTekst = forkastedeUtfallTekst,
+            VilkarId = dto.VilkarId,
+            ForelderVurderingId = dto.ForelderVurderingId
         };
 
         foreach (var faktum in faktumRader)
@@ -189,9 +211,12 @@ public class VurderingService
         Eskalert = vurdering.Eskalert,
         Hovedhensyn = FlerspraakligTekstMapper.TilDto(vurdering.HovedhensynTekst),
         ForkastedeUtfall = FlerspraakligTekstMapper.TilDto(vurdering.ForkastedeUtfallTekst),
+        VilkarId = vurdering.VilkarId,
+        ForelderVurderingId = vurdering.ForelderVurderingId,
         ErLaast = await _repository.ErVurderingReferertAsync(vurdering.VurderingId, ct),
         FaktumIder = vurdering.VurderingFaktum.Select(vf => vf.FaktumId).ToList(),
         RettskildeIder = vurdering.VurderingRettskilde.Select(vr => vr.RettskildeId).ToList(),
-        RefererteVurderingIder = vurdering.RefererteVurderinger.Select(r => r.RefererteVurderingId).ToList()
+        RefererteVurderingIder = vurdering.RefererteVurderinger.Select(r => r.RefererteVurderingId).ToList(),
+        DelvurderingIder = vurdering.Delvurderinger.Select(d => d.VurderingId).ToList()
     };
 }

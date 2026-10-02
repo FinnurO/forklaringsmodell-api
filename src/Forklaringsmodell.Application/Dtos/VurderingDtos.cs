@@ -14,10 +14,15 @@ public class VurderingDto
     public bool Eskalert { get; set; }
     public List<TekstVariantDto> Hovedhensyn { get; set; } = new();
     public List<TekstVariantDto> ForkastedeUtfall { get; set; } = new();
+    public Guid? VilkarId { get; set; }
+    public Guid? ForelderVurderingId { get; set; }
     public bool ErLaast { get; set; }
     public List<Guid> FaktumIder { get; set; } = new();
     public List<Guid> RettskildeIder { get; set; } = new();
     public List<Guid> RefererteVurderingIder { get; set; } = new();
+
+    /// <summary>Innkommende: vurderinger i samme sak som har denne som ForelderVurderingId. Beregnet, ikke en del av opprettelsen.</summary>
+    public List<Guid> DelvurderingIder { get; set; } = new();
 }
 
 public class OpprettVurderingDto
@@ -35,6 +40,8 @@ public class OpprettVurderingDto
     public bool Eskalert { get; set; }
     public List<TekstVariantDto> Hovedhensyn { get; set; } = new();
     public List<TekstVariantDto> ForkastedeUtfall { get; set; } = new();
+    public Guid? VilkarId { get; set; }
+    public Guid? ForelderVurderingId { get; set; }
     public List<Guid> FaktumIder { get; set; } = new();
     public List<Guid> RettskildeIder { get; set; } = new();
     public List<Guid> RefererteVurderingIder { get; set; } = new();

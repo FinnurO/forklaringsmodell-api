@@ -281,10 +281,13 @@ public class VedtakService
                 Eskalert = v.Eskalert,
                 Hovedhensyn = FlerspraakligTekstMapper.TilDto(v.HovedhensynTekst),
                 ForkastedeUtfall = FlerspraakligTekstMapper.TilDto(v.ForkastedeUtfallTekst),
+                VilkarId = v.VilkarId,
+                ForelderVurderingId = v.ForelderVurderingId,
                 ErLaast = true,
                 FaktumIder = v.VurderingFaktum.Select(vf => vf.FaktumId).ToList(),
                 RettskildeIder = v.VurderingRettskilde.Select(vr => vr.RettskildeId).ToList(),
-                RefererteVurderingIder = v.RefererteVurderinger.Select(r => r.RefererteVurderingId).ToList()
+                RefererteVurderingIder = v.RefererteVurderinger.Select(r => r.RefererteVurderingId).ToList(),
+                DelvurderingIder = v.Delvurderinger.Select(d => d.VurderingId).ToList()
             }).ToList(),
             Partsmedvirkninger = partsmedvirkningRader.Select(p => new PartsmedvirkningDto
             {

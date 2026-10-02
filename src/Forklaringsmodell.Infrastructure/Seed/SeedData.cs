@@ -262,6 +262,34 @@ public static class SeedData
         };
         vilkarDagpengesats.VilkarRettskilde.Add(new VilkarRettskilde { VilkarId = vilkarDagpengesats.VilkarId, RettskildeId = rettskildeInntektskrav.RettskildeId });
 
+        // Regel 3.18: vurderingDeterministisk er hovedkonklusjonen for inntektsvilkåret —
+        // merkes med hvilket katalogvilkår den gjelder.
+        vurderingDeterministisk.VilkarId = vilkarDagpengesats.VilkarId;
+
+        // Demonstrerer en intra-sak delvurdering (regel 3.18): i denne saken ble
+        // inntektsvilkåret i praksis avgjort av siste 12 måneder alene — en alternativ
+        // beregning over 36 måneder ble også vurdert, men ikke lagt til grunn siden den ga
+        // lavere grunnlag. Modellen håndhever ingen fast nedbryting — dette er bare det
+        // kallende systemet som faktisk valgte å dokumentere det slik i denne saken.
+        var vurderingInntekt36Mnd = new Vurdering
+        {
+            VurderingId = Guid.NewGuid(),
+            SakId = sak.SakId,
+            RegelId = regelDeterministisk.RegelId,
+            Type = VurderingsType.Deterministisk,
+            Utfall = UtfallType.Uaktuelt,
+            Beregningsspor = "Snittinntekt siste 36 måneder ga lavere grunnlag enn siste 12 måneder, og ble derfor ikke lagt til grunn",
+            Eskalert = false,
+            VilkarId = vilkarDagpengesats.VilkarId,
+            ForelderVurderingId = vurderingDeterministisk.VurderingId
+        };
+        vurderingInntekt36Mnd.VurderingFaktum.Add(new VurderingFaktum
+        {
+            VurderingId = vurderingInntekt36Mnd.VurderingId,
+            FaktumId = faktumInntekt.FaktumId
+        });
+        LeggTilOppforing(OppforingsType.Vurdering, vurderingInntekt36Mnd.VurderingId);
+
         // Regel 3.15: et Vilkar med Grunnlagstype == Datakvalitet er en teknisk kontroll,
         // ikke et rettslig krav, og har derfor bevisst ingen RettskildeIder (jf. DUF-
         // aliaseksempelet i spesifikasjonens punkt 6).
@@ -338,7 +366,7 @@ public static class SeedData
         db.Kilder.AddRange(kildeAOrdningen, kildeSoknad);
         db.Faktum.AddRange(faktumInntekt, faktumBegrunnelse);
         db.Regler.AddRange(regelDeterministisk, regelGenerativKI, regelSkjonn);
-        db.Vurderinger.AddRange(vurderingDeterministisk, vurderingGenerativKI, vurderingSkjonn, vurderingUaktuelt, vurderingIkkeVurdert);
+        db.Vurderinger.AddRange(vurderingDeterministisk, vurderingGenerativKI, vurderingSkjonn, vurderingUaktuelt, vurderingIkkeVurdert, vurderingInntekt36Mnd);
         db.Vedtak.Add(vedtak);
         db.Forklaringslogger.Add(logg);
         db.Vedtaksvirkninger.Add(virkningDagpenger);

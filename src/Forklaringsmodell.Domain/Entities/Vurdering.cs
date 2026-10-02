@@ -15,6 +15,18 @@ public class Vurdering
     public Guid? HovedhensynTekstId { get; set; }       // obligatorisk når Type == Skjonn
     public Guid? ForkastedeUtfallTekstId { get; set; }  // kontrastiv forklaring for skjønn
 
+    /// <summary>Hvilket katalogvilkår denne vurderingen gjelder — ren sporbarhetsmerking, ingen håndhevet struktur, se regel 3.18.</summary>
+    public Guid? VilkarId { get; set; }
+
+    /// <summary>
+    /// Intra-sak foreldre-vurdering: lar en vurdering være en delvurdering av et mer
+    /// overordnet vilkår, i samme (fortsatt åpne) sak — i motsetning til
+    /// RefererteVurderinger, som kun peker til frosne rader i andre saker (regel 3.11).
+    /// Gjengir trofast hvilken struktur det kallende systemet faktisk valgte, uten å
+    /// håndheve eller forutsette noen fast mal, se regel 3.18.
+    /// </summary>
+    public Guid? ForelderVurderingId { get; set; }
+
     /// <summary>
     /// Skrivebeskyttet fordi denne raden allerede er referert av en ForklaringsloggOppforing.
     /// Beregnet felt, ikke lagret i databasen.
@@ -23,8 +35,11 @@ public class Vurdering
 
     public Sak? Sak { get; set; }
     public Regel? Regel { get; set; }
+    public Vilkar? Vilkar { get; set; }
     public FlerspraakligTekst? HovedhensynTekst { get; set; }
     public FlerspraakligTekst? ForkastedeUtfallTekst { get; set; }
+    public Vurdering? ForelderVurdering { get; set; }
+    public ICollection<Vurdering> Delvurderinger { get; set; } = new List<Vurdering>();
     public ICollection<VurderingFaktum> VurderingFaktum { get; set; } = new List<VurderingFaktum>();
     public ICollection<VurderingRettskilde> VurderingRettskilde { get; set; } = new List<VurderingRettskilde>();
 
