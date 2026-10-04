@@ -141,10 +141,19 @@
     "method": "GET",
     "path": "/api/vedtak/{vedtakId}/forklaring",
     "status": 200,
-    "bytes": 8203
+    "bytes": 15691
   },
   {
-    "file": "17-sak-b-opprett.json",
+    "file": "17-sak-a-sak-forklaring.json",
+    "group": "Sak A – godkjent automatisk",
+    "desc": "Hent hele saken samlet: levende visning i ett kall",
+    "method": "GET",
+    "path": "/api/saker/{sakId}/forklaring",
+    "status": 200,
+    "bytes": 16624
+  },
+  {
+    "file": "18-sak-b-opprett.json",
     "group": "Sak B – rutet til manuell behandling",
     "desc": "Opprett sak B",
     "method": "POST",
@@ -153,7 +162,7 @@
     "bytes": 604
   },
   {
-    "file": "18-sak-b-faktum-omfang.json",
+    "file": "19-sak-b-faktum-omfang.json",
     "group": "Sak B – rutet til manuell behandling",
     "desc": "Faktum: tiltakets omfang",
     "method": "POST",
@@ -162,16 +171,16 @@
     "bytes": 810
   },
   {
-    "file": "19-sak-b-faktum-ansvarsrett.json",
+    "file": "20-sak-b-faktum-ansvarsrett.json",
     "group": "Sak B – rutet til manuell behandling",
     "desc": "Faktum: foretaket mangler riktig kategori",
     "method": "POST",
     "path": "/api/saker/{sakId}/faktum",
     "status": 201,
-    "bytes": 938
+    "bytes": 937
   },
   {
-    "file": "20-sak-b-vurdering-rot.json",
+    "file": "21-sak-b-vurdering-rot.json",
     "group": "Sak B – rutet til manuell behandling",
     "desc": "Vurdering: rot, Uavklart og eskalert",
     "method": "POST",
@@ -180,7 +189,7 @@
     "bytes": 1304
   },
   {
-    "file": "21-sak-b-delvurdering-ansvarsrett.json",
+    "file": "22-sak-b-delvurdering-ansvarsrett.json",
     "group": "Sak B – rutet til manuell behandling",
     "desc": "Delvurdering: ansvarsrett, IkkeOppfylt og eskalert",
     "method": "POST",
@@ -189,7 +198,7 @@
     "bytes": 1507
   },
   {
-    "file": "22-sak-b-delvurdering-omfang.json",
+    "file": "23-sak-b-delvurdering-omfang.json",
     "group": "Sak B – rutet til manuell behandling",
     "desc": "Delvurdering: tiltakets omfang",
     "method": "POST",
@@ -198,7 +207,7 @@
     "bytes": 1361
   },
   {
-    "file": "23-sak-b-vurderinger-liste.json",
+    "file": "24-sak-b-vurderinger-liste.json",
     "group": "Sak B – rutet til manuell behandling",
     "desc": "List vurderingene i saken (ingen vedtak finnes ennå)",
     "method": "GET",
@@ -207,12 +216,21 @@
     "bytes": 2725
   },
   {
-    "file": "24-sak-b-faktum-liste.json",
+    "file": "25-sak-b-faktum-liste.json",
     "group": "Sak B – rutet til manuell behandling",
     "desc": "List faktum i saken",
     "method": "GET",
     "path": "/api/saker/{sakId}/faktum",
     "status": 200,
-    "bytes": 1189
+    "bytes": 1188
+  },
+  {
+    "file": "26-sak-b-sak-forklaring.json",
+    "group": "Sak B – rutet til manuell behandling",
+    "desc": "Hent hele saken samlet: ingen vedtak ennå, men alt er med",
+    "method": "GET",
+    "path": "/api/saker/{sakId}/forklaring",
+    "status": 200,
+    "bytes": 11149
   }
 ]

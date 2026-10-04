@@ -5,15 +5,15 @@
   "request": {
     "utfall": "Tillatelse til rehabilitering av skorstein innvilget",
     "faktumIder": [
-      "a8f71ec3-1b32-4464-8e0f-019da09cf387",
-      "37add316-70da-45bc-9a38-fc8f86544d88",
-      "6995eec4-f179-4693-bbcb-4b74e7a43fc7"
+      "36dbd527-f14a-4882-850a-2c8be6adb25d",
+      "abd9a9ac-e011-4cae-bcad-15609cc773fe",
+      "60691f1b-9672-4103-8587-90b1a25e3bad"
     ],
     "vurderingIder": [
-      "7deed7b7-6333-4d63-9673-ff3ca6914d52",
-      "ddbf09f1-2b63-4151-a1f8-ac35553feadb",
-      "59c4dbfc-3468-4ff2-b8ea-d9b24c15cb4d",
-      "04eca1cd-864b-450f-b4f1-e464ee60be27"
+      "eaa03ca4-dd00-4d34-8166-e8001908f53a",
+      "e8118f56-6772-4248-b79b-f5951e886cbf",
+      "e1b24ffc-ea74-4985-80cf-b5a87c4ecda4",
+      "2a95bac0-0058-4acb-96a1-7c58bb854eb1"
     ],
     "partsmedvirkningIder": [],
     "virkninger": [
@@ -30,21 +30,21 @@
           }
         ],
         "fastsettelsesmate": "Parametrisert",
-        "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
+        "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
         "varighet": "Varig",
         "vurderingIder": [
-          "7deed7b7-6333-4d63-9673-ff3ca6914d52"
+          "eaa03ca4-dd00-4d34-8166-e8001908f53a"
         ],
         "faktumIder": [
-          "a8f71ec3-1b32-4464-8e0f-019da09cf387"
+          "36dbd527-f14a-4882-850a-2c8be6adb25d"
         ]
       }
     ]
   },
   "response": {
-    "vedtakId": "311f1f57-8264-4413-8f0f-a087afaa48b2",
-    "sakId": "1778cc21-d029-485e-8170-1c4f73a15956",
-    "tidspunkt": "2026-10-04T19:36:24.1198247+00:00",
+    "vedtakId": "d2ca99fa-2518-48b8-b8ae-b733071b87b9",
+    "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
+    "tidspunkt": "2026-10-04T19:55:43.0417664+00:00",
     "utfall": "Tillatelse til rehabilitering av skorstein innvilget",
     "automatiseringsGrad": "Helautomatisert"
   }

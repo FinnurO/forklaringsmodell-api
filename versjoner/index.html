@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Versjoner – Forklaringsmodell</title>
-<meta name="description" content="Versjonshistorikken til forklaringsmodell-api: hva som er nytt i hver versjon, fra første leveranse (1.0.0) til intra-sak vurderingshierarki (1.6.0).">
+<meta name="description" content="Versjonshistorikken til forklaringsmodell-api: hva som er nytt i hver versjon, fra første leveranse (1.0.0) til samlet forklaring av en sak (1.7.0).">
 <link rel="canonical" href="https://finnuro.github.io/forklaringsmodell-api/versjoner/">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../assets/css/fonts.css">
@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="../assets/css/vendor/designsystemet-theme.css">
 <link rel="stylesheet" href="../assets/css/site.css">
 <meta property="og:title" content="Versjoner – Forklaringsmodell">
-<meta property="og:description" content="Hva som er nytt i hver versjon av forklaringsmodellen, fra 1.0.0 til 1.6.0.">
+<meta property="og:description" content="Hva som er nytt i hver versjon av forklaringsmodellen, fra 1.0.0 til 1.7.0.">
 <meta property="og:type" content="website">
 </head>
 <body>
@@ -56,6 +56,16 @@
     <p style="max-width:46rem;">Dette er et sammendrag. Fasit er <a href="https://github.com/FinnurO/forklaringsmodell-api/blob/master/CHANGELOG.md" target="_blank" rel="noopener">hele CHANGELOG-en på GitHub</a>, og den samlede beskrivelsen av modellen og endepunktene står i <a href="https://github.com/FinnurO/forklaringsmodell-api/blob/master/docs/api-spesifikasjon-forklaringsmodell.md" target="_blank" rel="noopener">API-spesifikasjonen</a>. Endringer som krever tilpasning hos en klient er merket <span class="pill warn">brytende</span>.</p>
 
     <ol class="vers" style="margin-top:var(--ds-size-6);">
+
+      <li id="v1-7-0">
+        <h3><span class="v">v1.7.0</span> Samlet forklaring av en sak</h3>
+        <ul>
+          <li>Nytt endepunkt <code>GET /api/saker/{sakId}/forklaring</code> returnerer hele saken levende i ett svar, også uten vedtak, for eksempel en sak rutet til manuell behandling. <code>erLaast</code> viser hva som er frosset av et vedtak.</li>
+          <li>Den frosne forklaringen <code>GET /api/vedtak/{id}/forklaring</code> er beriket bakoverkompatibelt: <code>vurderingstre</code>, oppløst <code>referansedata</code>, <code>refererteVurderinger</code> fra andre frosne saker (regel 3.11) og <code>andreFaktum</code>. Eksisterende felt er uendret.</li>
+          <li>Vurderingene finnes både flatt og nøstet i samme svar (samme rader), og svaret kan bli stort for store saker.</li>
+          <li>Additivt: ingen databasemigrasjon, ingen brytende endring og ingen ny forretningsregel.</li>
+        </ul>
+      </li>
 
       <li id="v1-6-0">
         <h3><span class="v">v1.6.0</span> Intra-sak vurderingshierarki og vilkårsmerking</h3>

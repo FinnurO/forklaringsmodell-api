@@ -3,20 +3,20 @@
   "path": "/api/saker/{sakId}/faktum",
   "status": 201,
   "request": {
-    "kildeId": "53cf8e0f-4b79-4f79-9407-71408944049c",
+    "kildeId": "c7e89dda-0e51-46a8-a557-d49b467887ea",
     "type": "Raatt",
     "struktur": "Strukturert",
     "verdi": "Tiltaket er innvendig fôring av eksisterende skorstein. Ingen endring av utvendige dimensjoner."
   },
   "response": {
-    "faktumId": "0fa807c4-aa63-483c-b89d-7307a991768a",
-    "sakId": "a1bd5c89-6250-43d6-8407-baf6ba97aab3",
-    "kildeId": "53cf8e0f-4b79-4f79-9407-71408944049c",
+    "faktumId": "87b61083-a6b9-4e65-94e1-6630ecb5b8ec",
+    "sakId": "452b23ad-2073-45c4-abda-f7dc13e25d11",
+    "kildeId": "c7e89dda-0e51-46a8-a557-d49b467887ea",
     "type": "Raatt",
     "struktur": "Strukturert",
     "verdi": "Tiltaket er innvendig fôring av eksisterende skorstein. Ingen endring av utvendige dimensjoner.",
     "avledetFraFaktumId": null,
-    "innhentetTidspunkt": "2026-10-04T19:36:24.3649902+00:00",
+    "innhentetTidspunkt": "2026-10-04T19:55:43.7815782+00:00",
     "rettskildeIder": [],
     "erLaast": false
   }

@@ -3,21 +3,21 @@
   "path": "/api/saker/{sakId}/vurderinger",
   "status": 201,
   "request": {
-    "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+    "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
     "type": "Deterministisk",
     "utfall": "Oppfylt",
     "beregningsspor": "Tiltaket er begrenset til innvendig fôring, ingen utvendig dimensjonsendring => regnes som rehabilitering/reparasjon, ikke en ny installasjon, jf. § 20-1 bokstav f",
     "eskalert": false,
-    "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
-    "forelderVurderingId": "7deed7b7-6333-4d63-9673-ff3ca6914d52",
+    "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+    "forelderVurderingId": "eaa03ca4-dd00-4d34-8166-e8001908f53a",
     "faktumIder": [
-      "a8f71ec3-1b32-4464-8e0f-019da09cf387"
+      "36dbd527-f14a-4882-850a-2c8be6adb25d"
     ]
   },
   "response": {
-    "vurderingId": "59c4dbfc-3468-4ff2-b8ea-d9b24c15cb4d",
-    "sakId": "1778cc21-d029-485e-8170-1c4f73a15956",
-    "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+    "vurderingId": "e1b24ffc-ea74-4985-80cf-b5a87c4ecda4",
+    "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
+    "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
     "type": "Deterministisk",
     "utfall": "Oppfylt",
     "beregningsspor": "Tiltaket er begrenset til innvendig fôring, ingen utvendig dimensjonsendring => regnes som rehabilitering/reparasjon, ikke en ny installasjon, jf. § 20-1 bokstav f",
@@ -25,11 +25,11 @@
     "eskalert": false,
     "hovedhensyn": [],
     "forkastedeUtfall": [],
-    "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
-    "forelderVurderingId": "7deed7b7-6333-4d63-9673-ff3ca6914d52",
+    "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+    "forelderVurderingId": "eaa03ca4-dd00-4d34-8166-e8001908f53a",
     "erLaast": false,
     "faktumIder": [
-      "a8f71ec3-1b32-4464-8e0f-019da09cf387"
+      "36dbd527-f14a-4882-850a-2c8be6adb25d"
     ],
     "rettskildeIder": [],
     "refererteVurderingIder": [],

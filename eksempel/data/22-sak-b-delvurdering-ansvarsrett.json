@@ -3,24 +3,24 @@
   "path": "/api/saker/{sakId}/vurderinger",
   "status": 201,
   "request": {
-    "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+    "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
     "type": "Deterministisk",
     "utfall": "IkkeOppfylt",
     "beregningsspor": "Foretakets sentrale godkjenning dekker ikke tiltaksklassen/kategorien dette tiltaket krever => kan ikke automatisk bekreftes",
     "eskalert": true,
-    "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
-    "forelderVurderingId": "1f16ca36-4518-4f34-9d45-7a0e298c3080",
+    "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+    "forelderVurderingId": "bf44f609-39b1-49b8-bba2-ca02e7051f6c",
     "faktumIder": [
-      "52828432-d6b1-46dd-bd55-de3cfaf6b23d"
+      "4a2f0d48-d49e-4774-a759-a3d0b429ef71"
     ],
     "rettskildeIder": [
-      "59526578-8577-4f0b-a97b-91bd7dc728c3"
+      "2c741e06-f023-44c3-85e8-6532b217881b"
     ]
   },
   "response": {
-    "vurderingId": "b91cd483-b863-44c8-ac58-ef760dab065c",
-    "sakId": "a1bd5c89-6250-43d6-8407-baf6ba97aab3",
-    "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+    "vurderingId": "02e60621-8515-4c1d-b099-9dbb753c99f6",
+    "sakId": "452b23ad-2073-45c4-abda-f7dc13e25d11",
+    "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
     "type": "Deterministisk",
     "utfall": "IkkeOppfylt",
     "beregningsspor": "Foretakets sentrale godkjenning dekker ikke tiltaksklassen/kategorien dette tiltaket krever => kan ikke automatisk bekreftes",
@@ -28,14 +28,14 @@
     "eskalert": true,
     "hovedhensyn": [],
     "forkastedeUtfall": [],
-    "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
-    "forelderVurderingId": "1f16ca36-4518-4f34-9d45-7a0e298c3080",
+    "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+    "forelderVurderingId": "bf44f609-39b1-49b8-bba2-ca02e7051f6c",
     "erLaast": false,
     "faktumIder": [
-      "52828432-d6b1-46dd-bd55-de3cfaf6b23d"
+      "4a2f0d48-d49e-4774-a759-a3d0b429ef71"
     ],
     "rettskildeIder": [
-      "59526578-8577-4f0b-a97b-91bd7dc728c3"
+      "2c741e06-f023-44c3-85e8-6532b217881b"
     ],
     "refererteVurderingIder": [],
     "delvurderingIder": []
