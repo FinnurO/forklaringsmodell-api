@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="nb" data-color-scheme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modell – entiteter, enumer og relasjoner i Forklaringsmodell</title>
+<meta name="description" content="Informasjonsmodellen bak Forklaringsmodell: entitetskatalog, enumer, beslutningstreet i Vurdering, flerspråklige tekster, eksterne referanser og ER-diagram.">
+<link rel="canonical" href="https://finnuro.github.io/forklaringsmodell-api/modell/">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/vendor/designsystemet.css">
+<link rel="stylesheet" href="../assets/css/vendor/designsystemet-theme.css">
+<link rel="stylesheet" href="../assets/css/site.css">
+<meta property="og:title" content="Modell – Forklaringsmodell">
+<meta property="og:description" content="Entiteter, enumer og relasjoner i informasjonsmodellen som forklarer et vedtak: fra sak og faktum til vurdering, vedtak og frosset forklaringslogg.">
+<meta property="og:type" content="website">
+</head>
+<body>
+
+<a class="ds-link skip-to-content" href="#main">Hopp til innhold</a>
+
+<div class="disclaimer-bar">
+  <div class="wrap">
+    <span>📎 <strong>Prototype / proof of concept</strong> — ikke en produksjonstjeneste og ikke en offisiell Digdir-tjeneste. <strong>Utviklet sammen med Claude Code.</strong></span>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand plain" href="../">
+      <span class="brand__mark" aria-hidden="true">FM</span>
+      <span class="brand__text">
+        <span class="brand__title">Forklaringsmodell</span>
+        <span class="brand__subtitle">API for forklarbare vedtak</span>
+      </span>
+    </a>
+    <nav class="main-nav" aria-label="Hovedmeny">
+      <a href="../">Forside</a>
+      <a href="./" aria-current="page">Modell</a>
+      <a href="../regler/">Regler</a>
+      <a href="../eksempel/">Eksempel</a>
+      <a href="../api/">API</a>
+      <a href="../versjoner/">Versjoner</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap page-head">
+    <span style="font-size:var(--ds-body-xs-font-size); color:var(--ds-color-text-subtle);"><a class="ds-link" href="../">Forside</a> / Modell</span>
+    <h1>Informasjonsmodellen</h1>
+    <p class="lead">Hvilke entiteter modellen består av, hvordan de henger sammen, og hvorfor den er bygget slik: fra den levende saken til det frosne vedtaket med forklaringslogg.</p>
+  </div>
+
+  <div class="wrap guide-layout">
+    <nav class="guide-nav" aria-label="Innhold på siden">
+      <a href="#oversikt" data-anchor="oversikt">Oversikt</a>
+      <a href="#entiteter" data-anchor="entiteter">Entitetskatalog</a>
+      <a href="#enumer" data-anchor="enumer">Enumer</a>
+      <a href="#beslutningstreet" data-anchor="beslutningstreet">Vurdering og beslutningstreet</a>
+      <a href="#flerspraaklige-tekster" data-anchor="flerspraaklige-tekster">Flerspråklige tekster</a>
+      <a href="#eksterne-referanser" data-anchor="eksterne-referanser">Eksterne referanser</a>
+      <a href="#er-diagram" data-anchor="er-diagram">ER-diagram som tekst</a>
+    </nav>
+
+    <div class="guide-article">
+
+      <!-- ===================================================== 1. OVERSIKT -->
+      <section id="oversikt">
+        <span class="section-num">01</span>
+        <h2>Oversikt</h2>
+        <p class="intro">Modellen skiller mellom en levende saksmappe og et frosset øyeblikksbilde av det som forklarer vedtaket.</p>
+        <div class="prose">
+          <p>En <code>Sak</code> kan endres helt til det fattes et <code>Vedtak</code>. Til saken hører <code>Faktum</code> (opplysningene), <code>Vurdering</code> (en regel anvendt på faktum) og eventuelt <code>Partsmedvirkning</code>. Når vedtaket opprettes, bygger serveren en <code>Forklaringslogg</code> som peker på nøyaktig de radene som forklarer vedtaket, og alt loggen peker på blir skrivebeskyttet. En senere korrigering er alltid en ny rad.</p>
+          <p>Rundt dette ligger referansedata som deles på tvers av saker: <code>Kilde</code> (hvor faktum kommer fra), <code>Rettskilde</code> (hjemmelen), <code>Regel</code> (den operasjonaliserte regelen) og <code>Vilkar</code> (en katalog av gjenbrukbare vilkår).</p>
+        </div>
+
+        <figure class="diagram">
+          <svg viewBox="0 0 704 466" role="img" aria-labelledby="oversikt-tittel oversikt-beskr" xmlns="http://www.w3.org/2000/svg">
+            <title id="oversikt-tittel">Kjernekjeden i forklaringsmodellen</title>
+            <desc id="oversikt-beskr">Sak har Faktum, Vurdering og Vedtak. Vurdering bruker Faktum, anvender en Regel og gjelder et Vilkar. Faktum kommer fra en Kilde. Kilde og Regel har Rettskilde som hjemmel. Vedtak har en Forklaringslogg og medfører Vedtaksvirkninger, og hver Vedtaksvirkning kan være en instans av et Vilkar.</desc>
+            <defs>
+              <marker id="pil" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+                <path d="M0,0 L8,4 L0,8 z" style="fill:var(--ds-color-text-subtle); stroke:none"/>
+              </marker>
+            </defs>
+
+            <!-- Bokser: saksdata -->
+            <g style="fill:var(--ds-color-background-default); stroke:var(--ds-color-border-default); stroke-width:1.5">
+              <rect x="6" y="12" width="692" height="44" rx="8"/>
+              <rect x="6" y="96" width="146" height="52" rx="8"/>
+              <rect x="188" y="96" width="146" height="52" rx="8"/>
+            </g>
+            <!-- Bokser: frosset ved vedtak -->
+            <g style="fill:var(--ds-color-accent-surface-tinted); stroke:var(--ds-color-accent-base-default); stroke-width:1.5">
+              <rect x="370" y="96" width="146" height="52" rx="8"/>
+              <rect x="370" y="190" width="146" height="52" rx="8"/>
+              <rect x="552" y="190" width="146" height="52" rx="8"/>
+            </g>
+            <!-- Bokser: referansedata -->
+            <g style="fill:var(--ds-color-background-tinted); stroke:var(--ds-color-border-default); stroke-width:1.5; stroke-dasharray:5 3">
+              <rect x="6" y="190" width="146" height="52" rx="8"/>
+              <rect x="188" y="190" width="146" height="52" rx="8"/>
+              <rect x="6" y="284" width="146" height="52" rx="8"/>
+              <rect x="6" y="378" width="692" height="44" rx="8"/>
+            </g>
+
+            <!-- Piler -->
+            <g style="fill:none; stroke:var(--ds-color-text-subtle); stroke-width:1.5">
+              <path d="M79 56 V96" marker-end="url(#pil)"/>
+              <path d="M261 56 V96" marker-end="url(#pil)"/>
+              <path d="M443 56 V96" marker-end="url(#pil)"/>
+              <path d="M188 122 H152" marker-end="url(#pil)"/>
+              <path d="M79 148 V190" marker-end="url(#pil)"/>
+              <path d="M79 242 V284" marker-end="url(#pil)"/>
+              <path d="M261 148 V190" marker-end="url(#pil)"/>
+              <path d="M225 242 V310 H152" marker-end="url(#pil)"/>
+              <path d="M443 148 V190" marker-end="url(#pil)"/>
+              <path d="M516 122 H625 V190" marker-end="url(#pil)"/>
+              <path d="M625 242 V378" marker-end="url(#pil)"/>
+              <path d="M334 122 H352 V378" marker-end="url(#pil)"/>
+            </g>
+
+            <!-- Tittel i boksene -->
+            <g style="fill:var(--ds-color-text-default); font-size:14px; font-weight:600; text-anchor:middle">
+              <text x="352" y="31">Sak</text>
+              <text x="79" y="118">Faktum</text>
+              <text x="261" y="118">Vurdering</text>
+              <text x="443" y="118">Vedtak</text>
+              <text x="79" y="212">Kilde</text>
+              <text x="261" y="212">Regel</text>
+              <text x="443" y="212">Forklaringslogg</text>
+              <text x="625" y="212">Vedtaksvirkning</text>
+              <text x="79" y="306">Rettskilde</text>
+              <text x="352" y="397">Vilkar</text>
+            </g>
+            <!-- Undertekst i boksene -->
+            <g style="fill:var(--ds-color-text-subtle); font-size:11px; text-anchor:middle">
+              <text x="352" y="48">levende saksmappe, kan endres til et vedtak foreligger</text>
+              <text x="79" y="136">rått eller subsumert</text>
+              <text x="261" y="136">utfall + beregningsspor</text>
+              <text x="443" y="136">utfall og virkninger</text>
+              <text x="79" y="230">opphav til faktum</text>
+              <text x="261" y="230">versjonert regelrad</text>
+              <text x="443" y="230">peker på frosne rader</text>
+              <text x="625" y="230">tidsbegrenset virkning</text>
+              <text x="79" y="324">lov, forskrift m.m.</text>
+              <text x="352" y="413">katalog av gjenbrukbare vilkår (referansedata)</text>
+            </g>
+
+            <!-- Piletekster -->
+            <g style="fill:var(--ds-color-text-subtle); font-size:11px">
+              <text x="85" y="80">har</text>
+              <text x="267" y="80">inneholder</text>
+              <text x="449" y="80">resulterer i</text>
+              <text x="85" y="173">kommer fra</text>
+              <text x="85" y="267">hjemmel</text>
+              <text x="267" y="173">anvender</text>
+              <text x="231" y="272">operasjonaliserer</text>
+              <text x="449" y="173">har</text>
+              <text x="530" y="116">medfører</text>
+              <text x="358" y="300">gjelder</text>
+              <text x="619" y="316" style="text-anchor:end">er instans av</text>
+            </g>
+
+            <!-- Tegnforklaring -->
+            <g>
+              <rect x="6" y="440" width="14" height="14" rx="3" style="fill:var(--ds-color-background-default); stroke:var(--ds-color-border-default); stroke-width:1.5"/>
+              <rect x="116" y="440" width="14" height="14" rx="3" style="fill:var(--ds-color-accent-surface-tinted); stroke:var(--ds-color-accent-base-default); stroke-width:1.5"/>
+              <rect x="260" y="440" width="14" height="14" rx="3" style="fill:var(--ds-color-background-tinted); stroke:var(--ds-color-border-default); stroke-width:1.5; stroke-dasharray:3 2"/>
+              <path d="M410 447 H436" marker-end="url(#pil)" style="fill:none; stroke:var(--ds-color-text-subtle); stroke-width:1.5"/>
+            </g>
+            <g style="fill:var(--ds-color-text-subtle); font-size:11px">
+              <text x="26" y="451">Saksdata</text>
+              <text x="136" y="451">Frosset ved vedtak</text>
+              <text x="280" y="451">Referansedata</text>
+              <text x="444" y="451">refererer til</text>
+            </g>
+          </svg>
+          <figcaption>Kjernekjeden. Piler går fra raden som refererer til raden den refererer til. Ikke alle relasjoner er tegnet: <code>Forklaringslogg</code> peker på de frosne Faktum-, Vurdering- og Partsmedvirkning-radene, <code>Vedtaksvirkning</code> kan peke på Vurdering og Faktum som fastsatte den, og <code>Rettskilde</code> kan også knyttes til Vurdering og Vilkar. Se ER-diagrammet nederst for alle koblingene.</figcaption>
+        </figure>
+
+        <div class="prose">
+          <p>Tre ting er verdt å merke seg allerede her:</p>
+          <ul>
+            <li><strong>Rettskilde hører ikke til saken.</strong> Den kobles via <code>Regel</code> (den stående hjemmelen), via <code>Vurdering</code> (saksspesifikke kilder, for eksempel en dom i en skjønnsvurdering), via <code>Kilde</code> (hjemmel for innhenting) og via <code>Vilkar</code> — men aldri direkte til <code>Sak</code> (regel 3.7).</li>
+            <li><strong>Frosne rader er append-only.</strong> Det betyr at de bare kan legges til, aldri endres eller slettes. Fra vedtaket er opprettet gjelder det <code>Vedtak</code>, <code>Forklaringslogg</code>, <code>Vedtaksvirkning</code> og alle faktum, vurderinger og partsmedvirkninger loggen peker på (regel 3.1 og 3.10).</li>
+            <li><strong>Modellen er ingen prosessmotor.</strong> Den lagrer ikke saksflyt eller tilstandsoverganger. At én sak oppstod fra en annen, registreres som en ren referanse (<code>SakRelasjon</code>, regel 3.11).</li>
+          </ul>
+          <p>De 18 forretningsreglene står samlet på <a class="ds-link" href="../regler/">regelsiden</a>, og et utfylt eksempel finnes under <a class="ds-link" href="../eksempel/">Eksempel</a>.</p>
+        </div>
+      </section>
+
+      <!-- ===================================================== 2. ENTITETER -->
+      <section id="entiteter">
+        <span class="section-num">02</span>
+        <h2>Entitetskatalog</h2>
+        <p class="intro">Én rolle og noen sentrale felt per entitet. Feltnavn er skrevet slik de heter i koden.</p>
+        <div class="card-grid cols-2">
+
+          <div class="entity-card" id="sak">
+            <h3>Sak</h3>
+            <p>Den levende saksmappen. Kan endres helt til det finnes et vedtak, og kan få nye vedtak senere, for eksempel ved klage eller omgjøring.</p>
+            <dl>
+              <dt>Tittel</dt><dd>enkeltspråklig tekst</dd>
+              <dt>Status</dt><dd>SakStatus</dd>
+              <dt>UtlosendeHendelse</dt><dd>HendelseType: hvorfor saken oppstod</dd>
+              <dt>CpsvTjenesteReferanse</dt><dd>valgfri IRI til tjenesten</dd>
+              <dt>Opprettet</dt><dd>tidspunkt; SistEndret følger med</dd>
+            </dl>
+          </div>
+
+          <div class="entity-card" id="sakrelasjon">
+            <h3>SakRelasjon</h3>
+            <p>Kobler en ny, oppfølgende sak til saken den bygger videre på. En ren referanse, ikke en prosessmotor.</p>
+            <dl>
+              <dt>SakId</dt><dd>den nye/oppfølgende saken</dd>
+              <dt>RelatertSakId</dt><dd>saken den følger opp</dd>
+              <dt>Type</dt><dd>SakRelasjonType</dd>
+            </dl>
+          </div>
+
+          <div class="entity-card" id="faktum">
+            <h3>Faktum</h3>
+            <p>En opplysning om saken, rå eller subsumert (tolket slik at den passer rettsregelen), med kilde og sporbar avledning.</p>
+            <dl>
+              <dt>Type</dt><dd>Raatt eller Subsumert</dd>
+              <dt>Struktur</dt><dd>Strukturert eller Ustrukturert</dd>
+              <dt>Verdi</dt><dd>fritekst, eller JSON ved strukturert</dd>
+              <dt>KildeId</dt><dd>hvor opplysningen kommer fra</dd>
+              <dt>AvledetFraFaktumId</dt><dd>selvreferanse: transformasjonsspor</dd>
+              <dt>InnhentetTidspunkt</dt><dd>når den ble hentet inn</dd>
+            </dl>
+          </div>
+
+          <div class="entity-card" id="kilde">
+            <h3>Kilde</h3>
+            <p>Hvor et faktum kommer fra. Må ha minst én rettskilde som hjemmel for innhenting før det kan brukes (regel 3.8).</p>
+            <dl>
+              <dt>Navn</dt><dd>for eksempel et register</dd>
+              <dt>Type</dt><dd>KildeType</dd>
+              <dt>Autoritativ</dt><dd>ja/nei</dd>
+              <dt>RettskildeIder</dt><dd>hjemmel for innhenting</dd>
+              <dt>CccevReferanse</dt><dd>valgfri IRI</dd>
+            </dl>
+          </div>
+
+          <div class="entity-card" id="rettskilde">
+            <h3>Rettskilde</h3>
+            <p>Lov, forskrift, rundskriv eller annen hjemmel. Kobles aldri direkte til Sak (regel 3.7).</p>
+            <dl>
+              <dt>Type</dt><dd>RettskildeType</dd>
+              <dt>Henvisning</dt><dd>for eksempel «folketrygdloven § 4-5»</dd>
+              <dt>VersjonDato</dt><dd>bare for Lov/Forskrift</dd>
+              <dt>EliReferanse</dt><dd>bare for Lov/Forskrift</dd>
+            </dl>
+          </div>
+
+          <div class="entity-card" id="regel">
+            <h3>Regel</h3>
+            <p>En operasjonalisert regelversjon, koblet til rettskildene den bygger på. Når en vurdering har brukt den, skrives den aldri over; ny versjon blir ny rad (regel 3.4).</p>
+            <dl>
+              <dt>Teknologi</dt><dd>for eksempel «DMN» eller «LLM-prompt v3»</dd>
+              <dt>Type</dt><dd>VurderingsType, regelens konfigurerte type</dd>
+              <dt>RettskildeIder</dt><dd>mange-til-mange</dd>
+              <dt>CpsvRegelReferanse</dt><dd>valgfri IRI</dd>
+              <dt>RegeldefinisjonReferanse</dt><dd>valgfri URI til selve regelartefaktet</dd>
+            </dl>
+          </div>
+
+          <div class="entity-card" id="vurdering">
+            <h3>Vurdering</h3>
+            <p>En regel anvendt på faktum i en sak. Dekker deterministisk regel, generativ KI og skjønn, og dokumenterer også vilkår som ikke ble vurdert.</p>
+            <dl>
+              <dt>Utfall</dt><dd>UtfallType (se kapittel 04)</dd>
+              <dt>Type</dt><dd>faktisk brukt VurderingsType, kan avvike fra regelens ved eskalering</dd>
+              <dt>Beregningsspor</dt><dd>input, mellomverdier og begrunnelse</dd>
+              <dt>Konfidens</dt><dd>0–1, for generativ KI; Eskalert settes ved lav konfidens</dd>
+              <dt>Hovedhensyn</dt><dd>flerspråklig; obligatorisk ved skjønn</dd>
+              <dt>ForelderVurderingId</dt><dd>delvurdering i samme sak</dd>
+            </dl>
+          </div>
+
+          <div class="entity-card" id="vedtak">
+            <h3>Vedtak</h3>
+            <p>Det frosne utfallet i en sak. Når det opprettes, fryses alt det refererer til i samme transaksjon.</p>
+            <dl>
+              <dt>SakId</dt><dd>saken vedtaket tilhører</dd>
+              <dt>Tidspunkt</dt><dd>når vedtaket ble fattet</dd>
+              <dt>Utfall</dt><dd>enkeltspråklig tekst</dd>
+              <dt>AutomatiseringsGrad</dt><dd>beregnes av serveren fra vurderingene (regel 3.5)</dd>
+              <dt>Virkninger</dt><dd>Vedtaksvirkning-radene</dd>
+            </dl>
+          </div>
+
+          <div class="entity-card" id="forklaringslogg">
+            <h3>Forklaringslogg</h3>
+            <p>Det frosne øyeblikksbildet av hva som forklarer vedtaket. Består av ForklaringsloggOppforing-rader, som hver peker på ett faktum, én vurdering eller én partsmedvirkning.</p>
+            <dl>
+              <dt>LoggId</dt><dd>identitet</dd>
+              <dt>VedtakId</dt><dd>ett vedtak har én logg</dd>
+              <dt>Oppforinger</dt><dd>liste av ForklaringsloggOppforing</dd>
+              <dt>Oppforing.Type</dt><dd>Faktum, Vurdering eller Partsmedvirkning</dd>
+              <dt>Oppforing.ReferanseId</dt><dd>id til raden som pekes på</dd>
+            </dl>
+          </div>
+
+          <div class="entity-card" id="vedtaksvirkning">
+            <h3>Vedtaksvirkning</h3>
+            <p>Én uavhengig, tidsbegrenset virkning av et vedtak, for eksempel en tillatelse, en plikt, en ytelse eller et gebyr. Har flerspråklig Beskrivelse og kan peke til et katalogført Vilkar. Frosset sammen med vedtaket (regel 3.10).</p>
+            <dl>
+              <dt>Type</dt><dd>VirkningType</dd>
+              <dt>Fastsettelsesmate</dt><dd>statisk, parametrisert, skjønnsbasert eller avledet</dd>
+              <dt>Varighet</dt><dd>VarighetsType</dd>
+              <dt>GyldigFra / GyldigTil</dt><dd>GyldigTil skal være null ved Varig</dd>
+              <dt>Belop</dt><dd>for ytelse, tilskudd eller gebyr</dd>
+              <dt>AvledetFraVirkningId</dt><dd>selvreferanse, kan gå på tvers av saker</dd>
+            </dl>
+          </div>
+
+          <div class="entity-card" id="vilkar">
+            <h3>Vilkar</h3>
+            <p>En gjenbrukbar katalogoppføring for et vilkår, fra faste standardvilkår til parametrisert eller skjønnsbasert innhold. Referansedata, ikke eid av ett bestemt vedtak (regel 3.12).</p>
+            <dl>
+              <dt>Navn</dt><dd>enkeltspråklig</dd>
+              <dt>Kode / Kodeverk</dt><dd>valgfri kode fra kildesystemets kodeverk</dd>
+              <dt>Grunnlagstype</dt><dd>Rettslig, InternPraksis eller Datakvalitet</dd>
+              <dt>Fastsettelsesmate</dt><dd>typisk måte vilkåret fastsettes på</dd>
+              <dt>StandardTekst</dt><dd>flerspråklig mal</dd>
+              <dt>RegelId</dt><dd>valgfri kobling til en Regel</dd>
+            </dl>
+          </div>
+
+          <div class="entity-card" id="partsmedvirkning">
+            <h3>Partsmedvirkning</h3>
+            <p>Partens medvirkning i saken: forhåndsvarsel, kommentar eller innsynskrav. Kan refereres av forklaringsloggen.</p>
+            <dl>
+              <dt>Type</dt><dd>PartsmedvirkningType</dd>
+              <dt>Tidspunkt</dt><dd>når den fant sted</dd>
+              <dt>Innhold</dt><dd>fritekst</dd>
+              <dt>SakId</dt><dd>saken den hører til</dd>
+            </dl>
+          </div>
+
+          <div class="entity-card" id="flerspraakligtekst">
+            <h3>FlerspraakligTekst / TekstVariant</h3>
+            <p>En beholder for tekst på flere språk: én FlerspraakligTekst har én TekstVariant per språk (se kapittel 05).</p>
+            <dl>
+              <dt>Varianter</dt><dd>liste av TekstVariant</dd>
+              <dt>SpraakKode</dt><dd>fri streng, for eksempel «nb», «nn», «en»</dd>
+              <dt>Verdi</dt><dd>selve teksten på det språket</dd>
+            </dl>
+          </div>
+
+        </div>
+        <div class="prose" style="margin-top:var(--ds-size-5);">
+          <p><code>ForklaringsloggOppforing</code> er en generisk referanserad (type pluss <code>ReferanseId</code>) som gjør at loggen kan peke på tre ulike slags rader uten tre separate koblingstabeller. Koblingstabeller som <code>VurderingFaktum</code> og <code>RegelRettskilde</code> er rene mange-til-mange-tabeller og vises som lister av id-er i API-et (<code>faktumIder</code>, <code>rettskildeIder</code> og så videre).</p>
+        </div>
+      </section>
+
+      <!-- ===================================================== 3. ENUMER -->
+      <section id="enumer">
+        <span class="section-num">03</span>
+        <h2>Enumer</h2>
+        <p class="intro">Alle faste verdilister i domenemodellen, slik de er definert i koden.</p>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <caption class="sr-only" style="position:absolute; left:-999px;">Enumer, hvor de brukes og hvilke verdier de har</caption>
+            <thead>
+              <tr><th scope="col">Enum</th><th scope="col">Brukt i</th><th scope="col">Verdier</th><th scope="col">Merknad</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>FaktumType</code></td><td>Faktum.Type</td><td><code>Raatt</code>, <code>Subsumert</code></td><td>Subsumert: rått faktum tolket mot rettsregelen</td></tr>
+              <tr><td><code>StrukturType</code></td><td>Faktum.Struktur</td><td><code>Strukturert</code>, <code>Ustrukturert</code></td><td></td></tr>
+              <tr><td><code>KildeType</code></td><td>Kilde.Type</td><td><code>AutoritativtRegister</code>, <code>Soknad</code>, <code>TredjepartsUttalelse</code>, <code>AnnenKilde</code></td><td>I tillegg har Kilde en egen Autoritativ-flagg</td></tr>
+              <tr><td><code>RettskildeType</code></td><td>Rettskilde.Type</td><td><code>Lov</code>, <code>Forskrift</code>, <code>Rundskriv</code>, <code>Forarbeider</code>, <code>Rettspraksis</code>, <code>InternasjonalRett</code>, <code>Forvaltningspraksis</code></td><td>Bare Lov og Forskrift har VersjonDato og EliReferanse</td></tr>
+              <tr><td><code>VurderingsType</code></td><td>Regel.Type, Vurdering.Type</td><td><code>Deterministisk</code>, <code>GenerativKI</code>, <code>Skjonn</code></td><td>Vurderingens faktiske type kan avvike fra regelens ved eskalering</td></tr>
+              <tr><td><code>UtfallType</code></td><td>Vurdering.Utfall</td><td><code>Oppfylt</code>, <code>IkkeOppfylt</code>, <code>Uaktuelt</code>, <code>IkkeVurdert</code>, <code>Uavklart</code></td><td>Se kapittel 04</td></tr>
+              <tr><td><code>GrunnlagsType</code></td><td>Vilkar.Grunnlagstype</td><td><code>Rettslig</code>, <code>InternPraksis</code>, <code>Datakvalitet</code></td><td>Rettslig krever minst én rettskilde (regel 3.15)</td></tr>
+              <tr><td><code>AutomatiseringsGrad</code></td><td>Vedtak.AutomatiseringsGrad</td><td><code>Helautomatisert</code>, <code>DelvisAutomatisert</code>, <code>Manuell</code></td><td>Beregnes av serveren, settes ikke av klienten</td></tr>
+              <tr><td><code>PartsmedvirkningType</code></td><td>Partsmedvirkning.Type</td><td><code>Forhaandsvarsel</code>, <code>Kommentar</code>, <code>InnsynsKrav</code></td><td></td></tr>
+              <tr><td><code>OppforingsType</code></td><td>ForklaringsloggOppforing.Type</td><td><code>Faktum</code>, <code>Vurdering</code>, <code>Partsmedvirkning</code></td><td>Hva oppføringen peker på</td></tr>
+              <tr><td><code>SakStatus</code></td><td>Sak.Status</td><td><code>UnderBehandling</code>, <code>Avsluttet</code>, <code>Klaget</code></td><td></td></tr>
+              <tr><td><code>VirkningType</code></td><td>Vedtaksvirkning.Type, Vilkar.Type</td><td><code>Tillatelse</code>, <code>Plikt</code>, <code>OkonomiskYtelse</code>, <code>Tilskudd</code>, <code>Gebyr</code></td><td></td></tr>
+              <tr><td><code>FastsettelsesmateType</code></td><td>Vedtaksvirkning.Fastsettelsesmate, Vilkar.Fastsettelsesmate</td><td><code>Statisk</code>, <code>Parametrisert</code>, <code>Skjonnsbasert</code>, <code>Avledet</code></td><td>Hvordan innholdet ble fastsatt</td></tr>
+              <tr><td><code>VarighetsType</code></td><td>Vedtaksvirkning.Varighet</td><td><code>Tidsbegrenset</code>, <code>Varig</code>, <code>LopendeInntilVilkarBrister</code></td><td>GyldigTil skal være null ved Varig</td></tr>
+              <tr><td><code>HendelseType</code></td><td>Sak.UtlosendeHendelse</td><td><code>Soknad</code>, <code>Innrapportering</code>, <code>Melding</code>, <code>Tilbakekall</code>, <code>Kontroll</code>, <code>Klage</code>, <code>Omgjoring</code></td><td>Hendelsen som utløste saken</td></tr>
+              <tr><td><code>SakRelasjonType</code></td><td>SakRelasjon.Type</td><td><code>Tilbakekall</code>, <code>Revurdering</code>, <code>OppfolgingAvMelding</code>, <code>Klage</code>, <code>Kontroll</code>, <code>Annet</code></td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===================================================== 4. BESLUTNINGSTRE -->
+      <section id="beslutningstreet">
+        <span class="section-num">04</span>
+        <h2>Vurdering og beslutningstreet</h2>
+        <p class="intro">Et vedtak hviler sjelden på én enkelt vurdering. Modellen lar deg gjengi hele treet, også de grenene som ikke ble avgjørende.</p>
+        <div class="prose">
+          <h3>Utfall: fem verdier, ikke to</h3>
+          <p><code>Vurdering.Utfall</code> skiller mellom vilkår som faktisk ble avgjort og vilkår som ikke ble det (regel 3.14).</p>
+        </div>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <caption class="sr-only" style="position:absolute; left:-999px;">De fem utfallsverdiene og hva de betyr</caption>
+            <thead>
+              <tr><th scope="col">Utfall</th><th scope="col">Betyr</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="pill ok">Oppfylt</span></td><td>Vilkåret ble vurdert, og konklusjonen er at det er oppfylt.</td></tr>
+              <tr><td><span class="pill bad">IkkeOppfylt</span></td><td>Vilkåret ble vurdert, og konklusjonen er at det ikke er oppfylt. <code>FaktumIder</code> på raden viser hvilke fakta som gjorde at det ikke ble det.</td></tr>
+              <tr><td><span class="pill">Uaktuelt</span></td><td>Vilkåret var ikke relevant gitt sakens fakta, for eksempel et fornyelsesvilkår i en førstegangssøknad.</td></tr>
+              <tr><td><span class="pill">IkkeVurdert</span></td><td>Behandlingen stoppet før vilkåret ble nådd, for eksempel fordi et tidligere vilkår i treet allerede avgjorde utfallet.</td></tr>
+              <tr><td><span class="pill warn">Uavklart</span></td><td>En automatisert vurdering ga et resultat, men under konfidensterskelen (se <code>Eskalert</code>), og ble derfor ikke lagt til grunn alene.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="prose" style="margin-top:var(--ds-size-4);">
+          <p>En vurdering skal opprettes selv når vilkåret ikke ble vurdert. Fravær av en rad skal aldri være eneste dokumentasjon på at noe ikke ble vurdert, og årsaken skal fremgå av <code>Beregningsspor</code>.</p>
+
+          <h3>Tre pekere som lett forveksles</h3>
+          <p>En vurdering kan merkes med et katalogvilkår, kobles til en forelder i samme sak og sitere vurderinger fra andre saker. Dette er tre ulike ting:</p>
+        </div>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <caption class="sr-only" style="position:absolute; left:-999px;">Sammenligning av VilkarId, ForelderVurderingId og RefererteVurderingIder</caption>
+            <thead>
+              <tr><th scope="col">Felt</th><th scope="col">Peker til</th><th scope="col">Rekkevidde</th><th scope="col">Regel</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>VilkarId</code></td><td>et katalogvilkår (<code>Vilkar</code>)</td><td>Ren merking av hvilket vilkår vurderingen gjelder. Ingen validering av struktur, samme kategori som <code>RettskildeIder</code>.</td><td>3.18</td></tr>
+              <tr><td><code>ForelderVurderingId</code></td><td>en annen vurdering i <em>samme</em> sak</td><td>Et tre innad i saken (v1.6.0). Forelderen må tilhøre samme sak, men trenger ikke være frosset. API-et gir også en beregnet liste <code>DelvurderingIder</code>.</td><td>3.18</td></tr>
+              <tr><td><code>RefererteVurderingIder</code></td><td>vurderinger i <em>andre</em> saker</td><td>Kryss-sak-sitering. Peker kun til rader som allerede er frosset, og er alltid skrivebeskyttet: en vurdering kan lese fra en annen sak, men aldri endre den.</td><td>3.11</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout" style="margin-top:var(--ds-size-5);">
+          <h3>Gjengi, ikke foreskriv</h3>
+          <p>Modellen eier ikke vilkårsstrukturen og krever ingen fast nedbrytingsmal. Hvordan et vilkår ble brutt ned i delvurderinger, og hvorfor en gren ble <code>Uaktuelt</code> eller <code>IkkeVurdert</code>, er alene det kallende systemets valg (regelmotor, saksbehandler eller KI). Modellens eneste jobb er å gjengi strukturen trofast i ettertid.</p>
+        </div>
+
+        <div class="prose">
+          <h3>Et tre, tegnet som skisse</h3>
+          <p>Skissen under viser hvordan en vurdering med delvurderinger kan se ut. Den er en generisk illustrasjon, ikke ekte data, og modellen krever ikke akkurat denne formen.</p>
+        </div>
+        <p style="margin:0 0 var(--ds-size-3);"><span class="pill info">Illustrasjon — ikke ekte data</span></p>
+        <div class="dtree" role="group" aria-label="Illustrasjon av et beslutningstre med en overordnet vurdering og fire delvurderinger">
+          <div class="dnode is-root">
+            <div class="dnode__head">
+              <strong>Vilkår A</strong>
+              <span class="pill ok">Oppfylt</span>
+              <span class="pill">Skjonn</span>
+            </div>
+            <p class="dnode__spor">Overordnet vurdering. Utfallet er satt av det kallende systemet ut fra delvurderingene under.</p>
+            <div class="dnode__refs">
+              <span><b>VilkarId</b>Vilkår A i katalogen</span>
+            </div>
+          </div>
+          <div class="dchildren">
+            <div class="dnode">
+              <div class="dnode__head">
+                <strong>A1: kontroll av registerdata</strong>
+                <span class="pill ok">Oppfylt</span>
+                <span class="pill">Deterministisk</span>
+              </div>
+              <p class="dnode__spor">Regel anvendt på faktum fra et register.</p>
+              <div class="dnode__refs">
+                <span><b>ForelderVurderingId</b>Vilkår A</span>
+                <span><b>FaktumIder</b>faktum fra register</span>
+              </div>
+            </div>
+            <div class="dnode">
+              <div class="dnode__head">
+                <strong>A2: gren som ikke gjaldt</strong>
+                <span class="pill">Uaktuelt</span>
+                <span class="pill">Deterministisk</span>
+              </div>
+              <p class="dnode__spor">Uaktuelt: saken gjelder førstegangssøknad, ikke fornyelse.</p>
+              <div class="dnode__refs">
+                <span><b>ForelderVurderingId</b>Vilkår A</span>
+              </div>
+            </div>
+            <div class="dnode">
+              <div class="dnode__head">
+                <strong>A3: automatisk klassifisering</strong>
+                <span class="pill warn">Uavklart</span>
+                <span class="pill">GenerativKI</span>
+              </div>
+              <p class="dnode__spor">Konfidens under terskelen, eskalert til skjønn.</p>
+              <div class="dnode__refs">
+                <span><b>ForelderVurderingId</b>Vilkår A</span>
+              </div>
+            </div>
+            <div class="dchildren">
+              <div class="dnode">
+                <div class="dnode__head">
+                  <strong>A3a: saksbehandlerens skjønn</strong>
+                  <span class="pill ok">Oppfylt</span>
+                  <span class="pill">Skjonn</span>
+                </div>
+                <p class="dnode__spor">Hovedhensyn er oppgitt, og forkastede alternativer er beskrevet.</p>
+                <div class="dnode__refs">
+                  <span><b>ForelderVurderingId</b>A3</span>
+                  <span><b>RefererteVurderingIder</b>en frosset vurdering i en annen sak</span>
+                </div>
+              </div>
+            </div>
+            <div class="dnode">
+              <div class="dnode__head">
+                <strong>A4: vilkår senere i treet</strong>
+                <span class="pill">IkkeVurdert</span>
+                <span class="pill">Deterministisk</span>
+              </div>
+              <p class="dnode__spor">Behandlingen stoppet før dette vilkåret ble nådd.</p>
+              <div class="dnode__refs">
+                <span><b>ForelderVurderingId</b>Vilkår A</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================== 5. FLERSPRAAKLIG -->
+      <section id="flerspraaklige-tekster">
+        <span class="section-num">05</span>
+        <h2>Flerspråklige tekster</h2>
+        <p class="intro">Teksten som når en part skal kunne foreligge på flere språk, uten at skjemaet må endres for hvert nye språk.</p>
+        <div class="prose">
+          <p>En <code>FlerspraakligTekst</code> er en beholder med én <code>TekstVariant</code> per språk. Hver variant har en <code>SpraakKode</code> og en <code>Verdi</code>. Språkkoden er en fri streng (for eksempel <code>nb</code>, <code>nn</code> eller <code>en</code>), ikke en enum, så et nytt språk er bare en ny rad. Koden skal være unik per tekst (maks én variant per språk, uavhengig av store og små bokstaver), men valideres ikke mot noen fast liste. Alternativet, faste kolonner som <code>XNynorsk</code>, ville krevd skjemaendring for hvert nytt språk.</p>
+          <h3>Fem felt er flerspråklige</h3>
+        </div>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <caption class="sr-only" style="position:absolute; left:-999px;">De fem flerspråklige feltene</caption>
+            <thead>
+              <tr><th scope="col">Felt</th><th scope="col">Er</th><th scope="col">Krav</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>Vilkar.StandardTekst</code></td><td>fritekstmal for vilkåret</td><td>valgfri</td></tr>
+              <tr><td><code>Vurdering.Hovedhensyn</code></td><td>hovedhensynet bak en vurdering</td><td>obligatorisk når <code>Type == Skjonn</code></td></tr>
+              <tr><td><code>Vurdering.ForkastedeUtfall</code></td><td>kontrastiv forklaring: hva som ble forkastet</td><td>valgfri</td></tr>
+              <tr><td><code>Vedtaksvirkning.Beskrivelse</code></td><td>hva virkningen går ut på</td><td>påkrevd, minst én <code>TekstVariant</code></td></tr>
+              <tr><td><code>Vedtaksvirkning.LopendeVilkar</code></td><td>vilkår som må fortsette å være oppfylt</td><td>valgfri</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="prose" style="margin-top:var(--ds-size-4);">
+          <h3>Hvorfor ikke alle tekstfelt?</h3>
+          <p>Bare den delen av modellen som er en direkte del av begrunnelsen overfor en part, flerspråkliggjøres (regel 3.17). Interne og tekniske felt forblir enkeltspråklige: <code>Sak.Tittel</code>, <code>Vedtak.Utfall</code>, <code>Faktum.Verdi</code>, <code>Vurdering.Beregningsspor</code>, <code>Vilkar.Navn</code> og <code>Rettskilde.Henvisning</code>, blant andre. Det holder modellen enkel, og det er de fem feltene over en part faktisk leser.</p>
+          <p>I API-et tar de fem feltene imot og returnerer en liste av <code>{ spraakKode, verdi }</code> i stedet for en enkelt streng:</p>
+        </div>
+        <span class="code-label">JSON — Vurdering.hovedhensyn</span>
+        <pre class="code"><code>[
+  { "spraakKode": "nb", "verdi": "Dokumentert nedbemanning hos arbeidsgiver" },
+  { "spraakKode": "nn", "verdi": "Dokumentert nedbemanning hos arbeidsgivar" }
+]</code></pre>
+      </section>
+
+      <!-- ===================================================== 6. EKSTERNE REFERANSER -->
+      <section id="eksterne-referanser">
+        <span class="section-num">06</span>
+        <h2>Eksterne referanser</h2>
+        <p class="intro">Pekepinn, ikke kopi: modellen peker til andres kataloger og artefakter, men eier dem ikke.</p>
+        <div class="prose">
+          <p>Flere felt er valgfrie, eksterne referanser. En <em>IRI</em> er en internasjonal identifikator som i praksis ser ut som en nettadresse. Referansene peker blant annet til Felles datakatalog (data.norge.no) og valideres ikke mot noen lokal tabell (regel 3.9). De er sporbarhetsmetadata, ikke en del av forklaringsplikten: en vurdering eller et vedtak er fullt forklart uten dem.</p>
+        </div>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <caption class="sr-only" style="position:absolute; left:-999px;">Felt som peker til eksterne kataloger og artefakter</caption>
+            <thead>
+              <tr><th scope="col">Felt</th><th scope="col">Peker til</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>Sak.CpsvTjenesteReferanse</code></td><td>IRI til en <code>cpsvno:Service</code> i CPSV-AP-NO, den norske profilen for beskrivelse av offentlige tjenester</td></tr>
+              <tr><td><code>Regel.CpsvRegelReferanse</code></td><td>IRI til en <code>cpsvno:Rule</code> i CPSV-AP-NO</td></tr>
+              <tr><td><code>Kilde.CccevReferanse</code></td><td>IRI til en <code>cccev:Evidence</code> eller <code>cccev:Criterion</code> (CCCEV er et europeisk vokabular for kriterier og dokumentasjon)</td></tr>
+              <tr><td><code>Vilkar.CpsvTjenesteReferanse</code></td><td>IRI til tjenesten(e) vilkåret kan inngå i</td></tr>
+              <tr><td><code>Regel.RegeldefinisjonReferanse</code></td><td>URI til selve regelartefaktet, for eksempel DMN-XML i et regelrepo</td></tr>
+              <tr><td><code>Vilkar.Kode</code> og <code>Vilkar.Kodeverk</code></td><td>kode fra et kildesystems eget kodeverk (for eksempel <code>VILKAR_TYPE</code>), og hvilket kodeverk koden er hentet fra</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout" style="margin-top:var(--ds-size-5);">
+          <h3>Regeldefinisjonen lagres ikke her</h3>
+          <p>Selve regelartefaktet, for eksempel DMN-XML, skal ikke kopieres inn i modellen. <code>RegeldefinisjonReferanse</code> peker bare til hvor det faktisk ligger (regelrepo, versjonskontroll). Siden hver nye regelversjon er en ny <code>Regel</code>-rad (regel 3.4), gir det full sporbarhet til nøyaktig hvilken regelversjon som ble kjørt, uten at regelmotorens eget lagringsansvar dupliseres (regel 3.16).</p>
+          <p><code>Kode</code> og <code>Kodeverk</code> er valgfrie, men bør fylles ut når vilkåret stammer fra et kildesystem med eget kodeverk, slik at katalogen kan matches maskinelt mot kildesystemet (regel 3.15).</p>
+        </div>
+      </section>
+
+      <!-- ===================================================== 7. ER-DIAGRAM -->
+      <section id="er-diagram">
+        <span class="section-num">07</span>
+        <h2>ER-diagram som tekst</h2>
+        <p class="intro">Alle entiteter og kardinaliteter, skrevet i Mermaid. Kildeteksten er hentet fra spesifikasjonen (punkt 2).</p>
+        <span class="code-label">Mermaid — lim inn i mermaid.live eller et GitHub-markdown-felt</span>
+        <pre class="code"><code>erDiagram
+  SAK ||--o{ FAKTUM : har
+  SAK ||--o{ PARTSMEDVIRKNING : har
+  SAK ||--o{ VURDERING : inneholder
+  SAK ||--o{ VEDTAK : resulterer_i
+  FAKTUM }o--|| KILDE : kommer_fra
+  KILDE }o--o{ RETTSKILDE : har_hjemmel_for_innhenting
+  FAKTUM }o--o{ RETTSKILDE : har_tilleggshjemmel
+  VURDERING }o--o{ FAKTUM : bruker
+  VURDERING }o--|| REGEL : anvender
+  REGEL }o--o{ RETTSKILDE : operasjonaliserer
+  VURDERING }o--o{ RETTSKILDE : siterer
+  VEDTAK ||--|| FORKLARINGSLOGG : har
+  FORKLARINGSLOGG ||--o{ FORKLARINGSLOGG_OPPFORING : bestar_av
+  VEDTAK ||--o{ VEDTAKSVIRKNING : medforer
+  VEDTAKSVIRKNING }o--o{ VURDERING : fastsettes_av
+  VEDTAKSVIRKNING }o--o{ FAKTUM : bygger_pa
+  VEDTAKSVIRKNING }o--o| VILKAR : er_instans_av
+  VILKAR }o--o{ RETTSKILDE : har_hjemmel
+  VILKAR }o--o| REGEL : baserer_pa
+  SAK }o--o{ SAK : relaterer_til
+  VURDERING }o--o{ VURDERING : bygger_pa
+  VURDERING }o--o| VURDERING : er_delvurdering_av
+  VURDERING }o--o| VILKAR : gjelder
+  VILKAR }o--o| FLERSPRAAKLIG_TEKST : har_forklaringstekst
+  VURDERING }o--o| FLERSPRAAKLIG_TEKST : har_forklaringstekst
+  VEDTAKSVIRKNING }o--o| FLERSPRAAKLIG_TEKST : har_forklaringstekst
+  FLERSPRAAKLIG_TEKST ||--o{ TEKST_VARIANT : bestar_av</code></pre>
+        <div class="prose">
+          <p>Les <code>||--o{</code> som «én til null eller flere», <code>}o--||</code> som «null eller flere til nøyaktig én», og <code>}o--o|</code> som «null eller flere til null eller én». <code>FORKLARINGSLOGG_OPPFORING</code> er den generiske referanseraden som lar loggen peke på faktum, vurderinger og partsmedvirkninger.</p>
+          <p>Neste steg: se hvordan modellen ser ut fylt med data i <a class="ds-link" href="../eksempel/">eksempelet</a>, eller gå rett til <a class="ds-link" href="../api/">API-et</a>.</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <h3>Om nettstedet</h3>
+      <p style="font-size:var(--ds-body-sm-font-size); color:var(--ds-color-text-subtle); max-width:32ch; margin:0;">
+        Dokumentasjon for <a href="https://github.com/FinnurO/forklaringsmodell-api" target="_blank" rel="noopener">forklaringsmodell-api</a>:
+        en prototype for en felles informasjonsmodell som forklarer vedtak. Bygget med
+        <a href="https://designsystemet.no/" target="_blank" rel="noopener">designsystemet.no</a>.
+      </p>
+    </div>
+    <div>
+      <h3>Dokumentasjon</h3>
+      <ul>
+        <li><a href="./">Modell</a></li>
+        <li><a href="../regler/">Forretningsregler</a></li>
+        <li><a href="../eksempel/">Eksempel: piperehabilitering</a></li>
+        <li><a href="../api/">API</a></li>
+        <li><a href="../versjoner/">Versjoner</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Relatert</h3>
+      <ul>
+        <li><a href="https://github.com/FinnurO/digital-rettsstat" target="_blank" rel="noopener">Rammeverk for digital rettsstat</a></li>
+        <li><a href="https://github.com/FinnurO/regel-ide" target="_blank" rel="noopener">Regel-IDE</a></li>
+        <li><a href="https://lovdata.no/lov/1967-02-10" target="_blank" rel="noopener">Forvaltningsloven (Lovdata)</a></li>
+        <li><a href="https://data.norge.no/" target="_blank" rel="noopener">Felles datakatalog</a></li>
+        <li><a href="https://sjekkliste-bygg.ft.dibk.no/" target="_blank" rel="noopener">DiBKs sjekkliste for bygg</a></li>
+      </ul>
+    </div>
+    <p class="fine">
+      Prototype og proof of concept — ikke en offisiell nettside for Digitaliseringsdirektoratet (Digdir), og ikke en produksjonsklar tjeneste. Eksemplene bruker fiktive adresser og saker, og er utledet fra offentlig tilgjengelig informasjon.
+      Kildekode på <a href="https://github.com/FinnurO/forklaringsmodell-api" target="_blank" rel="noopener">GitHub</a>.
+    </p>
+    <p class="fine">
+      <strong>Utviklet sammen med Claude Code</strong> (Anthropic) — kode, tester og dokumentasjon. Innholdet er ikke fasitsjekket av jurister; behandle det som et utkast og meld gjerne fra via «Gi tilbakemelding».
+    </p>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>

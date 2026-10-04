@@ -1,5 +1,9 @@
 # Forklaringsmodell API
 
+**Dokumentasjonsnettsted:** https://finnuro.github.io/forklaringsmodell-api/ — formål, modell, forretningsregler, et konkret eksempel (Stavangers automatiske piperehabilitering), API-guide og versjoner.
+
+> **Prototype / proof of concept** — ikke en produksjonstjeneste og ikke en offisiell Digdir-tjeneste. Utviklet sammen med Claude Code.
+
 ASP.NET Core Web API som lar en saksbehandlingsløsning fylle ut og lese ut informasjonsmodellen som **forklarer et vedtak** — kombinasjonen av forvaltningsloven § 25 (begrunnelse) og digital-rettsstats lag for automatisert forklaring (Kildelaget, Datalaget, Regellaget).
 
 Modellen dokumenterer et vedtak uavhengig av om vurderingen bak er deterministisk regelanvendelse, en generativ KI-vurdering eller et menneskelig skjønn — og uavhengig av om faktum er strukturert/ustrukturert eller kommer fra en autoritativ kilde.
@@ -33,6 +37,12 @@ erDiagram
   VILKAR }o--o| REGEL : baserer_pa
   SAK }o--o{ SAK : relaterer_til
   VURDERING }o--o{ VURDERING : bygger_pa
+  VURDERING }o--o| VURDERING : er_delvurdering_av
+  VURDERING }o--o| VILKAR : gjelder
+  VILKAR }o--o| FLERSPRAAKLIG_TEKST : har_forklaringstekst
+  VURDERING }o--o| FLERSPRAAKLIG_TEKST : har_forklaringstekst
+  VEDTAKSVIRKNING }o--o| FLERSPRAAKLIG_TEKST : har_forklaringstekst
+  FLERSPRAAKLIG_TEKST ||--o{ TEKST_VARIANT : bestar_av
 ```
 
 | Entitet | Rolle |
@@ -46,16 +56,19 @@ erDiagram
 | `Vedtaksvirkning` | En konkret virkning av vedtaket (tillatelse, plikt, ytelse, gebyr), evt. instans av en katalogført `Vilkar`. |
 | `Vilkar` | Gjenbrukbar vilkårskatalog (som `Regel`) — rettslig, intern praksis eller teknisk/datakvalitet-forankret. |
 | `SakRelasjon` | Kobler en oppfølgende sak til en relatert sak, uten å modifisere den. |
+| `FlerspraakligTekst` / `TekstVariant` | Beholder for forklaringstekster på flere språk (nb, nn, …) — én variant per språk. |
 
 ## Forretningsregler (utvalg)
 
-Alle 16 regler er beskrevet i spesifikasjonen; de viktigste prinsippene:
+Alle 18 regler er beskrevet i spesifikasjonen (og forklart på [nettstedet](https://finnuro.github.io/forklaringsmodell-api/regler/)); de viktigste prinsippene:
 
 - **Append-only etter frysing** — ingen `PUT`/`DELETE` på `Vedtak`, `Forklaringslogg` eller `Vedtaksvirkning`. Alt som refereres i en frosset forklaringslogg blir skrivebeskyttet.
 - **Skjønn må forklares** — `Hovedhensyn` er obligatorisk når `Vurdering.Type == Skjonn`.
 - **`AutomatiseringsGrad` beregnes serverside**, ikke av klienten, fra andelen skjønn/eskalerte vurderinger.
 - **Kryss-sak-referanser er alltid skrivebeskyttede** — en vurdering kan lese fra en annen (allerede frosset) sak, men aldri endre den.
 - **Referansedata (`Regel`, `Vilkar`) er append-only** når de er tatt i bruk — nye versjoner opprettes som nye rader.
+- **Hele beslutningstreet kan gjengis** — en `Vurdering` kan ha delvurderinger i samme sak (`ForelderVurderingId`) og merkes med hvilket katalogvilkår den gjelder (`VilkarId`). Modellen foreskriver ingen fast nedbryting; den gjengir det kallende systemet faktisk gjorde.
+- **Forklaringstekster er flerspråklige** (bokmål, nynorsk og flere) via `FlerspraakligTekst`/`TekstVariant`, uten skjemaendring per nytt språk.
 
 ## Arkitektur
 
@@ -113,3 +126,28 @@ Seed-dataen setter opp et komplett dagpenger-eksempel (sak, faktum, vurderinger 
 | GET | `/api/vedtak/{id}/virkninger` | List vedtaksvirkninger |
 
 Se spesifikasjonen for fullstendige request/response-skjemaer og valideringsregler.
+
+## Nettsted (GitHub Pages)
+
+Dokumentasjonsnettstedet ligger i [`site/`](site/) som ren statisk HTML/CSS/JS — ingen bygg-steg, ingen avhengigheter, og ingen kjøretidsavhengighet til eksterne CDN-er (designsystemet.no sitt CSS og fontene Inter og Source Serif 4 er selv-hostet i `site/assets/`, se [`site/THIRD_PARTY_NOTICES.md`](site/THIRD_PARTY_NOTICES.md)). Stilen følger [tjenestedesign-no](https://github.com/FinnurO/tjenestedesign-no).
+
+```
+site/
+  index.html          Forside: formål og hovedprinsipper
+  modell/             Entiteter, relasjoner, beslutningstreet, flerspråklige tekster
+  regler/             De 18 forretningsreglene
+  eksempel/           Stavangers automatiske piperehabilitering, fylt ut i modellen
+  api/                Kom i gang, endepunkter, typisk flyt
+  versjoner/          Versjonshistorikk
+  assets/             CSS (designsystemet + site.css), fonter, site.js (tilbakemeldingsknapp)
+```
+
+Kjør lokalt — server mappen med hva som helst statisk:
+
+```bash
+python -m http.server 8000 --directory site
+```
+
+**Deploy:** `.github/workflows/pages-deploy.yml` kopierer `site/` til `gh-pages`-branchen ved hvert push til `master` som endrer `site/`. `.github/workflows/pages-pr-preview.yml` publiserer en forhåndsvisning per åpne PR som endrer `site/`, på `https://finnuro.github.io/forklaringsmodell-api/pr-preview/pr-<nummer>/`. Under *Settings → Pages* står kilden på `gh-pages` / rot.
+
+**Tilbakemelding:** knappen «Gi tilbakemelding» nederst til høyre på alle sider åpner et forhåndsutfylt GitHub-issue (merket `tilbakemelding`) med side, avsnitt og eventuell merket tekst.

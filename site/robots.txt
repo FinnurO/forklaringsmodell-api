@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://finnuro.github.io/forklaringsmodell-api/sitemap.xml

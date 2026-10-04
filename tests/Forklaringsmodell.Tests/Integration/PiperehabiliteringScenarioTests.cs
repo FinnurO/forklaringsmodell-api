@@ -157,11 +157,33 @@ public class PiperehabiliteringScenarioTests : IClassFixture<CustomWebApplicatio
         });
         var vOmfangId = (await vOmfang.Content.ReadFromJsonAsync<VurderingResult>())!.VurderingId;
 
+        var faktumFredning = await client.PostAsJsonAsync($"/api/saker/{sakId}/faktum", new
+        {
+            kildeId = kildeSoknadId,
+            type = "Raatt",
+            struktur = "Strukturert",
+            verdi = "Bygningen er ikke registrert som fredet eller verneverdig i kommunens kulturminneregister."
+        });
+        var faktumFredningId = (await faktumFredning.Content.ReadFromJsonAsync<FaktumResult>())!.FaktumId;
+
+        var vFredning = await client.PostAsJsonAsync($"/api/saker/{sakId}/vurderinger", new
+        {
+            regelId,
+            type = "Deterministisk",
+            utfall = "Oppfylt",
+            beregningsspor = "Bygningen er ikke fredet eller verneverdig => ingen tilleggsvilkår utløses",
+            eskalert = false,
+            vilkarId,
+            forelderVurderingId = vHovedId,
+            faktumIder = new[] { faktumFredningId }
+        });
+        var vFredningId = (await vFredning.Content.ReadFromJsonAsync<VurderingResult>())!.VurderingId;
+
         var vedtakResponse = await client.PostAsJsonAsync($"/api/saker/{sakId}/vedtak", new
         {
             utfall = "Tillatelse til rehabilitering av skorstein innvilget",
-            faktumIder = new[] { faktumOmfangId, faktumAnsvarsrettId },
-            vurderingIder = new[] { vHovedId, vAnsvarsrettId, vOmfangId },
+            faktumIder = new[] { faktumOmfangId, faktumAnsvarsrettId, faktumFredningId },
+            vurderingIder = new[] { vHovedId, vAnsvarsrettId, vOmfangId, vFredningId },
             partsmedvirkningIder = Array.Empty<Guid>(),
             virkninger = new[]
             {
@@ -188,11 +210,12 @@ public class PiperehabiliteringScenarioTests : IClassFixture<CustomWebApplicatio
         forklaringResponse.EnsureSuccessStatusCode();
         var forklaring = await forklaringResponse.Content.ReadFromJsonAsync<ForklaringResult>();
 
-        Assert.Equal(3, forklaring!.Vurderinger.Count);
+        Assert.Equal(4, forklaring!.Vurderinger.Count);
         var hoved = forklaring.Vurderinger.Single(v => v.VurderingId == vHovedId);
-        Assert.Equal(2, hoved.DelvurderingIder.Count);
+        Assert.Equal(3, hoved.DelvurderingIder.Count);
         Assert.Contains(vAnsvarsrettId, hoved.DelvurderingIder);
         Assert.Contains(vOmfangId, hoved.DelvurderingIder);
+        Assert.Contains(vFredningId, hoved.DelvurderingIder);
         Assert.All(forklaring.Vurderinger, v => Assert.Equal(vilkarId, v.VilkarId));
 
         var virkning = forklaring.Virkninger.Single();

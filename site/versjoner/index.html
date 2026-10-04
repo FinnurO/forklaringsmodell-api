@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="nb" data-color-scheme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Versjoner – Forklaringsmodell</title>
+<meta name="description" content="Versjonshistorikken til forklaringsmodell-api: hva som er nytt i hver versjon, fra første leveranse (1.0.0) til intra-sak vurderingshierarki (1.6.0).">
+<link rel="canonical" href="https://finnuro.github.io/forklaringsmodell-api/versjoner/">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/vendor/designsystemet.css">
+<link rel="stylesheet" href="../assets/css/vendor/designsystemet-theme.css">
+<link rel="stylesheet" href="../assets/css/site.css">
+<meta property="og:title" content="Versjoner – Forklaringsmodell">
+<meta property="og:description" content="Hva som er nytt i hver versjon av forklaringsmodellen, fra 1.0.0 til 1.6.0.">
+<meta property="og:type" content="website">
+</head>
+<body>
+
+<a class="ds-link skip-to-content" href="#main">Hopp til innhold</a>
+
+<div class="disclaimer-bar">
+  <div class="wrap">
+    <span>📎 <strong>Prototype / proof of concept</strong> — ikke en produksjonstjeneste og ikke en offisiell Digdir-tjeneste. <strong>Utviklet sammen med Claude Code.</strong></span>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand plain" href="../">
+      <span class="brand__mark" aria-hidden="true">FM</span>
+      <span class="brand__text">
+        <span class="brand__title">Forklaringsmodell</span>
+        <span class="brand__subtitle">API for forklarbare vedtak</span>
+      </span>
+    </a>
+    <nav class="main-nav" aria-label="Hovedmeny">
+      <a href="../">Forside</a>
+      <a href="../modell/">Modell</a>
+      <a href="../regler/">Regler</a>
+      <a href="../eksempel/">Eksempel</a>
+      <a href="../api/">API</a>
+      <a href="../versjoner/" aria-current="page">Versjoner</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap page-head">
+    <span style="font-size:var(--ds-body-xs-font-size); color:var(--ds-color-text-subtle);"><a class="ds-link" href="../">Forside</a> / Versjoner</span>
+    <h1>Versjoner</h1>
+    <p class="lead">Modellen utvikles i små, additive steg: hver versjon legger til felt, entiteter og forretningsregler uten å rive ned det som er der fra før. Her er en oppsummering av hva som er nytt i hver versjon, nyeste først.</p>
+  </div>
+
+  <div class="wrap" style="padding-bottom:var(--ds-size-16);">
+    <p style="max-width:46rem;">Dette er et sammendrag. Fasit er <a href="https://github.com/FinnurO/forklaringsmodell-api/blob/master/CHANGELOG.md" target="_blank" rel="noopener">hele CHANGELOG-en på GitHub</a>, og den samlede beskrivelsen av modellen og endepunktene står i <a href="https://github.com/FinnurO/forklaringsmodell-api/blob/master/docs/api-spesifikasjon-forklaringsmodell.md" target="_blank" rel="noopener">API-spesifikasjonen</a>. Endringer som krever tilpasning hos en klient er merket <span class="pill warn">brytende</span>.</p>
+
+    <ol class="vers" style="margin-top:var(--ds-size-6);">
+
+      <li id="v1-6-0">
+        <h3><span class="v">v1.6.0</span> Intra-sak vurderingshierarki og vilkårsmerking</h3>
+        <ul>
+          <li>En vurdering kan nå være en delvurdering av en annen i samme, fortsatt åpne sak (<code>ForelderVurderingId</code>). Forelderen må tilhøre samme sak, men trenger ikke være frosset.</li>
+          <li>En vurdering kan merkes med hvilket katalogvilkår den gjelder (<code>VilkarId</code>). Dette er ren sporbarhet uten håndhevet validering.</li>
+          <li>Hele treet av delvurderinger kan leses ut via det beregnede feltet <code>delvurderingIder</code>.</li>
+          <li>Modellen foreskriver ingen fast nedbrytingsmal: det er det kallende systemet som avgjør hvordan et vilkår ble brutt ned (regel 3.18).</li>
+          <li>Kontrakten utvides additivt: nye valgfrie felt ved opprettelse og nye felt i svaret. Ingen datatap i migrasjonen.</li>
+        </ul>
+      </li>
+
+      <li id="v1-5-0">
+        <h3><span class="v">v1.5.0</span> Flerspråklige forklaringstekster <span class="pill warn">brytende</span></h3>
+        <ul>
+          <li>Ny beholder for tekst på flere språk. Språkkoden er en fri streng, så nye språk er nye rader og ikke en skjemaendring (regel 3.17).</li>
+          <li>Tekster som inngår i begrunnelsen overfor en part er flerspråkliggjort: vilkårets standardtekst, vurderingens hovedhensyn og forkastede utfall, og virkningens beskrivelse og løpende vilkår.</li>
+          <li>Brytende: disse feltene tar nå imot og returnerer en liste av <code>{ spraakKode, verdi }</code> i stedet for én streng.</li>
+          <li>Ny enkel utforskerside som serveres sammen med API-et, og nytt endepunkt <code>GET /api/saker/{sakId}/vedtak</code>.</li>
+          <li>Feilretting: den hydrerte forklaringen manglet felt som var lagt til i tidligere versjoner, og viste da stille standardverdier.</li>
+        </ul>
+      </li>
+
+      <li id="v1-4-0">
+        <h3><span class="v">v1.4.0</span> Utfallstyper og vilkårets rettslige, interne og tekniske grunnlag <span class="pill warn">brytende</span></h3>
+        <ul>
+          <li>Hver vurdering har nå et obligatorisk utfall: oppfylt, ikke oppfylt, uaktuelt, ikke vurdert eller uavklart. En vurdering opprettes selv når vilkåret ikke ble vurdert, slik at fravær av en rad aldri er eneste dokumentasjon (regel 3.14).</li>
+          <li>Vilkår har en grunnlagstype: rettslig, intern praksis eller datakvalitet. Et rettslig vilkår må ha minst én rettskilde (regel 3.15).</li>
+          <li>Vilkår kan ha kode og kodeverk fra kildesystemet, og en referanse til CPSV-AP-NO-tjenesten det inngår i.</li>
+          <li>Regler kan peke på selve regelartefaktet, for eksempel DMN, med en ekstern URI. Det er en pekepinn og ikke en kopi (regel 3.16).</li>
+          <li>Nytt obligatorisk felt <code>Utfall</code> på vurderinger i API-et.</li>
+        </ul>
+      </li>
+
+      <li id="v1-3-0">
+        <h3><span class="v">v1.3.0</span> Vilkårskatalog og avledede virkninger</h3>
+        <ul>
+          <li>Ny gjenbrukbar vilkårskatalog for vilkår som går igjen på tvers av vedtak, med endepunkt <code>GET/POST /api/vilkar</code>. Et vilkår som er brukt av en virkning overskrives ikke; endringer blir en ny rad (regel 3.12).</li>
+          <li>En vedtaksvirkning kan kobles til et katalogvilkår og angi hvordan innholdet ble fastsatt: statisk, parametrisert, skjønnsbasert eller avledet.</li>
+          <li>En virkning kan være avledet av en annen, også på tvers av vedtak og saker, men bare av en virkning i et frosset vedtak (regel 3.13).</li>
+          <li>Ny virkningstype <em>Gebyr</em> for beløp som går fra mottaker.</li>
+        </ul>
+      </li>
+
+      <li id="v1-2-0">
+        <h3><span class="v">v1.2.0</span> Vedtaksvirkninger, saksrelasjoner og kryss-sak-referanser <span class="pill warn">brytende</span></h3>
+        <ul>
+          <li>Et vedtak kan ha flere, uavhengig tidsbegrensede virkninger: tillatelse, plikt, økonomisk ytelse eller tilskudd. Virkningene er append-only og opprettes sammen med vedtaket (regel 3.10).</li>
+          <li>En ny sak kan kobles til en relatert sak, for eksempel tilbakekall, revurdering eller klage, uten å endre den opprinnelige. Modellen modellerer ikke saksflyt: en ny hendelse gir alltid en ny sak.</li>
+          <li>Saken må oppgi hvilken hendelse som utløste den. En vurdering kan bygge på en frosset vurdering eller et faktum fra en annen sak, men aldri endre den (regel 3.11).</li>
+          <li>Brytende: <code>utlosendeHendelse</code> er obligatorisk ved opprettelse av sak, og tre referansefelt er omdøpt for samsvar med CPSV-AP-NO og CCCEV (<code>cpsvTjenesteReferanse</code>, <code>cccevReferanse</code>, <code>cpsvRegelReferanse</code>).</li>
+        </ul>
+      </li>
+
+      <li id="v1-1-0">
+        <h3><span class="v">v1.1.0</span> Rettskildekobling og CPSV-AP/CCCEV-sporbarhet <span class="pill warn">brytende</span></h3>
+        <ul>
+          <li>Rettskilder har nå en type (lov, forskrift, rundskriv, forarbeider, rettspraksis, internasjonal rett eller forvaltningspraksis), og versjonsdato er valgfri.</li>
+          <li>En regel kan hjemles i flere rettskilder samtidig. En kilde må ha minst én rettskilde som hjemmel før den kan brukes til å registrere faktum (regel 3.8).</li>
+          <li>Faktum og vurderinger kan peke på tilleggshjemler utover regelens og kildens standard. Rettskilder kobles aldri direkte til saken (regel 3.7).</li>
+          <li>Valgfrie, eksterne referanser til CPSV-AP-NO og CCCEV på sak, kilde og regel, uten validering mot lokal tabell (regel 3.9).</li>
+          <li>Brytende: <code>paragraf</code> er byttet ut med <code>henvisning</code> og <code>type</code> er obligatorisk på rettskilder. <code>rettskildeId</code> på regler er erstattet av listen <code>rettskildeIder</code>, og kilder krever <code>rettskildeIder</code>.</li>
+        </ul>
+      </li>
+
+      <li id="v1-0-0">
+        <h3><span class="v">v1.0.0</span> Første leveranse</h3>
+        <ul>
+          <li>Domenemodell for sak, kilde, faktum, rettskilde, regel, vurdering, partsmedvirkning, vedtak og forklaringslogg.</li>
+          <li>Forretningsregler for append-only etter vedtak (3.1), obligatorisk hovedhensyn for skjønn (3.2), konfidensvalidering (3.3), append-only regelspeil (3.4), serverberegnet automatiseringsgrad (3.5) og flere vedtak per sak (3.6).</li>
+          <li>Alle endepunktene fra spesifikasjonen, inkludert hydrert forklaring, med databasemigrasjon og eksempeldata fra et dagpengeeksempel.</li>
+          <li>Enhetstester for forretningsreglene.</li>
+        </ul>
+      </li>
+
+    </ol>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <h3>Om nettstedet</h3>
+      <p style="font-size:var(--ds-body-sm-font-size); color:var(--ds-color-text-subtle); max-width:32ch; margin:0;">
+        Dokumentasjon for <a href="https://github.com/FinnurO/forklaringsmodell-api" target="_blank" rel="noopener">forklaringsmodell-api</a>:
+        en prototype for en felles informasjonsmodell som forklarer vedtak. Bygget med
+        <a href="https://designsystemet.no/" target="_blank" rel="noopener">designsystemet.no</a>.
+      </p>
+    </div>
+    <div>
+      <h3>Dokumentasjon</h3>
+      <ul>
+        <li><a href="../modell/">Modell</a></li>
+        <li><a href="../regler/">Forretningsregler</a></li>
+        <li><a href="../eksempel/">Eksempel: piperehabilitering</a></li>
+        <li><a href="../api/">API</a></li>
+        <li><a href="../versjoner/">Versjoner</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Relatert</h3>
+      <ul>
+        <li><a href="https://github.com/FinnurO/digital-rettsstat" target="_blank" rel="noopener">Rammeverk for digital rettsstat</a></li>
+        <li><a href="https://github.com/FinnurO/regel-ide" target="_blank" rel="noopener">Regel-IDE</a></li>
+        <li><a href="https://lovdata.no/lov/1967-02-10" target="_blank" rel="noopener">Forvaltningsloven (Lovdata)</a></li>
+        <li><a href="https://data.norge.no/" target="_blank" rel="noopener">Felles datakatalog</a></li>
+        <li><a href="https://sjekkliste-bygg.ft.dibk.no/" target="_blank" rel="noopener">DiBKs sjekkliste for bygg</a></li>
+      </ul>
+    </div>
+    <p class="fine">
+      Prototype og proof of concept — ikke en offisiell nettside for Digitaliseringsdirektoratet (Digdir), og ikke en produksjonsklar tjeneste. Eksemplene bruker fiktive adresser og saker, og er utledet fra offentlig tilgjengelig informasjon.
+      Kildekode på <a href="https://github.com/FinnurO/forklaringsmodell-api" target="_blank" rel="noopener">GitHub</a>.
+    </p>
+    <p class="fine">
+      <strong>Utviklet sammen med Claude Code</strong> (Anthropic) — kode, tester og dokumentasjon. Innholdet er ikke fasitsjekket av jurister; behandle det som et utkast og meld gjerne fra via «Gi tilbakemelding».
+    </p>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>
