@@ -1,0 +1,32 @@
+{
+  "method": "GET",
+  "path": "/api/saker/{sakId}/faktum",
+  "status": 200,
+  "request": null,
+  "response": [
+    {
+      "faktumId": "0fa807c4-aa63-483c-b89d-7307a991768a",
+      "sakId": "a1bd5c89-6250-43d6-8407-baf6ba97aab3",
+      "kildeId": "53cf8e0f-4b79-4f79-9407-71408944049c",
+      "type": "Raatt",
+      "struktur": "Strukturert",
+      "verdi": "Tiltaket er innvendig fôring av eksisterende skorstein. Ingen endring av utvendige dimensjoner.",
+      "avledetFraFaktumId": null,
+      "innhentetTidspunkt": "2026-10-04T19:36:24.3649902+00:00",
+      "rettskildeIder": [],
+      "erLaast": false
+    },
+    {
+      "faktumId": "52828432-d6b1-46dd-bd55-de3cfaf6b23d",
+      "sakId": "a1bd5c89-6250-43d6-8407-baf6ba97aab3",
+      "kildeId": "7a795ac6-5ce3-400e-a903-99a1845a9226",
+      "type": "Raatt",
+      "struktur": "Strukturert",
+      "verdi": "Ansvarlig foretak har sentral godkjenning kun for tiltaksklasse 1 ildsted – ikke registrert for kategorien brannsikkerhet/skorstein som dette tiltaket krever.",
+      "avledetFraFaktumId": null,
+      "innhentetTidspunkt": "2026-10-04T19:36:24.3736886+00:00",
+      "rettskildeIder": [],
+      "erLaast": false
+    }
+  ]
+}

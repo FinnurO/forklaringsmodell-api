@@ -1,0 +1,43 @@
+{
+  "method": "POST",
+  "path": "/api/saker/{sakId}/vurderinger",
+  "status": 201,
+  "request": {
+    "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+    "type": "Deterministisk",
+    "utfall": "IkkeOppfylt",
+    "beregningsspor": "Foretakets sentrale godkjenning dekker ikke tiltaksklassen/kategorien dette tiltaket krever => kan ikke automatisk bekreftes",
+    "eskalert": true,
+    "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
+    "forelderVurderingId": "1f16ca36-4518-4f34-9d45-7a0e298c3080",
+    "faktumIder": [
+      "52828432-d6b1-46dd-bd55-de3cfaf6b23d"
+    ],
+    "rettskildeIder": [
+      "59526578-8577-4f0b-a97b-91bd7dc728c3"
+    ]
+  },
+  "response": {
+    "vurderingId": "b91cd483-b863-44c8-ac58-ef760dab065c",
+    "sakId": "a1bd5c89-6250-43d6-8407-baf6ba97aab3",
+    "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+    "type": "Deterministisk",
+    "utfall": "IkkeOppfylt",
+    "beregningsspor": "Foretakets sentrale godkjenning dekker ikke tiltaksklassen/kategorien dette tiltaket krever => kan ikke automatisk bekreftes",
+    "konfidens": null,
+    "eskalert": true,
+    "hovedhensyn": [],
+    "forkastedeUtfall": [],
+    "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
+    "forelderVurderingId": "1f16ca36-4518-4f34-9d45-7a0e298c3080",
+    "erLaast": false,
+    "faktumIder": [
+      "52828432-d6b1-46dd-bd55-de3cfaf6b23d"
+    ],
+    "rettskildeIder": [
+      "59526578-8577-4f0b-a97b-91bd7dc728c3"
+    ],
+    "refererteVurderingIder": [],
+    "delvurderingIder": []
+  }
+}

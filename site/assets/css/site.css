@@ -281,3 +281,23 @@ pre.code code{ background:none; border:none; padding:0; font-size:inherit; overf
 .card-grid > *{ min-width:0; }
 .entity-card dl{ grid-template-columns: max-content minmax(0,1fr); }
 .entity-card dt, .entity-card dd{ overflow-wrap:anywhere; min-width:0; }
+
+/* JSON-filvisning (eksempel-siden): <details class="jfile"> med verktøylinje og fargelagt JSON */
+.jgroup{ margin: 0 0 var(--ds-size-6); }
+.jgroup h3{ margin: 0 0 var(--ds-size-3); font-size: var(--ds-body-lg-font-size); }
+.jfile{ border:1px solid var(--ds-color-border-subtle); border-radius: var(--ds-border-radius-md); background: var(--ds-color-background-default); margin-bottom: var(--ds-size-2); min-width:0; }
+.jfile > summary{ list-style:none; cursor:pointer; display:flex; flex-wrap:wrap; align-items:center; gap: var(--ds-size-2) var(--ds-size-3); padding: var(--ds-size-3) var(--ds-size-4); }
+.jfile > summary::-webkit-details-marker{ display:none; }
+.jfile > summary::before{ content:"▸"; color: var(--ds-color-text-subtle); transition: transform .15s ease; }
+.jfile[open] > summary::before{ transform: rotate(90deg); }
+.jfile[open] > summary{ border-bottom:1px solid var(--ds-color-border-subtle); }
+.jfile .jpath{ font-family: var(--site-font-mono); font-size: var(--ds-body-sm-font-size); overflow-wrap:anywhere; min-width:0; }
+.jfile .jdesc{ flex-basis:100%; padding-left:1.25rem; font-size: var(--ds-body-sm-font-size); color: var(--ds-color-text-subtle); }
+.jfile .jbody{ padding: var(--ds-size-4); }
+.jtool{ display:flex; flex-wrap:wrap; gap: var(--ds-size-2); align-items:center; margin-bottom: var(--ds-size-3); font-size: var(--ds-body-xs-font-size); color: var(--ds-color-text-subtle); }
+.jtool .fname{ font-family: var(--site-font-mono); margin-right:auto; overflow-wrap:anywhere; min-width:0; }
+.jfile pre.code{ margin:0; max-height: 32rem; }
+.json-k{ color: var(--ds-color-accent-text-default); }
+.json-s{ color: var(--ds-color-success-text-default); }
+.json-n{ color: var(--ds-color-warning-text-default); }
+.json-b{ color: var(--ds-color-danger-text-default); }

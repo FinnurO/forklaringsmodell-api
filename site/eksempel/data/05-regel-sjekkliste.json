@@ -1,0 +1,24 @@
+{
+  "method": "POST",
+  "path": "/api/regler",
+  "status": 201,
+  "request": {
+    "rettskildeIder": [
+      "ae65fbfa-9072-48e7-9a54-9935fb4cc0d8"
+    ],
+    "teknologi": "DiBK nasjonal sjekkliste (DMN-aktig regelsett i Elements eByggesak)",
+    "type": "Deterministisk",
+    "regeldefinisjonReferanse": "https://sjekkliste-bygg-api.ft.dibk.no/api/sjekkliste"
+  },
+  "response": {
+    "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+    "rettskildeIder": [
+      "ae65fbfa-9072-48e7-9a54-9935fb4cc0d8"
+    ],
+    "teknologi": "DiBK nasjonal sjekkliste (DMN-aktig regelsett i Elements eByggesak)",
+    "type": "Deterministisk",
+    "cpsvRegelReferanse": null,
+    "regeldefinisjonReferanse": "https://sjekkliste-bygg-api.ft.dibk.no/api/sjekkliste",
+    "erLaast": false
+  }
+}

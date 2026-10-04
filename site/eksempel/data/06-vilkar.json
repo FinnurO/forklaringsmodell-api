@@ -1,0 +1,52 @@
+{
+  "method": "POST",
+  "path": "/api/vilkar",
+  "status": 201,
+  "request": {
+    "navn": "Automatisk godkjenning av piperehabilitering",
+    "kode": "PIPEREHAB_AUTOMATISK",
+    "kodeverk": "DIBK_SJEKKLISTE_BYGG",
+    "type": "Tillatelse",
+    "grunnlagstype": "Rettslig",
+    "fastsettelsesmate": "Parametrisert",
+    "rettskildeIder": [
+      "ae65fbfa-9072-48e7-9a54-9935fb4cc0d8"
+    ],
+    "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+    "standardTekst": [
+      {
+        "spraakKode": "nb",
+        "verdi": "Søknad om rehabilitering av skorstein kan godkjennes automatisk når ansvarlig foretak har sentral godkjenning for ansvarsrett, tiltaket kun gjelder innvendig fôring uten utvendig dimensjonsendring, og bygningen ikke er fredet eller verneverdig."
+      },
+      {
+        "spraakKode": "nn",
+        "verdi": "Søknad om rehabilitering av skorstein kan godkjennast automatisk når ansvarleg foretak har sentral godkjenning for ansvarsrett, tiltaket berre gjeld innvendig fôring utan utvendig dimensjonsendring, og bygningen ikkje er freda eller verneverdig."
+      }
+    ]
+  },
+  "response": {
+    "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
+    "navn": "Automatisk godkjenning av piperehabilitering",
+    "kode": "PIPEREHAB_AUTOMATISK",
+    "kodeverk": "DIBK_SJEKKLISTE_BYGG",
+    "type": "Tillatelse",
+    "grunnlagstype": "Rettslig",
+    "fastsettelsesmate": "Parametrisert",
+    "standardTekst": [
+      {
+        "spraakKode": "nb",
+        "verdi": "Søknad om rehabilitering av skorstein kan godkjennes automatisk når ansvarlig foretak har sentral godkjenning for ansvarsrett, tiltaket kun gjelder innvendig fôring uten utvendig dimensjonsendring, og bygningen ikke er fredet eller verneverdig."
+      },
+      {
+        "spraakKode": "nn",
+        "verdi": "Søknad om rehabilitering av skorstein kan godkjennast automatisk når ansvarleg foretak har sentral godkjenning for ansvarsrett, tiltaket berre gjeld innvendig fôring utan utvendig dimensjonsendring, og bygningen ikkje er freda eller verneverdig."
+      }
+    ],
+    "rettskildeIder": [
+      "ae65fbfa-9072-48e7-9a54-9935fb4cc0d8"
+    ],
+    "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+    "cpsvTjenesteReferanse": null,
+    "erLaast": false
+  }
+}

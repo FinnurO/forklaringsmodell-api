@@ -1,0 +1,25 @@
+{
+  "method": "POST",
+  "path": "/api/kilder",
+  "status": 201,
+  "request": {
+    "navn": "Sentral godkjenning for ansvarsrett (DiBK-registeret)",
+    "type": "AutoritativtRegister",
+    "autoritativ": true,
+    "cccevReferanse": "https://www.dibk.no/sentral-godkjenning",
+    "rettskildeIder": [
+      "59526578-8577-4f0b-a97b-91bd7dc728c3"
+    ]
+  },
+  "response": {
+    "kildeId": "7a795ac6-5ce3-400e-a903-99a1845a9226",
+    "navn": "Sentral godkjenning for ansvarsrett (DiBK-registeret)",
+    "type": "AutoritativtRegister",
+    "autoritativ": true,
+    "rettskildeIder": [
+      "59526578-8577-4f0b-a97b-91bd7dc728c3"
+    ],
+    "cccevReferanse": "https://www.dibk.no/sentral-godkjenning",
+    "erLaast": false
+  }
+}

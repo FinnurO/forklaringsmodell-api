@@ -1,0 +1,24 @@
+{
+  "method": "POST",
+  "path": "/api/kilder",
+  "status": 201,
+  "request": {
+    "navn": "eByggesøk Proff (søknadsportal)",
+    "type": "Soknad",
+    "autoritativ": false,
+    "rettskildeIder": [
+      "ae65fbfa-9072-48e7-9a54-9935fb4cc0d8"
+    ]
+  },
+  "response": {
+    "kildeId": "53cf8e0f-4b79-4f79-9407-71408944049c",
+    "navn": "eByggesøk Proff (søknadsportal)",
+    "type": "Soknad",
+    "autoritativ": false,
+    "rettskildeIder": [
+      "ae65fbfa-9072-48e7-9a54-9935fb4cc0d8"
+    ],
+    "cccevReferanse": null,
+    "erLaast": false
+  }
+}

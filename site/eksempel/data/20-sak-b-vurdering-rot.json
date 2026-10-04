@@ -1,0 +1,37 @@
+{
+  "method": "POST",
+  "path": "/api/saker/{sakId}/vurderinger",
+  "status": 201,
+  "request": {
+    "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+    "type": "Deterministisk",
+    "utfall": "Uavklart",
+    "beregningsspor": "Ett av tre delvilkår i DiBKs sjekkliste (ansvarsrett) kunne ikke bekreftes automatisk => saken rutes til ordinær manuell saksbehandling",
+    "eskalert": true,
+    "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
+    "rettskildeIder": [
+      "ae65fbfa-9072-48e7-9a54-9935fb4cc0d8"
+    ]
+  },
+  "response": {
+    "vurderingId": "1f16ca36-4518-4f34-9d45-7a0e298c3080",
+    "sakId": "a1bd5c89-6250-43d6-8407-baf6ba97aab3",
+    "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+    "type": "Deterministisk",
+    "utfall": "Uavklart",
+    "beregningsspor": "Ett av tre delvilkår i DiBKs sjekkliste (ansvarsrett) kunne ikke bekreftes automatisk => saken rutes til ordinær manuell saksbehandling",
+    "konfidens": null,
+    "eskalert": true,
+    "hovedhensyn": [],
+    "forkastedeUtfall": [],
+    "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
+    "forelderVurderingId": null,
+    "erLaast": false,
+    "faktumIder": [],
+    "rettskildeIder": [
+      "ae65fbfa-9072-48e7-9a54-9935fb4cc0d8"
+    ],
+    "refererteVurderingIder": [],
+    "delvurderingIder": []
+  }
+}

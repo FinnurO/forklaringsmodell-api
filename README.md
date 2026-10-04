@@ -137,6 +137,7 @@ site/
   modell/             Entiteter, relasjoner, beslutningstreet, flerspråklige tekster
   regler/             De 18 forretningsreglene
   eksempel/           Stavangers automatiske piperehabilitering, fylt ut i modellen
+  eksempel/data/      De 24 faktiske API-kallene (forespørsel og svar) som JSON-filer
   api/                Kom i gang, endepunkter, typisk flyt
   versjoner/          Versjonshistorikk
   assets/             CSS (designsystemet + site.css), fonter, site.js (tilbakemeldingsknapp)

@@ -1,0 +1,23 @@
+{
+  "method": "POST",
+  "path": "/api/saker/{sakId}/faktum",
+  "status": 201,
+  "request": {
+    "kildeId": "7a795ac6-5ce3-400e-a903-99a1845a9226",
+    "type": "Raatt",
+    "struktur": "Strukturert",
+    "verdi": "Ansvarlig foretak har gyldig sentral godkjenning for ansvarsrett, tiltaksklasse 1, for brannsikkerhet/ildsted og skorstein."
+  },
+  "response": {
+    "faktumId": "37add316-70da-45bc-9a38-fc8f86544d88",
+    "sakId": "1778cc21-d029-485e-8170-1c4f73a15956",
+    "kildeId": "7a795ac6-5ce3-400e-a903-99a1845a9226",
+    "type": "Raatt",
+    "struktur": "Strukturert",
+    "verdi": "Ansvarlig foretak har gyldig sentral godkjenning for ansvarsrett, tiltaksklasse 1, for brannsikkerhet/ildsted og skorstein.",
+    "avledetFraFaktumId": null,
+    "innhentetTidspunkt": "2026-10-04T19:36:23.3358067+00:00",
+    "rettskildeIder": [],
+    "erLaast": false
+  }
+}

@@ -1,0 +1,218 @@
+[
+  {
+    "file": "01-rettskilde-soknadsplikt.json",
+    "group": "Referansedata",
+    "desc": "Rettskilde: søknadsplikt (pbl § 20-1 bokstav f)",
+    "method": "POST",
+    "path": "/api/rettskilder",
+    "status": 201,
+    "bytes": 676
+  },
+  {
+    "file": "02-rettskilde-ansvarsrett.json",
+    "group": "Referansedata",
+    "desc": "Rettskilde: ansvarsrett (pbl § 23-3 jf. § 22-1)",
+    "method": "POST",
+    "path": "/api/rettskilder",
+    "status": 201,
+    "bytes": 660
+  },
+  {
+    "file": "03-kilde-soknadsportal.json",
+    "group": "Referansedata",
+    "desc": "Kilde: søknadsportalen (ikke autoritativ)",
+    "method": "POST",
+    "path": "/api/kilder",
+    "status": 201,
+    "bytes": 555
+  },
+  {
+    "file": "04-kilde-sentral-godkjenning.json",
+    "group": "Referansedata",
+    "desc": "Kilde: sentral godkjenning (autoritativt register)",
+    "method": "POST",
+    "path": "/api/kilder",
+    "status": 201,
+    "bytes": 723
+  },
+  {
+    "file": "05-regel-sjekkliste.json",
+    "group": "Referansedata",
+    "desc": "Regel: deterministisk sjekkliste med peker til regelartefaktet",
+    "method": "POST",
+    "path": "/api/regler",
+    "status": 201,
+    "bytes": 779
+  },
+  {
+    "file": "06-vilkar.json",
+    "group": "Referansedata",
+    "desc": "Vilkår: katalogoppføring med flerspråklig standardtekst (nb og nn)",
+    "method": "POST",
+    "path": "/api/vilkar",
+    "status": 201,
+    "bytes": 2261
+  },
+  {
+    "file": "07-sak-a-opprett.json",
+    "group": "Sak A – godkjent automatisk",
+    "desc": "Opprett sak A",
+    "method": "POST",
+    "path": "/api/saker",
+    "status": 201,
+    "bytes": 610
+  },
+  {
+    "file": "08-sak-a-faktum-omfang.json",
+    "group": "Sak A – godkjent automatisk",
+    "desc": "Faktum: tiltakets omfang (fra søknaden)",
+    "method": "POST",
+    "path": "/api/saker/{sakId}/faktum",
+    "status": 201,
+    "bytes": 888
+  },
+  {
+    "file": "09-sak-a-faktum-ansvarsrett.json",
+    "group": "Sak A – godkjent automatisk",
+    "desc": "Faktum: ansvarsrett (fra sentral godkjenning)",
+    "method": "POST",
+    "path": "/api/saker/{sakId}/faktum",
+    "status": 201,
+    "bytes": 864
+  },
+  {
+    "file": "10-sak-a-faktum-fredning.json",
+    "group": "Sak A – godkjent automatisk",
+    "desc": "Faktum: fredningsstatus",
+    "method": "POST",
+    "path": "/api/saker/{sakId}/faktum",
+    "status": 201,
+    "bytes": 798
+  },
+  {
+    "file": "11-sak-a-vurdering-rot.json",
+    "group": "Sak A – godkjent automatisk",
+    "desc": "Vurdering: rot (samlet konklusjon)",
+    "method": "POST",
+    "path": "/api/saker/{sakId}/vurderinger",
+    "status": 201,
+    "bytes": 1220
+  },
+  {
+    "file": "12-sak-a-delvurdering-ansvarsrett.json",
+    "group": "Sak A – godkjent automatisk",
+    "desc": "Delvurdering: ansvarsrett (forelderVurderingId peker til roten)",
+    "method": "POST",
+    "path": "/api/saker/{sakId}/vurderinger",
+    "status": 201,
+    "bytes": 1485
+  },
+  {
+    "file": "13-sak-a-delvurdering-omfang.json",
+    "group": "Sak A – godkjent automatisk",
+    "desc": "Delvurdering: tiltakets omfang",
+    "method": "POST",
+    "path": "/api/saker/{sakId}/vurderinger",
+    "status": 201,
+    "bytes": 1457
+  },
+  {
+    "file": "14-sak-a-delvurdering-fredning.json",
+    "group": "Sak A – godkjent automatisk",
+    "desc": "Delvurdering: fredning",
+    "method": "POST",
+    "path": "/api/saker/{sakId}/vurderinger",
+    "status": 201,
+    "bytes": 1309
+  },
+  {
+    "file": "15-sak-a-vedtak-opprett.json",
+    "group": "Sak A – godkjent automatisk",
+    "desc": "Opprett vedtak med virkning (fryser forklaringsloggen)",
+    "method": "POST",
+    "path": "/api/saker/{sakId}/vedtak",
+    "status": 201,
+    "bytes": 1571
+  },
+  {
+    "file": "16-sak-a-forklaring.json",
+    "group": "Sak A – godkjent automatisk",
+    "desc": "Hent hydrert forklaring: alt utfoldet i ett svar",
+    "method": "GET",
+    "path": "/api/vedtak/{vedtakId}/forklaring",
+    "status": 200,
+    "bytes": 8203
+  },
+  {
+    "file": "17-sak-b-opprett.json",
+    "group": "Sak B – rutet til manuell behandling",
+    "desc": "Opprett sak B",
+    "method": "POST",
+    "path": "/api/saker",
+    "status": 201,
+    "bytes": 604
+  },
+  {
+    "file": "18-sak-b-faktum-omfang.json",
+    "group": "Sak B – rutet til manuell behandling",
+    "desc": "Faktum: tiltakets omfang",
+    "method": "POST",
+    "path": "/api/saker/{sakId}/faktum",
+    "status": 201,
+    "bytes": 810
+  },
+  {
+    "file": "19-sak-b-faktum-ansvarsrett.json",
+    "group": "Sak B – rutet til manuell behandling",
+    "desc": "Faktum: foretaket mangler riktig kategori",
+    "method": "POST",
+    "path": "/api/saker/{sakId}/faktum",
+    "status": 201,
+    "bytes": 938
+  },
+  {
+    "file": "20-sak-b-vurdering-rot.json",
+    "group": "Sak B – rutet til manuell behandling",
+    "desc": "Vurdering: rot, Uavklart og eskalert",
+    "method": "POST",
+    "path": "/api/saker/{sakId}/vurderinger",
+    "status": 201,
+    "bytes": 1304
+  },
+  {
+    "file": "21-sak-b-delvurdering-ansvarsrett.json",
+    "group": "Sak B – rutet til manuell behandling",
+    "desc": "Delvurdering: ansvarsrett, IkkeOppfylt og eskalert",
+    "method": "POST",
+    "path": "/api/saker/{sakId}/vurderinger",
+    "status": 201,
+    "bytes": 1507
+  },
+  {
+    "file": "22-sak-b-delvurdering-omfang.json",
+    "group": "Sak B – rutet til manuell behandling",
+    "desc": "Delvurdering: tiltakets omfang",
+    "method": "POST",
+    "path": "/api/saker/{sakId}/vurderinger",
+    "status": 201,
+    "bytes": 1361
+  },
+  {
+    "file": "23-sak-b-vurderinger-liste.json",
+    "group": "Sak B – rutet til manuell behandling",
+    "desc": "List vurderingene i saken (ingen vedtak finnes ennå)",
+    "method": "GET",
+    "path": "/api/saker/{sakId}/vurderinger",
+    "status": 200,
+    "bytes": 2725
+  },
+  {
+    "file": "24-sak-b-faktum-liste.json",
+    "group": "Sak B – rutet til manuell behandling",
+    "desc": "List faktum i saken",
+    "method": "GET",
+    "path": "/api/saker/{sakId}/faktum",
+    "status": 200,
+    "bytes": 1189
+  }
+]
