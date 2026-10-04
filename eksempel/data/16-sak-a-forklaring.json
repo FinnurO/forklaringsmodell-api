@@ -1,0 +1,219 @@
+{
+  "method": "GET",
+  "path": "/api/vedtak/{vedtakId}/forklaring",
+  "status": 200,
+  "request": null,
+  "response": {
+    "vedtak": {
+      "vedtakId": "311f1f57-8264-4413-8f0f-a087afaa48b2",
+      "sakId": "1778cc21-d029-485e-8170-1c4f73a15956",
+      "tidspunkt": "2026-10-04T19:36:24.1198247+00:00",
+      "utfall": "Tillatelse til rehabilitering av skorstein innvilget",
+      "automatiseringsGrad": "Helautomatisert"
+    },
+    "forklaringslogg": {
+      "loggId": "4be5914b-1a22-4cb8-8454-04b6b5f011c5",
+      "vedtakId": "311f1f57-8264-4413-8f0f-a087afaa48b2",
+      "oppforinger": [
+        {
+          "oppforingId": "071aa292-5078-4e20-893a-eec9bbf4ee37",
+          "type": "Vurdering",
+          "referanseId": "7deed7b7-6333-4d63-9673-ff3ca6914d52"
+        },
+        {
+          "oppforingId": "2735556c-2cbd-4c24-b258-a7d8c3c69d69",
+          "type": "Vurdering",
+          "referanseId": "ddbf09f1-2b63-4151-a1f8-ac35553feadb"
+        },
+        {
+          "oppforingId": "77f4f28e-61cb-4270-adb7-5817522bccc4",
+          "type": "Vurdering",
+          "referanseId": "04eca1cd-864b-450f-b4f1-e464ee60be27"
+        },
+        {
+          "oppforingId": "79bdd030-8de2-4350-8429-3514211e68c9",
+          "type": "Vurdering",
+          "referanseId": "59c4dbfc-3468-4ff2-b8ea-d9b24c15cb4d"
+        },
+        {
+          "oppforingId": "873d9b7f-ca7a-4cf7-a976-e7251df03cbc",
+          "type": "Faktum",
+          "referanseId": "6995eec4-f179-4693-bbcb-4b74e7a43fc7"
+        },
+        {
+          "oppforingId": "8b26ddc6-576a-4957-ac07-1c6515858486",
+          "type": "Faktum",
+          "referanseId": "37add316-70da-45bc-9a38-fc8f86544d88"
+        },
+        {
+          "oppforingId": "ee4adb52-4f88-4493-8d50-35fdf518c306",
+          "type": "Faktum",
+          "referanseId": "a8f71ec3-1b32-4464-8e0f-019da09cf387"
+        }
+      ]
+    },
+    "faktum": [
+      {
+        "faktumId": "37add316-70da-45bc-9a38-fc8f86544d88",
+        "sakId": "1778cc21-d029-485e-8170-1c4f73a15956",
+        "kildeId": "7a795ac6-5ce3-400e-a903-99a1845a9226",
+        "type": "Raatt",
+        "struktur": "Strukturert",
+        "verdi": "Ansvarlig foretak har gyldig sentral godkjenning for ansvarsrett, tiltaksklasse 1, for brannsikkerhet/ildsted og skorstein.",
+        "avledetFraFaktumId": null,
+        "innhentetTidspunkt": "2026-10-04T19:36:23.3358067+00:00",
+        "rettskildeIder": [],
+        "erLaast": true
+      },
+      {
+        "faktumId": "6995eec4-f179-4693-bbcb-4b74e7a43fc7",
+        "sakId": "1778cc21-d029-485e-8170-1c4f73a15956",
+        "kildeId": "53cf8e0f-4b79-4f79-9407-71408944049c",
+        "type": "Raatt",
+        "struktur": "Strukturert",
+        "verdi": "Bygningen er ikke registrert som fredet eller verneverdig i kommunens kulturminneregister.",
+        "avledetFraFaktumId": null,
+        "innhentetTidspunkt": "2026-10-04T19:36:23.3501117+00:00",
+        "rettskildeIder": [],
+        "erLaast": true
+      },
+      {
+        "faktumId": "a8f71ec3-1b32-4464-8e0f-019da09cf387",
+        "sakId": "1778cc21-d029-485e-8170-1c4f73a15956",
+        "kildeId": "53cf8e0f-4b79-4f79-9407-71408944049c",
+        "type": "Raatt",
+        "struktur": "Strukturert",
+        "verdi": "Tiltaket er innvendig fôring (nytt skorsteinsrør) av eksisterende skorstein. Ingen endring av utvendige dimensjoner eller plassering.",
+        "avledetFraFaktumId": null,
+        "innhentetTidspunkt": "2026-10-04T19:36:23.3012751+00:00",
+        "rettskildeIder": [],
+        "erLaast": true
+      }
+    ],
+    "vurderinger": [
+      {
+        "vurderingId": "04eca1cd-864b-450f-b4f1-e464ee60be27",
+        "sakId": "1778cc21-d029-485e-8170-1c4f73a15956",
+        "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+        "type": "Deterministisk",
+        "utfall": "Oppfylt",
+        "beregningsspor": "Bygningen er ikke registrert som fredet eller verneverdig => ingen tilleggsvilkår utløses",
+        "konfidens": null,
+        "eskalert": false,
+        "hovedhensyn": [],
+        "forkastedeUtfall": [],
+        "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
+        "forelderVurderingId": "7deed7b7-6333-4d63-9673-ff3ca6914d52",
+        "erLaast": true,
+        "faktumIder": [
+          "6995eec4-f179-4693-bbcb-4b74e7a43fc7"
+        ],
+        "rettskildeIder": [],
+        "refererteVurderingIder": [],
+        "delvurderingIder": []
+      },
+      {
+        "vurderingId": "59c4dbfc-3468-4ff2-b8ea-d9b24c15cb4d",
+        "sakId": "1778cc21-d029-485e-8170-1c4f73a15956",
+        "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+        "type": "Deterministisk",
+        "utfall": "Oppfylt",
+        "beregningsspor": "Tiltaket er begrenset til innvendig fôring, ingen utvendig dimensjonsendring => regnes som rehabilitering/reparasjon, ikke en ny installasjon, jf. § 20-1 bokstav f",
+        "konfidens": null,
+        "eskalert": false,
+        "hovedhensyn": [],
+        "forkastedeUtfall": [],
+        "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
+        "forelderVurderingId": "7deed7b7-6333-4d63-9673-ff3ca6914d52",
+        "erLaast": true,
+        "faktumIder": [
+          "a8f71ec3-1b32-4464-8e0f-019da09cf387"
+        ],
+        "rettskildeIder": [],
+        "refererteVurderingIder": [],
+        "delvurderingIder": []
+      },
+      {
+        "vurderingId": "7deed7b7-6333-4d63-9673-ff3ca6914d52",
+        "sakId": "1778cc21-d029-485e-8170-1c4f73a15956",
+        "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+        "type": "Deterministisk",
+        "utfall": "Oppfylt",
+        "beregningsspor": "Alle tre delvilkår i DiBKs sjekkliste for piperehabilitering er oppfylt => automatisk godkjent",
+        "konfidens": null,
+        "eskalert": false,
+        "hovedhensyn": [],
+        "forkastedeUtfall": [],
+        "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
+        "forelderVurderingId": null,
+        "erLaast": true,
+        "faktumIder": [],
+        "rettskildeIder": [
+          "ae65fbfa-9072-48e7-9a54-9935fb4cc0d8"
+        ],
+        "refererteVurderingIder": [],
+        "delvurderingIder": [
+          "04eca1cd-864b-450f-b4f1-e464ee60be27",
+          "59c4dbfc-3468-4ff2-b8ea-d9b24c15cb4d",
+          "ddbf09f1-2b63-4151-a1f8-ac35553feadb"
+        ]
+      },
+      {
+        "vurderingId": "ddbf09f1-2b63-4151-a1f8-ac35553feadb",
+        "sakId": "1778cc21-d029-485e-8170-1c4f73a15956",
+        "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+        "type": "Deterministisk",
+        "utfall": "Oppfylt",
+        "beregningsspor": "Ansvarlig foretak har gyldig sentral godkjenning for ansvarsrett, tiltaksklasse 1, brannsikkerhet => vilkår oppfylt",
+        "konfidens": null,
+        "eskalert": false,
+        "hovedhensyn": [],
+        "forkastedeUtfall": [],
+        "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
+        "forelderVurderingId": "7deed7b7-6333-4d63-9673-ff3ca6914d52",
+        "erLaast": true,
+        "faktumIder": [
+          "37add316-70da-45bc-9a38-fc8f86544d88"
+        ],
+        "rettskildeIder": [
+          "59526578-8577-4f0b-a97b-91bd7dc728c3"
+        ],
+        "refererteVurderingIder": [],
+        "delvurderingIder": []
+      }
+    ],
+    "partsmedvirkninger": [],
+    "virkninger": [
+      {
+        "virkningId": "8856731a-d873-406f-a70f-b69f89272e99",
+        "vedtakId": "311f1f57-8264-4413-8f0f-a087afaa48b2",
+        "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
+        "type": "Tillatelse",
+        "fastsettelsesmate": "Parametrisert",
+        "beskrivelse": [
+          {
+            "spraakKode": "nb",
+            "verdi": "Tillatelse til rehabilitering av skorstein (innvendig fôring)"
+          },
+          {
+            "spraakKode": "nn",
+            "verdi": "Løyve til rehabilitering av skorstein (innvendig fôring)"
+          }
+        ],
+        "varighet": "Varig",
+        "gyldigFra": null,
+        "gyldigTil": null,
+        "belop": null,
+        "lopendeVilkar": [],
+        "rapporteringsFrekvens": null,
+        "avledetFraVirkningId": null,
+        "vurderingIder": [
+          "7deed7b7-6333-4d63-9673-ff3ca6914d52"
+        ],
+        "faktumIder": [
+          "a8f71ec3-1b32-4464-8e0f-019da09cf387"
+        ]
+      }
+    ]
+  }
+}

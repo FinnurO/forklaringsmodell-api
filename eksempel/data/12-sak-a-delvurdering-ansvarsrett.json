@@ -1,0 +1,43 @@
+{
+  "method": "POST",
+  "path": "/api/saker/{sakId}/vurderinger",
+  "status": 201,
+  "request": {
+    "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+    "type": "Deterministisk",
+    "utfall": "Oppfylt",
+    "beregningsspor": "Ansvarlig foretak har gyldig sentral godkjenning for ansvarsrett, tiltaksklasse 1, brannsikkerhet => vilkår oppfylt",
+    "eskalert": false,
+    "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
+    "forelderVurderingId": "7deed7b7-6333-4d63-9673-ff3ca6914d52",
+    "faktumIder": [
+      "37add316-70da-45bc-9a38-fc8f86544d88"
+    ],
+    "rettskildeIder": [
+      "59526578-8577-4f0b-a97b-91bd7dc728c3"
+    ]
+  },
+  "response": {
+    "vurderingId": "ddbf09f1-2b63-4151-a1f8-ac35553feadb",
+    "sakId": "1778cc21-d029-485e-8170-1c4f73a15956",
+    "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+    "type": "Deterministisk",
+    "utfall": "Oppfylt",
+    "beregningsspor": "Ansvarlig foretak har gyldig sentral godkjenning for ansvarsrett, tiltaksklasse 1, brannsikkerhet => vilkår oppfylt",
+    "konfidens": null,
+    "eskalert": false,
+    "hovedhensyn": [],
+    "forkastedeUtfall": [],
+    "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
+    "forelderVurderingId": "7deed7b7-6333-4d63-9673-ff3ca6914d52",
+    "erLaast": false,
+    "faktumIder": [
+      "37add316-70da-45bc-9a38-fc8f86544d88"
+    ],
+    "rettskildeIder": [
+      "59526578-8577-4f0b-a97b-91bd7dc728c3"
+    ],
+    "refererteVurderingIder": [],
+    "delvurderingIder": []
+  }
+}

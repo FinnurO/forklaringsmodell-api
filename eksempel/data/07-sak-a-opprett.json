@@ -1,0 +1,19 @@
+{
+  "method": "POST",
+  "path": "/api/saker",
+  "status": 201,
+  "request": {
+    "tittel": "Søknad om rehabilitering av skorstein – Eiganesveien 12, Stavanger",
+    "status": "UnderBehandling",
+    "utlosendeHendelse": "Soknad"
+  },
+  "response": {
+    "sakId": "1778cc21-d029-485e-8170-1c4f73a15956",
+    "tittel": "Søknad om rehabilitering av skorstein – Eiganesveien 12, Stavanger",
+    "status": "UnderBehandling",
+    "opprettet": "2026-10-04T19:36:23.2177583+00:00",
+    "sistEndret": "2026-10-04T19:36:23.2177583+00:00",
+    "cpsvTjenesteReferanse": null,
+    "utlosendeHendelse": "Soknad"
+  }
+}

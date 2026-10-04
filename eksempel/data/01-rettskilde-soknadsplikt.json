@@ -1,0 +1,18 @@
+{
+  "method": "POST",
+  "path": "/api/rettskilder",
+  "status": 201,
+  "request": {
+    "type": "Lov",
+    "henvisning": "plan- og bygningsloven § 20-1 bokstav f (rehabilitering/endring av skorstein er et søknadspliktig tiltak)",
+    "versjonDato": "2026-01-01T00:00:00Z",
+    "eliReferanse": "https://lovdata.no/lov/2008-06-27-71"
+  },
+  "response": {
+    "rettskildeId": "ae65fbfa-9072-48e7-9a54-9935fb4cc0d8",
+    "type": "Lov",
+    "henvisning": "plan- og bygningsloven § 20-1 bokstav f (rehabilitering/endring av skorstein er et søknadspliktig tiltak)",
+    "versjonDato": "2026-01-01T00:00:00+00:00",
+    "eliReferanse": "https://lovdata.no/lov/2008-06-27-71"
+  }
+}

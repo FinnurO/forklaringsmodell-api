@@ -1,0 +1,51 @@
+{
+  "method": "POST",
+  "path": "/api/saker/{sakId}/vedtak",
+  "status": 201,
+  "request": {
+    "utfall": "Tillatelse til rehabilitering av skorstein innvilget",
+    "faktumIder": [
+      "a8f71ec3-1b32-4464-8e0f-019da09cf387",
+      "37add316-70da-45bc-9a38-fc8f86544d88",
+      "6995eec4-f179-4693-bbcb-4b74e7a43fc7"
+    ],
+    "vurderingIder": [
+      "7deed7b7-6333-4d63-9673-ff3ca6914d52",
+      "ddbf09f1-2b63-4151-a1f8-ac35553feadb",
+      "59c4dbfc-3468-4ff2-b8ea-d9b24c15cb4d",
+      "04eca1cd-864b-450f-b4f1-e464ee60be27"
+    ],
+    "partsmedvirkningIder": [],
+    "virkninger": [
+      {
+        "type": "Tillatelse",
+        "beskrivelse": [
+          {
+            "spraakKode": "nb",
+            "verdi": "Tillatelse til rehabilitering av skorstein (innvendig fôring)"
+          },
+          {
+            "spraakKode": "nn",
+            "verdi": "Løyve til rehabilitering av skorstein (innvendig fôring)"
+          }
+        ],
+        "fastsettelsesmate": "Parametrisert",
+        "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
+        "varighet": "Varig",
+        "vurderingIder": [
+          "7deed7b7-6333-4d63-9673-ff3ca6914d52"
+        ],
+        "faktumIder": [
+          "a8f71ec3-1b32-4464-8e0f-019da09cf387"
+        ]
+      }
+    ]
+  },
+  "response": {
+    "vedtakId": "311f1f57-8264-4413-8f0f-a087afaa48b2",
+    "sakId": "1778cc21-d029-485e-8170-1c4f73a15956",
+    "tidspunkt": "2026-10-04T19:36:24.1198247+00:00",
+    "utfall": "Tillatelse til rehabilitering av skorstein innvilget",
+    "automatiseringsGrad": "Helautomatisert"
+  }
+}
