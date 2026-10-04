@@ -1,0 +1,281 @@
+{
+  "method": "GET",
+  "path": "/api/saker/{sakId}/forklaring",
+  "status": 200,
+  "request": null,
+  "response": {
+    "sak": {
+      "sakId": "452b23ad-2073-45c4-abda-f7dc13e25d11",
+      "tittel": "Søknad om rehabilitering av skorstein – Hinna Park 4, Stavanger",
+      "status": "UnderBehandling",
+      "opprettet": "2026-10-04T19:55:43.7649948+00:00",
+      "sistEndret": "2026-10-04T19:55:43.7649948+00:00",
+      "cpsvTjenesteReferanse": null,
+      "utlosendeHendelse": "Soknad"
+    },
+    "oppsummering": {
+      "harVedtak": false,
+      "antallVedtak": 0,
+      "antallFaktum": 2,
+      "antallVurderinger": 3,
+      "antallEskalerteVurderinger": 2
+    },
+    "relasjoner": [],
+    "faktum": [
+      {
+        "faktumId": "87b61083-a6b9-4e65-94e1-6630ecb5b8ec",
+        "sakId": "452b23ad-2073-45c4-abda-f7dc13e25d11",
+        "kildeId": "c7e89dda-0e51-46a8-a557-d49b467887ea",
+        "type": "Raatt",
+        "struktur": "Strukturert",
+        "verdi": "Tiltaket er innvendig fôring av eksisterende skorstein. Ingen endring av utvendige dimensjoner.",
+        "avledetFraFaktumId": null,
+        "innhentetTidspunkt": "2026-10-04T19:55:43.7815782+00:00",
+        "rettskildeIder": [],
+        "erLaast": false
+      },
+      {
+        "faktumId": "4a2f0d48-d49e-4774-a759-a3d0b429ef71",
+        "sakId": "452b23ad-2073-45c4-abda-f7dc13e25d11",
+        "kildeId": "392f8932-5654-4c37-bd8c-342d4075e6ba",
+        "type": "Raatt",
+        "struktur": "Strukturert",
+        "verdi": "Ansvarlig foretak har sentral godkjenning kun for tiltaksklasse 1 ildsted – ikke registrert for kategorien brannsikkerhet/skorstein som dette tiltaket krever.",
+        "avledetFraFaktumId": null,
+        "innhentetTidspunkt": "2026-10-04T19:55:43.793489+00:00",
+        "rettskildeIder": [],
+        "erLaast": false
+      }
+    ],
+    "vurderinger": [
+      {
+        "vurderingId": "02e60621-8515-4c1d-b099-9dbb753c99f6",
+        "sakId": "452b23ad-2073-45c4-abda-f7dc13e25d11",
+        "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+        "type": "Deterministisk",
+        "utfall": "IkkeOppfylt",
+        "beregningsspor": "Foretakets sentrale godkjenning dekker ikke tiltaksklassen/kategorien dette tiltaket krever => kan ikke automatisk bekreftes",
+        "konfidens": null,
+        "eskalert": true,
+        "hovedhensyn": [],
+        "forkastedeUtfall": [],
+        "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+        "forelderVurderingId": "bf44f609-39b1-49b8-bba2-ca02e7051f6c",
+        "erLaast": false,
+        "faktumIder": [
+          "4a2f0d48-d49e-4774-a759-a3d0b429ef71"
+        ],
+        "rettskildeIder": [
+          "2c741e06-f023-44c3-85e8-6532b217881b"
+        ],
+        "refererteVurderingIder": [],
+        "delvurderingIder": []
+      },
+      {
+        "vurderingId": "bf44f609-39b1-49b8-bba2-ca02e7051f6c",
+        "sakId": "452b23ad-2073-45c4-abda-f7dc13e25d11",
+        "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+        "type": "Deterministisk",
+        "utfall": "Uavklart",
+        "beregningsspor": "Ett av tre delvilkår i DiBKs sjekkliste (ansvarsrett) kunne ikke bekreftes automatisk => saken rutes til ordinær manuell saksbehandling",
+        "konfidens": null,
+        "eskalert": true,
+        "hovedhensyn": [],
+        "forkastedeUtfall": [],
+        "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+        "forelderVurderingId": null,
+        "erLaast": false,
+        "faktumIder": [],
+        "rettskildeIder": [
+          "a10fc9c6-a378-4250-9639-da9b1677ccf4"
+        ],
+        "refererteVurderingIder": [],
+        "delvurderingIder": [
+          "02e60621-8515-4c1d-b099-9dbb753c99f6",
+          "f352d643-4d86-451e-af7a-40bc532db59c"
+        ]
+      },
+      {
+        "vurderingId": "f352d643-4d86-451e-af7a-40bc532db59c",
+        "sakId": "452b23ad-2073-45c4-abda-f7dc13e25d11",
+        "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+        "type": "Deterministisk",
+        "utfall": "Oppfylt",
+        "beregningsspor": "Tiltaket er begrenset til innvendig fôring, ingen utvendig dimensjonsendring => regnes som rehabilitering/reparasjon",
+        "konfidens": null,
+        "eskalert": false,
+        "hovedhensyn": [],
+        "forkastedeUtfall": [],
+        "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+        "forelderVurderingId": "bf44f609-39b1-49b8-bba2-ca02e7051f6c",
+        "erLaast": false,
+        "faktumIder": [
+          "87b61083-a6b9-4e65-94e1-6630ecb5b8ec"
+        ],
+        "rettskildeIder": [],
+        "refererteVurderingIder": [],
+        "delvurderingIder": []
+      }
+    ],
+    "vurderingstre": [
+      {
+        "delvurderinger": [
+          {
+            "delvurderinger": [],
+            "vurderingId": "02e60621-8515-4c1d-b099-9dbb753c99f6",
+            "sakId": "452b23ad-2073-45c4-abda-f7dc13e25d11",
+            "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+            "type": "Deterministisk",
+            "utfall": "IkkeOppfylt",
+            "beregningsspor": "Foretakets sentrale godkjenning dekker ikke tiltaksklassen/kategorien dette tiltaket krever => kan ikke automatisk bekreftes",
+            "konfidens": null,
+            "eskalert": true,
+            "hovedhensyn": [],
+            "forkastedeUtfall": [],
+            "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+            "forelderVurderingId": "bf44f609-39b1-49b8-bba2-ca02e7051f6c",
+            "erLaast": false,
+            "faktumIder": [
+              "4a2f0d48-d49e-4774-a759-a3d0b429ef71"
+            ],
+            "rettskildeIder": [
+              "2c741e06-f023-44c3-85e8-6532b217881b"
+            ],
+            "refererteVurderingIder": [],
+            "delvurderingIder": []
+          },
+          {
+            "delvurderinger": [],
+            "vurderingId": "f352d643-4d86-451e-af7a-40bc532db59c",
+            "sakId": "452b23ad-2073-45c4-abda-f7dc13e25d11",
+            "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+            "type": "Deterministisk",
+            "utfall": "Oppfylt",
+            "beregningsspor": "Tiltaket er begrenset til innvendig fôring, ingen utvendig dimensjonsendring => regnes som rehabilitering/reparasjon",
+            "konfidens": null,
+            "eskalert": false,
+            "hovedhensyn": [],
+            "forkastedeUtfall": [],
+            "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+            "forelderVurderingId": "bf44f609-39b1-49b8-bba2-ca02e7051f6c",
+            "erLaast": false,
+            "faktumIder": [
+              "87b61083-a6b9-4e65-94e1-6630ecb5b8ec"
+            ],
+            "rettskildeIder": [],
+            "refererteVurderingIder": [],
+            "delvurderingIder": []
+          }
+        ],
+        "vurderingId": "bf44f609-39b1-49b8-bba2-ca02e7051f6c",
+        "sakId": "452b23ad-2073-45c4-abda-f7dc13e25d11",
+        "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+        "type": "Deterministisk",
+        "utfall": "Uavklart",
+        "beregningsspor": "Ett av tre delvilkår i DiBKs sjekkliste (ansvarsrett) kunne ikke bekreftes automatisk => saken rutes til ordinær manuell saksbehandling",
+        "konfidens": null,
+        "eskalert": true,
+        "hovedhensyn": [],
+        "forkastedeUtfall": [],
+        "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+        "forelderVurderingId": null,
+        "erLaast": false,
+        "faktumIder": [],
+        "rettskildeIder": [
+          "a10fc9c6-a378-4250-9639-da9b1677ccf4"
+        ],
+        "refererteVurderingIder": [],
+        "delvurderingIder": [
+          "02e60621-8515-4c1d-b099-9dbb753c99f6",
+          "f352d643-4d86-451e-af7a-40bc532db59c"
+        ]
+      }
+    ],
+    "partsmedvirkninger": [],
+    "vedtak": [],
+    "refererteVurderinger": [],
+    "andreFaktum": [],
+    "referansedata": {
+      "kilder": [
+        {
+          "kildeId": "c7e89dda-0e51-46a8-a557-d49b467887ea",
+          "navn": "eByggesøk Proff (søknadsportal)",
+          "type": "Soknad",
+          "autoritativ": false,
+          "rettskildeIder": [
+            "a10fc9c6-a378-4250-9639-da9b1677ccf4"
+          ],
+          "cccevReferanse": null,
+          "erLaast": true
+        },
+        {
+          "kildeId": "392f8932-5654-4c37-bd8c-342d4075e6ba",
+          "navn": "Sentral godkjenning for ansvarsrett (DiBK-registeret)",
+          "type": "AutoritativtRegister",
+          "autoritativ": true,
+          "rettskildeIder": [
+            "2c741e06-f023-44c3-85e8-6532b217881b"
+          ],
+          "cccevReferanse": "https://www.dibk.no/sentral-godkjenning",
+          "erLaast": true
+        }
+      ],
+      "rettskilder": [
+        {
+          "rettskildeId": "a10fc9c6-a378-4250-9639-da9b1677ccf4",
+          "type": "Lov",
+          "henvisning": "plan- og bygningsloven § 20-1 bokstav f (rehabilitering/endring av skorstein er et søknadspliktig tiltak)",
+          "versjonDato": "2026-01-01T00:00:00+00:00",
+          "eliReferanse": "https://lovdata.no/lov/2008-06-27-71"
+        },
+        {
+          "rettskildeId": "2c741e06-f023-44c3-85e8-6532b217881b",
+          "type": "Lov",
+          "henvisning": "plan- og bygningsloven § 23-3 (ansvarlig søker) jf. § 22-1 (sentral godkjenning for ansvarsrett)",
+          "versjonDato": "2026-01-01T00:00:00+00:00",
+          "eliReferanse": "https://lovdata.no/lov/2008-06-27-71"
+        }
+      ],
+      "regler": [
+        {
+          "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+          "rettskildeIder": [
+            "a10fc9c6-a378-4250-9639-da9b1677ccf4"
+          ],
+          "teknologi": "DiBK nasjonal sjekkliste (DMN-aktig regelsett i Elements eByggesak)",
+          "type": "Deterministisk",
+          "cpsvRegelReferanse": null,
+          "regeldefinisjonReferanse": "https://sjekkliste-bygg-api.ft.dibk.no/api/sjekkliste",
+          "erLaast": true
+        }
+      ],
+      "vilkar": [
+        {
+          "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+          "navn": "Automatisk godkjenning av piperehabilitering",
+          "kode": "PIPEREHAB_AUTOMATISK",
+          "kodeverk": "DIBK_SJEKKLISTE_BYGG",
+          "type": "Tillatelse",
+          "grunnlagstype": "Rettslig",
+          "fastsettelsesmate": "Parametrisert",
+          "standardTekst": [
+            {
+              "spraakKode": "nb",
+              "verdi": "Søknad om rehabilitering av skorstein kan godkjennes automatisk når ansvarlig foretak har sentral godkjenning for ansvarsrett, tiltaket kun gjelder innvendig fôring uten utvendig dimensjonsendring, og bygningen ikke er fredet eller verneverdig."
+            },
+            {
+              "spraakKode": "nn",
+              "verdi": "Søknad om rehabilitering av skorstein kan godkjennast automatisk når ansvarleg foretak har sentral godkjenning for ansvarsrett, tiltaket berre gjeld innvendig fôring utan utvendig dimensjonsendring, og bygningen ikkje er freda eller verneverdig."
+            }
+          ],
+          "rettskildeIder": [
+            "a10fc9c6-a378-4250-9639-da9b1677ccf4"
+          ],
+          "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+          "cpsvTjenesteReferanse": null,
+          "erLaast": true
+        }
+      ]
+    }
+  }
+}

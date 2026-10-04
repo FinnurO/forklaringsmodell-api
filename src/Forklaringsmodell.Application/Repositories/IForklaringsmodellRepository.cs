@@ -23,6 +23,7 @@ public interface IForklaringsmodellRepository
     // Kilde
     Task<Kilde?> GetKildeAsync(Guid kildeId, CancellationToken ct = default);
     Task<List<Kilde>> GetKilderAsync(CancellationToken ct = default);
+    Task<List<Kilde>> GetKilderByIderAsync(IEnumerable<Guid> kildeIder, CancellationToken ct = default);
     Task AddKildeAsync(Kilde kilde, CancellationToken ct = default);
     Task<bool> ErKildeReferertAsync(Guid kildeId, CancellationToken ct = default);
 
@@ -42,6 +43,7 @@ public interface IForklaringsmodellRepository
     // Regel
     Task<Regel?> GetRegelAsync(Guid regelId, CancellationToken ct = default);
     Task<List<Regel>> GetReglerAsync(CancellationToken ct = default);
+    Task<List<Regel>> GetReglerByIderAsync(IEnumerable<Guid> regelIder, CancellationToken ct = default);
     Task AddRegelAsync(Regel regel, CancellationToken ct = default);
     Task<bool> ErRegelReferertAsync(Guid regelId, CancellationToken ct = default);
 

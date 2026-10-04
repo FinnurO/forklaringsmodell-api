@@ -40,6 +40,9 @@ public class ForklaringsmodellRepository : IForklaringsmodellRepository
     public Task<List<Kilde>> GetKilderAsync(CancellationToken ct = default) =>
         _db.Kilder.Include(k => k.KildeRettskilde).OrderBy(k => k.Navn).ToListAsync(ct);
 
+    public Task<List<Kilde>> GetKilderByIderAsync(IEnumerable<Guid> kildeIder, CancellationToken ct = default) =>
+        _db.Kilder.Include(k => k.KildeRettskilde).Where(k => kildeIder.Contains(k.KildeId)).ToListAsync(ct);
+
     public async Task AddKildeAsync(Kilde kilde, CancellationToken ct = default) =>
         await _db.Kilder.AddAsync(kilde, ct);
 
@@ -82,6 +85,9 @@ public class ForklaringsmodellRepository : IForklaringsmodellRepository
 
     public Task<List<Regel>> GetReglerAsync(CancellationToken ct = default) =>
         _db.Regler.Include(r => r.RegelRettskilde).OrderBy(r => r.Teknologi).ToListAsync(ct);
+
+    public Task<List<Regel>> GetReglerByIderAsync(IEnumerable<Guid> regelIder, CancellationToken ct = default) =>
+        _db.Regler.Include(r => r.RegelRettskilde).Where(r => regelIder.Contains(r.RegelId)).ToListAsync(ct);
 
     public async Task AddRegelAsync(Regel regel, CancellationToken ct = default) =>
         await _db.Regler.AddAsync(regel, ct);
@@ -173,7 +179,9 @@ public class ForklaringsmodellRepository : IForklaringsmodellRepository
             .OrderBy(v => v.Navn).ToListAsync(ct);
 
     public Task<List<Vilkar>> GetVilkarByIderAsync(IEnumerable<Guid> vilkarIder, CancellationToken ct = default) =>
-        _db.Vilkar.Where(v => vilkarIder.Contains(v.VilkarId)).ToListAsync(ct);
+        _db.Vilkar.Include(v => v.VilkarRettskilde)
+            .Include(v => v.StandardTekst).ThenInclude(t => t!.Varianter)
+            .Where(v => vilkarIder.Contains(v.VilkarId)).ToListAsync(ct);
 
     public async Task AddVilkarAsync(Vilkar vilkar, CancellationToken ct = default) =>
         await _db.Vilkar.AddAsync(vilkar, ct);

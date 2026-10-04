@@ -1,4 +1,5 @@
 using Forklaringsmodell.Application.Dtos;
+using Forklaringsmodell.Application.Mapping;
 using Forklaringsmodell.Application.Exceptions;
 using Forklaringsmodell.Application.Repositories;
 using Forklaringsmodell.Application.Validators;
@@ -84,14 +85,5 @@ public class SakService
         return ToDto(sak);
     }
 
-    private static SakDto ToDto(Sak sak) => new()
-    {
-        SakId = sak.SakId,
-        Tittel = sak.Tittel,
-        Status = sak.Status,
-        Opprettet = sak.Opprettet,
-        SistEndret = sak.SistEndret,
-        CpsvTjenesteReferanse = sak.CpsvTjenesteReferanse,
-        UtlosendeHendelse = sak.UtlosendeHendelse
-    };
+    private static SakDto ToDto(Sak sak) => DtoMapper.TilDto(sak);
 }

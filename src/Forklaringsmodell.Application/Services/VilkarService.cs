@@ -94,19 +94,6 @@ public class VilkarService
         }
     }
 
-    private async Task<VilkarDto> ToDtoAsync(Vilkar vilkar, CancellationToken ct) => new()
-    {
-        VilkarId = vilkar.VilkarId,
-        Navn = vilkar.Navn,
-        Kode = vilkar.Kode,
-        Kodeverk = vilkar.Kodeverk,
-        Type = vilkar.Type,
-        Grunnlagstype = vilkar.Grunnlagstype,
-        Fastsettelsesmate = vilkar.Fastsettelsesmate,
-        StandardTekst = FlerspraakligTekstMapper.TilDto(vilkar.StandardTekst),
-        RettskildeIder = vilkar.VilkarRettskilde.Select(vr => vr.RettskildeId).ToList(),
-        RegelId = vilkar.RegelId,
-        CpsvTjenesteReferanse = vilkar.CpsvTjenesteReferanse,
-        ErLaast = await _repository.ErVilkarReferertAsync(vilkar.VilkarId, ct)
-    };
+    private async Task<VilkarDto> ToDtoAsync(Vilkar vilkar, CancellationToken ct) =>
+        DtoMapper.TilDto(vilkar, await _repository.ErVilkarReferertAsync(vilkar.VilkarId, ct));
 }

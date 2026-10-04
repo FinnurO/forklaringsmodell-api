@@ -9,10 +9,12 @@ namespace Forklaringsmodell.Api.Controllers;
 public class SakerController : ControllerBase
 {
     private readonly SakService _sakService;
+    private readonly ForklaringService _forklaringService;
 
-    public SakerController(SakService sakService)
+    public SakerController(SakService sakService, ForklaringService forklaringService)
     {
         _sakService = sakService;
+        _forklaringService = forklaringService;
     }
 
     [HttpGet]
@@ -29,6 +31,11 @@ public class SakerController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<SakDto>> Get(Guid id, CancellationToken ct) =>
         Ok(await _sakService.GetAsync(id, ct));
+
+    /// <summary>Hele saken samlet i ett svar: levende visning, også uten vedtak. <c>erLaast</c> viser hva et vedtak har frosset.</summary>
+    [HttpGet("{id:guid}/forklaring")]
+    public async Task<ActionResult<SakForklaringDto>> GetForklaring(Guid id, CancellationToken ct) =>
+        Ok(await _forklaringService.GetSakForklaringAsync(id, ct));
 
     [HttpPut("{id:guid}")]
     public async Task<ActionResult<SakDto>> Oppdater(Guid id, [FromBody] OppdaterSakDto dto, CancellationToken ct) =>

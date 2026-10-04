@@ -38,10 +38,12 @@ public class SakVedtakController : ControllerBase
 public class VedtakController : ControllerBase
 {
     private readonly VedtakService _vedtakService;
+    private readonly ForklaringService _forklaringService;
 
-    public VedtakController(VedtakService vedtakService)
+    public VedtakController(VedtakService vedtakService, ForklaringService forklaringService)
     {
         _vedtakService = vedtakService;
+        _forklaringService = forklaringService;
     }
 
     [HttpGet("{id:guid}")]
@@ -50,7 +52,7 @@ public class VedtakController : ControllerBase
 
     [HttpGet("{id:guid}/forklaring")]
     public async Task<ActionResult<HydrertForklaringDto>> GetForklaring(Guid id, CancellationToken ct) =>
-        Ok(await _vedtakService.GetForklaringAsync(id, ct));
+        Ok(await _forklaringService.GetVedtakForklaringAsync(id, ct));
 
     [HttpGet("{id:guid}/virkninger")]
     public async Task<ActionResult<List<VedtaksvirkningDto>>> GetVirkninger(Guid id, CancellationToken ct) =>

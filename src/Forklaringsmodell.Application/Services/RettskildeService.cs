@@ -1,4 +1,5 @@
 using Forklaringsmodell.Application.Dtos;
+using Forklaringsmodell.Application.Mapping;
 using Forklaringsmodell.Application.Exceptions;
 using Forklaringsmodell.Application.Repositories;
 using Forklaringsmodell.Domain.Entities;
@@ -45,12 +46,5 @@ public class RettskildeService
         return ToDto(rettskilde);
     }
 
-    private static RettskildeDto ToDto(Rettskilde rettskilde) => new()
-    {
-        RettskildeId = rettskilde.RettskildeId,
-        Type = rettskilde.Type,
-        Henvisning = rettskilde.Henvisning,
-        VersjonDato = rettskilde.VersjonDato,
-        EliReferanse = rettskilde.EliReferanse
-    };
+    private static RettskildeDto ToDto(Rettskilde rettskilde) => DtoMapper.TilDto(rettskilde);
 }

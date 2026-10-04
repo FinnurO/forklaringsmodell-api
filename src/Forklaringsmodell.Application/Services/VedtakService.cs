@@ -227,80 +227,6 @@ public class VedtakService
         return virkninger.Select(ToDto).ToList();
     }
 
-    /// <summary>Leser hydrert forklaring: vedtak + alle refererte faktum/vurdering/partsmedvirkning-rader utfoldet.</summary>
-    public async Task<HydrertForklaringDto> GetForklaringAsync(Guid vedtakId, CancellationToken ct = default)
-    {
-        var vedtak = await _repository.GetVedtakAsync(vedtakId, ct) ?? throw new NotFoundException($"Vedtak {vedtakId} finnes ikke.");
-        var logg = await _repository.GetForklaringsloggAsync(vedtakId, ct) ?? throw new NotFoundException($"Forklaringslogg for vedtak {vedtakId} finnes ikke.");
-
-        var faktumIder = logg.Oppforinger.Where(o => o.Type == OppforingsType.Faktum).Select(o => o.ReferanseId).ToList();
-        var vurderingIder = logg.Oppforinger.Where(o => o.Type == OppforingsType.Vurdering).Select(o => o.ReferanseId).ToList();
-        var partsmedvirkningIder = logg.Oppforinger.Where(o => o.Type == OppforingsType.Partsmedvirkning).Select(o => o.ReferanseId).ToList();
-
-        var faktumRader = faktumIder.Count > 0 ? await _repository.GetFaktumByIderAsync(faktumIder, ct) : new List<Faktum>();
-        var vurderingRader = vurderingIder.Count > 0 ? await _repository.GetVurderingerByIderAsync(vurderingIder, ct) : new List<Vurdering>();
-        var partsmedvirkningRader = partsmedvirkningIder.Count > 0 ? await _repository.GetPartsmedvirkningerByIderAsync(partsmedvirkningIder, ct) : new List<Partsmedvirkning>();
-        var virkninger = await _repository.GetVirkningerForVedtakAsync(vedtakId, ct);
-
-        return new HydrertForklaringDto
-        {
-            Vedtak = ToDto(vedtak),
-            Forklaringslogg = new ForklaringsloggDto
-            {
-                LoggId = logg.LoggId,
-                VedtakId = logg.VedtakId,
-                Oppforinger = logg.Oppforinger.Select(o => new ForklaringsloggOppforingDto
-                {
-                    OppforingId = o.OppforingId,
-                    Type = o.Type,
-                    ReferanseId = o.ReferanseId
-                }).ToList()
-            },
-            Faktum = faktumRader.Select(f => new FaktumDto
-            {
-                FaktumId = f.FaktumId,
-                SakId = f.SakId,
-                KildeId = f.KildeId,
-                Type = f.Type,
-                Struktur = f.Struktur,
-                Verdi = f.Verdi,
-                AvledetFraFaktumId = f.AvledetFraFaktumId,
-                InnhentetTidspunkt = f.InnhentetTidspunkt,
-                RettskildeIder = f.FaktumRettskilde.Select(fr => fr.RettskildeId).ToList(),
-                ErLaast = true
-            }).ToList(),
-            Vurderinger = vurderingRader.Select(v => new VurderingDto
-            {
-                VurderingId = v.VurderingId,
-                SakId = v.SakId,
-                RegelId = v.RegelId,
-                Type = v.Type,
-                Utfall = v.Utfall,
-                Beregningsspor = v.Beregningsspor,
-                Konfidens = v.Konfidens,
-                Eskalert = v.Eskalert,
-                Hovedhensyn = FlerspraakligTekstMapper.TilDto(v.HovedhensynTekst),
-                ForkastedeUtfall = FlerspraakligTekstMapper.TilDto(v.ForkastedeUtfallTekst),
-                VilkarId = v.VilkarId,
-                ForelderVurderingId = v.ForelderVurderingId,
-                ErLaast = true,
-                FaktumIder = v.VurderingFaktum.Select(vf => vf.FaktumId).ToList(),
-                RettskildeIder = v.VurderingRettskilde.Select(vr => vr.RettskildeId).ToList(),
-                RefererteVurderingIder = v.RefererteVurderinger.Select(r => r.RefererteVurderingId).ToList(),
-                DelvurderingIder = v.Delvurderinger.Select(d => d.VurderingId).ToList()
-            }).ToList(),
-            Partsmedvirkninger = partsmedvirkningRader.Select(p => new PartsmedvirkningDto
-            {
-                MedvirkningId = p.MedvirkningId,
-                SakId = p.SakId,
-                Type = p.Type,
-                Tidspunkt = p.Tidspunkt,
-                Innhold = p.Innhold
-            }).ToList(),
-            Virkninger = virkninger.Select(ToDto).ToList()
-        };
-    }
-
     /// <summary>
     /// Regel 3.5: Vedtak.AutomatiseringsGrad skal ikke settes fritt av klienten, men
     /// beregnes serverside ut fra andelen Vurdering som bærer et manuelt/eskalert signal
@@ -340,31 +266,7 @@ public class VedtakService
         return AutomatiseringsGrad.DelvisAutomatisert;
     }
 
-    private static VedtakDto ToDto(Vedtak vedtak) => new()
-    {
-        VedtakId = vedtak.VedtakId,
-        SakId = vedtak.SakId,
-        Tidspunkt = vedtak.Tidspunkt,
-        Utfall = vedtak.Utfall,
-        AutomatiseringsGrad = vedtak.AutomatiseringsGrad
-    };
+    private static VedtakDto ToDto(Vedtak vedtak) => DtoMapper.TilDto(vedtak);
 
-    private static VedtaksvirkningDto ToDto(Vedtaksvirkning virkning) => new()
-    {
-        VirkningId = virkning.VirkningId,
-        VedtakId = virkning.VedtakId,
-        VilkarId = virkning.VilkarId,
-        Type = virkning.Type,
-        Fastsettelsesmate = virkning.Fastsettelsesmate,
-        Beskrivelse = FlerspraakligTekstMapper.TilDto(virkning.BeskrivelseTekst),
-        Varighet = virkning.Varighet,
-        GyldigFra = virkning.GyldigFra,
-        GyldigTil = virkning.GyldigTil,
-        Belop = virkning.Belop,
-        LopendeVilkar = FlerspraakligTekstMapper.TilDto(virkning.LopendeVilkarTekst),
-        RapporteringsFrekvens = virkning.RapporteringsFrekvens,
-        AvledetFraVirkningId = virkning.AvledetFraVirkningId,
-        VurderingIder = virkning.VedtaksvirkningVurdering.Select(vv => vv.VurderingId).ToList(),
-        FaktumIder = virkning.VedtaksvirkningFaktum.Select(vf => vf.FaktumId).ToList()
-    };
+    private static VedtaksvirkningDto ToDto(Vedtaksvirkning virkning) => DtoMapper.TilDto(virkning);
 }

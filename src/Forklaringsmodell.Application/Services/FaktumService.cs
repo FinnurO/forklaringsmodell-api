@@ -1,4 +1,5 @@
 using Forklaringsmodell.Application.Dtos;
+using Forklaringsmodell.Application.Mapping;
 using Forklaringsmodell.Application.Exceptions;
 using Forklaringsmodell.Application.Repositories;
 using Forklaringsmodell.Domain.Entities;
@@ -133,17 +134,6 @@ public class FaktumService
         }
     }
 
-    private async Task<FaktumDto> ToDtoAsync(Faktum faktum, CancellationToken ct) => new()
-    {
-        FaktumId = faktum.FaktumId,
-        SakId = faktum.SakId,
-        KildeId = faktum.KildeId,
-        Type = faktum.Type,
-        Struktur = faktum.Struktur,
-        Verdi = faktum.Verdi,
-        AvledetFraFaktumId = faktum.AvledetFraFaktumId,
-        InnhentetTidspunkt = faktum.InnhentetTidspunkt,
-        RettskildeIder = faktum.FaktumRettskilde.Select(fr => fr.RettskildeId).ToList(),
-        ErLaast = await _repository.ErFaktumReferertAsync(faktum.FaktumId, ct)
-    };
+    private async Task<FaktumDto> ToDtoAsync(Faktum faktum, CancellationToken ct) =>
+        DtoMapper.TilDto(faktum, await _repository.ErFaktumReferertAsync(faktum.FaktumId, ct));
 }

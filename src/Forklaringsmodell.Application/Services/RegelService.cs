@@ -1,4 +1,5 @@
 using Forklaringsmodell.Application.Dtos;
+using Forklaringsmodell.Application.Mapping;
 using Forklaringsmodell.Application.Exceptions;
 using Forklaringsmodell.Application.Repositories;
 using Forklaringsmodell.Domain.Entities;
@@ -62,14 +63,6 @@ public class RegelService
         return await ToDtoAsync(regel, ct);
     }
 
-    private async Task<RegelDto> ToDtoAsync(Regel regel, CancellationToken ct) => new()
-    {
-        RegelId = regel.RegelId,
-        RettskildeIder = regel.RegelRettskilde.Select(rr => rr.RettskildeId).ToList(),
-        Teknologi = regel.Teknologi,
-        Type = regel.Type,
-        CpsvRegelReferanse = regel.CpsvRegelReferanse,
-        RegeldefinisjonReferanse = regel.RegeldefinisjonReferanse,
-        ErLaast = await _repository.ErRegelReferertAsync(regel.RegelId, ct)
-    };
+    private async Task<RegelDto> ToDtoAsync(Regel regel, CancellationToken ct) =>
+        DtoMapper.TilDto(regel, await _repository.ErRegelReferertAsync(regel.RegelId, ct));
 }

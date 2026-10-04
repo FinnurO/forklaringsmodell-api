@@ -3,20 +3,20 @@
   "path": "/api/saker/{sakId}/vurderinger",
   "status": 201,
   "request": {
-    "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+    "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
     "type": "Deterministisk",
     "utfall": "Oppfylt",
     "beregningsspor": "Alle tre delvilkår i DiBKs sjekkliste for piperehabilitering er oppfylt => automatisk godkjent",
     "eskalert": false,
-    "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
+    "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
     "rettskildeIder": [
-      "ae65fbfa-9072-48e7-9a54-9935fb4cc0d8"
+      "a10fc9c6-a378-4250-9639-da9b1677ccf4"
     ]
   },
   "response": {
-    "vurderingId": "7deed7b7-6333-4d63-9673-ff3ca6914d52",
-    "sakId": "1778cc21-d029-485e-8170-1c4f73a15956",
-    "regelId": "24c316fb-9c10-4f48-9373-6f05f3c140a3",
+    "vurderingId": "eaa03ca4-dd00-4d34-8166-e8001908f53a",
+    "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
+    "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
     "type": "Deterministisk",
     "utfall": "Oppfylt",
     "beregningsspor": "Alle tre delvilkår i DiBKs sjekkliste for piperehabilitering er oppfylt => automatisk godkjent",
@@ -24,12 +24,12 @@
     "eskalert": false,
     "hovedhensyn": [],
     "forkastedeUtfall": [],
-    "vilkarId": "506d361c-6fc2-48e0-acdb-f022864bf8a4",
+    "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
     "forelderVurderingId": null,
     "erLaast": false,
     "faktumIder": [],
     "rettskildeIder": [
-      "ae65fbfa-9072-48e7-9a54-9935fb4cc0d8"
+      "a10fc9c6-a378-4250-9639-da9b1677ccf4"
     ],
     "refererteVurderingIder": [],
     "delvurderingIder": []

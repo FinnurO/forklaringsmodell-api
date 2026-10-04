@@ -1,57 +1,26 @@
 {
   "method": "GET",
-  "path": "/api/vedtak/{vedtakId}/forklaring",
+  "path": "/api/saker/{sakId}/forklaring",
   "status": 200,
   "request": null,
   "response": {
-    "vedtak": {
-      "vedtakId": "d2ca99fa-2518-48b8-b8ae-b733071b87b9",
+    "sak": {
       "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
-      "tidspunkt": "2026-10-04T19:55:43.0417664+00:00",
-      "utfall": "Tillatelse til rehabilitering av skorstein innvilget",
-      "automatiseringsGrad": "Helautomatisert"
+      "tittel": "Søknad om rehabilitering av skorstein – Eiganesveien 12, Stavanger",
+      "status": "UnderBehandling",
+      "opprettet": "2026-10-04T19:55:42.1174818+00:00",
+      "sistEndret": "2026-10-04T19:55:42.1174818+00:00",
+      "cpsvTjenesteReferanse": null,
+      "utlosendeHendelse": "Soknad"
     },
-    "forklaringslogg": {
-      "loggId": "63f6aa2f-6210-4949-ab66-204954f6abce",
-      "vedtakId": "d2ca99fa-2518-48b8-b8ae-b733071b87b9",
-      "oppforinger": [
-        {
-          "oppforingId": "4be74287-7977-4729-96d0-66695cfc9282",
-          "type": "Faktum",
-          "referanseId": "60691f1b-9672-4103-8587-90b1a25e3bad"
-        },
-        {
-          "oppforingId": "8a733db7-f718-422b-bb5f-d5888ede780f",
-          "type": "Vurdering",
-          "referanseId": "e1b24ffc-ea74-4985-80cf-b5a87c4ecda4"
-        },
-        {
-          "oppforingId": "98560a0a-f5a4-4199-b83f-1463c1a30fc7",
-          "type": "Vurdering",
-          "referanseId": "2a95bac0-0058-4acb-96a1-7c58bb854eb1"
-        },
-        {
-          "oppforingId": "a009bf19-467f-4ee0-ab90-383ac4b24016",
-          "type": "Vurdering",
-          "referanseId": "eaa03ca4-dd00-4d34-8166-e8001908f53a"
-        },
-        {
-          "oppforingId": "ad638255-b4c5-462d-b0af-e5f305883e29",
-          "type": "Faktum",
-          "referanseId": "abd9a9ac-e011-4cae-bcad-15609cc773fe"
-        },
-        {
-          "oppforingId": "bb40f124-97ac-4c07-9f6b-2f35160559f9",
-          "type": "Faktum",
-          "referanseId": "36dbd527-f14a-4882-850a-2c8be6adb25d"
-        },
-        {
-          "oppforingId": "df060273-5ea3-44af-8a9e-3a36f7c59e37",
-          "type": "Vurdering",
-          "referanseId": "e8118f56-6772-4248-b79b-f5951e886cbf"
-        }
-      ]
+    "oppsummering": {
+      "harVedtak": true,
+      "antallVedtak": 1,
+      "antallFaktum": 3,
+      "antallVurderinger": 4,
+      "antallEskalerteVurderinger": 0
     },
+    "relasjoner": [],
     "faktum": [
       {
         "faktumId": "36dbd527-f14a-4882-850a-2c8be6adb25d",
@@ -66,18 +35,6 @@
         "erLaast": true
       },
       {
-        "faktumId": "60691f1b-9672-4103-8587-90b1a25e3bad",
-        "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
-        "kildeId": "c7e89dda-0e51-46a8-a557-d49b467887ea",
-        "type": "Raatt",
-        "struktur": "Strukturert",
-        "verdi": "Bygningen er ikke registrert som fredet eller verneverdig i kommunens kulturminneregister.",
-        "avledetFraFaktumId": null,
-        "innhentetTidspunkt": "2026-10-04T19:55:42.2575419+00:00",
-        "rettskildeIder": [],
-        "erLaast": true
-      },
-      {
         "faktumId": "abd9a9ac-e011-4cae-bcad-15609cc773fe",
         "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
         "kildeId": "392f8932-5654-4c37-bd8c-342d4075e6ba",
@@ -86,6 +43,18 @@
         "verdi": "Ansvarlig foretak har gyldig sentral godkjenning for ansvarsrett, tiltaksklasse 1, for brannsikkerhet/ildsted og skorstein.",
         "avledetFraFaktumId": null,
         "innhentetTidspunkt": "2026-10-04T19:55:42.2421491+00:00",
+        "rettskildeIder": [],
+        "erLaast": true
+      },
+      {
+        "faktumId": "60691f1b-9672-4103-8587-90b1a25e3bad",
+        "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
+        "kildeId": "c7e89dda-0e51-46a8-a557-d49b467887ea",
+        "type": "Raatt",
+        "struktur": "Strukturert",
+        "verdi": "Bygningen er ikke registrert som fredet eller verneverdig i kommunens kulturminneregister.",
+        "avledetFraFaktumId": null,
+        "innhentetTidspunkt": "2026-10-04T19:55:42.2575419+00:00",
         "rettskildeIder": [],
         "erLaast": true
       }
@@ -280,35 +249,87 @@
       }
     ],
     "partsmedvirkninger": [],
-    "virkninger": [
+    "vedtak": [
       {
-        "virkningId": "217a2551-bea1-444a-959e-df26d4ac8c0f",
-        "vedtakId": "d2ca99fa-2518-48b8-b8ae-b733071b87b9",
-        "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
-        "type": "Tillatelse",
-        "fastsettelsesmate": "Parametrisert",
-        "beskrivelse": [
+        "vedtak": {
+          "vedtakId": "d2ca99fa-2518-48b8-b8ae-b733071b87b9",
+          "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
+          "tidspunkt": "2026-10-04T19:55:43.0417664+00:00",
+          "utfall": "Tillatelse til rehabilitering av skorstein innvilget",
+          "automatiseringsGrad": "Helautomatisert"
+        },
+        "forklaringslogg": {
+          "loggId": "63f6aa2f-6210-4949-ab66-204954f6abce",
+          "vedtakId": "d2ca99fa-2518-48b8-b8ae-b733071b87b9",
+          "oppforinger": [
+            {
+              "oppforingId": "4be74287-7977-4729-96d0-66695cfc9282",
+              "type": "Faktum",
+              "referanseId": "60691f1b-9672-4103-8587-90b1a25e3bad"
+            },
+            {
+              "oppforingId": "8a733db7-f718-422b-bb5f-d5888ede780f",
+              "type": "Vurdering",
+              "referanseId": "e1b24ffc-ea74-4985-80cf-b5a87c4ecda4"
+            },
+            {
+              "oppforingId": "98560a0a-f5a4-4199-b83f-1463c1a30fc7",
+              "type": "Vurdering",
+              "referanseId": "2a95bac0-0058-4acb-96a1-7c58bb854eb1"
+            },
+            {
+              "oppforingId": "a009bf19-467f-4ee0-ab90-383ac4b24016",
+              "type": "Vurdering",
+              "referanseId": "eaa03ca4-dd00-4d34-8166-e8001908f53a"
+            },
+            {
+              "oppforingId": "ad638255-b4c5-462d-b0af-e5f305883e29",
+              "type": "Faktum",
+              "referanseId": "abd9a9ac-e011-4cae-bcad-15609cc773fe"
+            },
+            {
+              "oppforingId": "bb40f124-97ac-4c07-9f6b-2f35160559f9",
+              "type": "Faktum",
+              "referanseId": "36dbd527-f14a-4882-850a-2c8be6adb25d"
+            },
+            {
+              "oppforingId": "df060273-5ea3-44af-8a9e-3a36f7c59e37",
+              "type": "Vurdering",
+              "referanseId": "e8118f56-6772-4248-b79b-f5951e886cbf"
+            }
+          ]
+        },
+        "virkninger": [
           {
-            "spraakKode": "nb",
-            "verdi": "Tillatelse til rehabilitering av skorstein (innvendig fôring)"
-          },
-          {
-            "spraakKode": "nn",
-            "verdi": "Løyve til rehabilitering av skorstein (innvendig fôring)"
+            "virkningId": "217a2551-bea1-444a-959e-df26d4ac8c0f",
+            "vedtakId": "d2ca99fa-2518-48b8-b8ae-b733071b87b9",
+            "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+            "type": "Tillatelse",
+            "fastsettelsesmate": "Parametrisert",
+            "beskrivelse": [
+              {
+                "spraakKode": "nb",
+                "verdi": "Tillatelse til rehabilitering av skorstein (innvendig fôring)"
+              },
+              {
+                "spraakKode": "nn",
+                "verdi": "Løyve til rehabilitering av skorstein (innvendig fôring)"
+              }
+            ],
+            "varighet": "Varig",
+            "gyldigFra": null,
+            "gyldigTil": null,
+            "belop": null,
+            "lopendeVilkar": [],
+            "rapporteringsFrekvens": null,
+            "avledetFraVirkningId": null,
+            "vurderingIder": [
+              "eaa03ca4-dd00-4d34-8166-e8001908f53a"
+            ],
+            "faktumIder": [
+              "36dbd527-f14a-4882-850a-2c8be6adb25d"
+            ]
           }
-        ],
-        "varighet": "Varig",
-        "gyldigFra": null,
-        "gyldigTil": null,
-        "belop": null,
-        "lopendeVilkar": [],
-        "rapporteringsFrekvens": null,
-        "avledetFraVirkningId": null,
-        "vurderingIder": [
-          "eaa03ca4-dd00-4d34-8166-e8001908f53a"
-        ],
-        "faktumIder": [
-          "36dbd527-f14a-4882-850a-2c8be6adb25d"
         ]
       }
     ],

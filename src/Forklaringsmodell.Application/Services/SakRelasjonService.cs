@@ -1,4 +1,5 @@
 using Forklaringsmodell.Application.Dtos;
+using Forklaringsmodell.Application.Mapping;
 using Forklaringsmodell.Application.Exceptions;
 using Forklaringsmodell.Application.Repositories;
 using Forklaringsmodell.Domain.Entities;
@@ -52,11 +53,5 @@ public class SakRelasjonService
         return ToDto(relasjon);
     }
 
-    private static SakRelasjonDto ToDto(SakRelasjon relasjon) => new()
-    {
-        RelasjonId = relasjon.RelasjonId,
-        SakId = relasjon.SakId,
-        RelatertSakId = relasjon.RelatertSakId,
-        Type = relasjon.Type
-    };
+    private static SakRelasjonDto ToDto(SakRelasjon relasjon) => DtoMapper.TilDto(relasjon);
 }

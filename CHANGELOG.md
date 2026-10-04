@@ -2,6 +2,38 @@
 
 Alle vesentlige endringer i dette prosjektet dokumenteres i denne filen.
 
+## [1.7.0] — Samlet forklaring av en sak
+
+### Lagt til
+
+- **Nytt endepunkt `GET /api/saker/{sakId}/forklaring`**: hele saken levende i ett svar, også når saken ikke har vedtak (f.eks. en sak rutet til manuell behandling). Svaret inneholder `sak`, `oppsummering` (`harVedtak`, `antallVedtak`, `antallFaktum`, `antallVurderinger`, `antallEskalerteVurderinger`), `relasjoner`, `faktum`, `vurderinger` (flat liste), `vurderingstre` (samme rader nøstet), `partsmedvirkninger`, `vedtak` (liste der hvert element har `vedtak`, `forklaringslogg` og `virkninger`), `refererteVurderinger`, `andreFaktum` og `referansedata`. `erLaast` på hver rad viser hva som er frosset av et vedtak (beregnet fra forklaringsloggene). 404 hvis saken ikke finnes.
+- **`vurderingstre`**: vurderingene nøstet via `forelderVurderingId` (regel 3.18). Hver node har alle `VurderingDto`-feltene pluss `delvurderinger`, slik at en visning kan gå rett fra tre til skjerm.
+- **`referansedata`**: oppløste `kilder`, `rettskilder`, `regler` og `vilkar` som er referert i svaret, inkludert rettskilder som kilder, regler og vilkår selv peker på, og regelen et vilkår peker på. Klienten slipper egne oppslag.
+- **`refererteVurderinger`**: vurderinger i *andre*, frosne saker som vurderingene her bygger på (regel 3.11). Følges ett nivå.
+- **`andreFaktum`**: faktum som er referert fra vurderinger eller virkninger, men ikke er oppført i forklaringsloggen (typisk fra en annen sak).
+
+### Endrede API-kontrakter
+
+- `GET /api/vedtak/{id}/forklaring` berikes med `vurderingstre`, `referansedata`, `refererteVurderinger` og `andreFaktum`. Bakoverkompatibelt: alle eksisterende felt er uendret, kun nye felt er lagt til. Svaret er fortsatt det *frosne* øyeblikksbildet: kun det forklaringsloggen peker på, pluss oppløste referanser.
+- De to visningene har ulik rolle: vedtak-forklaringen er det frosne øyeblikksbildet, sak-forklaringen er den levende saksvisningen.
+
+### Avveininger
+
+- Svaret fra `GET /api/saker/{sakId}/forklaring` kan bli stort for store saker.
+- Vurderingene finnes både flatt (`vurderinger`) og nøstet (`vurderingstre`). Det er de samme radene: enklere for klienten, men gir dobbel nyttelast.
+
+### Migrasjon
+
+- Ingen databasemigrasjon og ingen brytende endring. Ingen ny forretningsregel (antallet er fortsatt 18).
+
+### Internt
+
+- Entitet-til-DTO-mappingen er samlet i `DtoMapper`, og alle services og begge forklaringsvisningene bruker den. Tidligere lå en egen, manuelt vedlikeholdt projeksjon i `GetForklaringAsync`, og den falt flere ganger ut av takt med DTO-ene når nye felt ble lagt til. Forklaringen settes nå sammen av `ForklaringService` i stedet for `VedtakService`.
+
+### Tester
+
+- Nye tester for begge forklaringsvisningene (vurderingstre, referansedata, kryss-sak-referanser, sak uten vedtak og 404).
+
 ## [1.6.0] — Intra-sak vurderingshierarki og vilkårsmerking
 
 ### Lagt til

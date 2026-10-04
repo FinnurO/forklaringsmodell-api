@@ -3,20 +3,20 @@
   "path": "/api/saker/{sakId}/faktum",
   "status": 201,
   "request": {
-    "kildeId": "53cf8e0f-4b79-4f79-9407-71408944049c",
+    "kildeId": "c7e89dda-0e51-46a8-a557-d49b467887ea",
     "type": "Raatt",
     "struktur": "Strukturert",
     "verdi": "Bygningen er ikke registrert som fredet eller verneverdig i kommunens kulturminneregister."
   },
   "response": {
-    "faktumId": "6995eec4-f179-4693-bbcb-4b74e7a43fc7",
-    "sakId": "1778cc21-d029-485e-8170-1c4f73a15956",
-    "kildeId": "53cf8e0f-4b79-4f79-9407-71408944049c",
+    "faktumId": "60691f1b-9672-4103-8587-90b1a25e3bad",
+    "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
+    "kildeId": "c7e89dda-0e51-46a8-a557-d49b467887ea",
     "type": "Raatt",
     "struktur": "Strukturert",
     "verdi": "Bygningen er ikke registrert som fredet eller verneverdig i kommunens kulturminneregister.",
     "avledetFraFaktumId": null,
-    "innhentetTidspunkt": "2026-10-04T19:36:23.3501117+00:00",
+    "innhentetTidspunkt": "2026-10-04T19:55:42.2575419+00:00",
     "rettskildeIder": [],
     "erLaast": false
   }

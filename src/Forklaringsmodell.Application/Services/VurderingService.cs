@@ -199,24 +199,6 @@ public class VurderingService
         }
     }
 
-    private async Task<VurderingDto> ToDtoAsync(Vurdering vurdering, CancellationToken ct) => new()
-    {
-        VurderingId = vurdering.VurderingId,
-        SakId = vurdering.SakId,
-        RegelId = vurdering.RegelId,
-        Type = vurdering.Type,
-        Utfall = vurdering.Utfall,
-        Beregningsspor = vurdering.Beregningsspor,
-        Konfidens = vurdering.Konfidens,
-        Eskalert = vurdering.Eskalert,
-        Hovedhensyn = FlerspraakligTekstMapper.TilDto(vurdering.HovedhensynTekst),
-        ForkastedeUtfall = FlerspraakligTekstMapper.TilDto(vurdering.ForkastedeUtfallTekst),
-        VilkarId = vurdering.VilkarId,
-        ForelderVurderingId = vurdering.ForelderVurderingId,
-        ErLaast = await _repository.ErVurderingReferertAsync(vurdering.VurderingId, ct),
-        FaktumIder = vurdering.VurderingFaktum.Select(vf => vf.FaktumId).ToList(),
-        RettskildeIder = vurdering.VurderingRettskilde.Select(vr => vr.RettskildeId).ToList(),
-        RefererteVurderingIder = vurdering.RefererteVurderinger.Select(r => r.RefererteVurderingId).ToList(),
-        DelvurderingIder = vurdering.Delvurderinger.Select(d => d.VurderingId).ToList()
-    };
+    private async Task<VurderingDto> ToDtoAsync(Vurdering vurdering, CancellationToken ct) =>
+        DtoMapper.TilDto(vurdering, await _repository.ErVurderingReferertAsync(vurdering.VurderingId, ct));
 }

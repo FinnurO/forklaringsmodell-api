@@ -290,7 +290,8 @@ public class ForklaringsloggOppforing
 | GET/POST | `/api/saker/{sakId}/partsmedvirkning` | List / registrer partsmedvirkning |
 | POST | `/api/saker/{sakId}/vedtak` | Opprett vedtak — se body-skjema under |
 | GET | `/api/vedtak/{id}` | Les vedtaket (grunndata) |
-| GET | `/api/vedtak/{id}/forklaring` | Les hydrert forklaring: vedtak + alle refererte faktum/vurdering/partsmedvirkning-rader utfoldet, inkludert virkninger |
+| GET | `/api/vedtak/{id}/forklaring` | Les hydrert forklaring: det frosne øyeblikksbildet — vedtak + alle refererte faktum/vurdering/partsmedvirkning-rader utfoldet, inkludert virkninger, vurderingstre, oppløst referansedata og kryss-sak-referanser (se «To visninger av forklaringen» under) |
+| GET | `/api/saker/{sakId}/forklaring` | Les hele saken levende i ett svar, også uten vedtak (se «To visninger av forklaringen» under) |
 | GET | `/api/vedtak/{id}/virkninger` | List alle `Vedtaksvirkning`-rader for et vedtak |
 
 Ingen `DELETE` på `vedtak`, `forklaringslogg`- eller `vedtaksvirkning`-relaterte ressurser. `PUT`/`DELETE` på `faktum`, `vurderinger`, `regler`, `kilder` skal avvises (409/423) dersom raden allerede er referert av en `ForklaringsloggOppforing`. `POST /api/regler`, `POST /api/saker/{sakId}/vurderinger` og `POST /api/kilder` tar imot `rettskildeIder` som en liste i request-body (mange-til-mange, ikke enkeltverdi) — se punkt 3.7–3.8. `POST /api/saker/{sakId}/faktum` tar imot `rettskildeIder` som valgfritt tilleggsfelt. `POST /api/saker/{sakId}/vurderinger` tar imot `refererteVurderingIder` som valgfritt tilleggsfelt — se punkt 3.11. De flerspråklige feltene (`standardTekst` på vilkår, `hovedhensyn`/`forkastedeUtfall` på vurderinger, `beskrivelse`/`lopendeVilkar` på virkninger) tar imot/returnerer en liste av `{ spraakKode, verdi }` i stedet for en enkelt streng — se punkt 3.17.
@@ -320,6 +321,19 @@ Ingen `DELETE` på `vedtak`, `forklaringslogg`- eller `vedtaksvirkning`-relatert
 ```
 
 Serveren bygger `Forklaringslogg` og dens `ForklaringsloggOppforing`-rader fra disse listene, beregner `AutomatiseringsGrad` fra de refererte `Vurdering`-radene (regel 3.5), oppretter `Vedtaksvirkning`-radene fra `virkninger`, og fryser alt i samme transaksjon.
+
+**To visninger av forklaringen**
+
+For å vise en sak komplett, tolket og på én gang, finnes to GET-kall med ulik rolle:
+
+- `GET /api/vedtak/{id}/forklaring` er det **frosne øyeblikksbildet**: kun det forklaringsloggen peker på, pluss oppløste referanser. Alle eksisterende felt (`vedtak`, `forklaringslogg`, `faktum`, `vurderinger`, `partsmedvirkninger`, `virkninger`) er uendret; følgende felt er lagt til (bakoverkompatibelt):
+  - `vurderingstre` — vurderingene nøstet via `forelderVurderingId` (regel 3.18). Hver node har alle `VurderingDto`-feltene pluss `delvurderinger`.
+  - `referansedata` — oppløste `kilder`, `rettskilder`, `regler` og `vilkar` som er referert, inkludert rettskilder som kilder, regler og vilkår peker på, og regelen et vilkår peker på.
+  - `refererteVurderinger` — vurderinger i *andre*, frosne saker som vurderingene her bygger på (regel 3.11). Følges ett nivå.
+  - `andreFaktum` — faktum referert fra vurderinger eller virkninger, men ikke oppført i loggen (typisk fra en annen sak).
+- `GET /api/saker/{sakId}/forklaring` er den **levende saksvisningen**: hele saken i ett svar, også når saken ikke har vedtak (f.eks. en sak rutet til manuell behandling). Svaret har feltene `sak`, `oppsummering` (`harVedtak`, `antallVedtak`, `antallFaktum`, `antallVurderinger`, `antallEskalerteVurderinger`), `relasjoner`, `faktum`, `vurderinger` (flat), `vurderingstre` (samme rader nøstet), `partsmedvirkninger`, `vedtak` (liste der hvert element har `vedtak`, `forklaringslogg` og `virkninger`), `refererteVurderinger`, `andreFaktum` og `referansedata`. `erLaast` på hver rad viser hva som er frosset av et vedtak, beregnet fra forklaringsloggene. Gir 404 hvis saken (eller vedtaket, for vedtak-forklaringen) ikke finnes.
+
+Begge er rene lesekall uten ny forretningsregel; frysing og append-only (punkt 3.1–3.4) er uendret. Avveininger: svaret kan bli stort for store saker, og vurderingene finnes både flatt og nøstet (samme rader, enklere for klienten, men dobbel nyttelast).
 
 ## 6. Eksempeldata (fra dagpenger-eksempelet)
 

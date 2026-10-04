@@ -122,8 +122,11 @@ Seed-dataen setter opp et komplett dagpenger-eksempel (sak, faktum, vurderinger 
 | GET/POST | `/api/saker/{sakId}/partsmedvirkning` | List / registrer partsmedvirkning |
 | POST | `/api/saker/{sakId}/vedtak` | Opprett vedtak (fryser forklaringslogg + virkninger) |
 | GET | `/api/vedtak/{id}` | Les vedtaket |
-| GET | `/api/vedtak/{id}/forklaring` | Hydrert forklaring — alt utfoldet |
+| GET | `/api/vedtak/{id}/forklaring` | Hydrert forklaring: frosset øyeblikksbilde med vurderingstre, oppløst referansedata og kryss-sak-referanser |
+| GET | `/api/saker/{sakId}/forklaring` | Hele saken levende i ett svar (også uten vedtak): faktum, vurderinger flatt og som tre, partsmedvirkning, vedtak med virkninger, referansedata |
 | GET | `/api/vedtak/{id}/virkninger` | List vedtaksvirkninger |
+
+Forklaringen kan leses på to måter: `GET /api/vedtak/{id}/forklaring` gir det frosne øyeblikksbildet bak ett vedtak, mens `GET /api/saker/{sakId}/forklaring` gir den levende saken samlet, med `erLaast` på hver rad som viser hva et vedtak har frosset.
 
 Se spesifikasjonen for fullstendige request/response-skjemaer og valideringsregler.
 
@@ -137,7 +140,7 @@ site/
   modell/             Entiteter, relasjoner, beslutningstreet, flerspråklige tekster
   regler/             De 18 forretningsreglene
   eksempel/           Stavangers automatiske piperehabilitering, fylt ut i modellen
-  eksempel/data/      De 24 faktiske API-kallene (forespørsel og svar) som JSON-filer
+  eksempel/data/      De 26 faktiske API-kallene (forespørsel og svar) som JSON-filer
   api/                Kom i gang, endepunkter, typisk flyt
   versjoner/          Versjonshistorikk
   assets/             CSS (designsystemet + site.css), fonter, site.js (tilbakemeldingsknapp)

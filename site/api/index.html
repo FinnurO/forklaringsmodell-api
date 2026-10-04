@@ -63,6 +63,7 @@
       <a href="#konvensjoner" data-anchor="konvensjoner">Konvensjoner</a>
       <a href="#endepunkter" data-anchor="endepunkter">Endepunkter</a>
       <a href="#flyt" data-anchor="flyt">Typisk flyt</a>
+      <a href="#samlet-forklaring" data-anchor="samlet-forklaring">Samlet forklaring</a>
       <a href="#konfigurasjon" data-anchor="konfigurasjon">Konfigurasjon</a>
       <a href="#kodeorganisering" data-anchor="kodeorganisering">Kodeorganisering</a>
     </nav>
@@ -227,6 +228,7 @@ dotnet run --project src/Forklaringsmodell.Api</code></pre>
               <tr><td><span class="pill ok">POST</span></td><td><code>/api/saker/{sakId}/relasjoner</code></td><td>Koble saken til en relatert sak (<code>relatertSakId</code>, <code>type</code>).</td></tr>
               <tr><td><span class="pill info">GET</span></td><td><code>/api/saker/{sakId}/partsmedvirkning</code></td><td>List partsmedvirkning (forhåndsvarsel, kommentar, innsynskrav).</td></tr>
               <tr><td><span class="pill ok">POST</span></td><td><code>/api/saker/{sakId}/partsmedvirkning</code></td><td>Registrer partsmedvirkning (<code>type</code>, <code>innhold</code>, valgfri <code>tidspunkt</code>).</td></tr>
+              <tr><td><span class="pill info">GET</span></td><td><code>/api/saker/{sakId}/forklaring</code></td><td>Hele saken levende i ett svar, også uten vedtak: faktum, vurderinger (flatt og nøstet), partsmedvirkninger, vedtak med forklaringslogg og virkninger, og oppløst referansedata. Se <a href="#samlet-forklaring">samlet forklaring</a>.</td></tr>
             </tbody>
           </table>
         </div>
@@ -282,7 +284,7 @@ dotnet run --project src/Forklaringsmodell.Api</code></pre>
               <tr><td><span class="pill info">GET</span></td><td><code>/api/saker/{sakId}/vedtak</code></td><td>List vedtak i saken.</td></tr>
               <tr><td><span class="pill ok">POST</span></td><td><code>/api/saker/{sakId}/vedtak</code></td><td>Opprett vedtak med forklaringslogg og virkninger i én transaksjon. Fryser alt som refereres.</td></tr>
               <tr><td><span class="pill info">GET</span></td><td><code>/api/vedtak/{id}</code></td><td>Les vedtaket.</td></tr>
-              <tr><td><span class="pill info">GET</span></td><td><code>/api/vedtak/{id}/forklaring</code></td><td>Hydrert forklaring: vedtak, forklaringslogg og alle refererte faktum, vurderinger, partsmedvirkninger og virkninger utfoldet.</td></tr>
+              <tr><td><span class="pill info">GET</span></td><td><code>/api/vedtak/{id}/forklaring</code></td><td>Frosset, hydrert forklaring: vedtak, forklaringslogg og alle refererte faktum, vurderinger (flatt og nøstet som <code>vurderingstre</code>), partsmedvirkninger og virkninger, pluss oppløst <code>referansedata</code>, <code>refererteVurderinger</code> og <code>andreFaktum</code>. Se <a href="#samlet-forklaring">samlet forklaring</a>.</td></tr>
               <tr><td><span class="pill info">GET</span></td><td><code>/api/vedtak/{id}/virkninger</code></td><td>List virkningene til vedtaket.</td></tr>
             </tbody>
           </table>
@@ -441,11 +443,83 @@ dotnet run --project src/Forklaringsmodell.Api</code></pre>
   ]
 }</code></pre>
         <p>Dette er hele beslutningstreet i ett kall: hvem som vurderte hva, på hvilket grunnlag, hvilke delvilkår som inngikk og hva vedtaket førte til. Alt er <code>erLaast: true</code>.</p>
+        <p class="footnote">Vil du ha hele saken i stedet for bare det ett vedtak peker på, kan den også hentes med ett kall: <code>GET /api/saker/{sakId}/forklaring</code>. Se <a href="#samlet-forklaring">samlet forklaring</a>.</p>
       </section>
 
-      <!-- ===================== 5. KONFIGURASJON ===================== -->
-      <section id="konfigurasjon">
+      <!-- ===================== 5. SAMLET FORKLARING ===================== -->
+      <section id="samlet-forklaring">
         <span class="section-num">5</span>
+        <h2>Samlet forklaring: ett kall</h2>
+        <p class="intro">For å vise en sak komplett trenger du ikke sette den sammen av mange kall. To endepunkter gir alt i ett svar, og de svarer på to ulike spørsmål.</p>
+        <p>Se ekte svar: <a href="../eksempel/data/17-sak-a-sak-forklaring.json" target="_blank" rel="noopener">hele Sak A</a> og <a href="../eksempel/data/26-sak-b-sak-forklaring.json" target="_blank" rel="noopener">hele Sak B (uten vedtak)</a> fra <code>GET /api/saker/{sakId}/forklaring</code>, og <a href="../eksempel/data/16-sak-a-forklaring.json" target="_blank" rel="noopener">vedtak-forklaringen for Sak A</a>. Alle tre kan også leses og lastes ned på <a href="../eksempel/#json-filer">eksempelsiden</a>.</p>
+
+        <h3>Hvilket endepunkt skal jeg bruke?</h3>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <caption class="ds-sr-only">Frosset øyeblikksbilde mot levende saksvisning</caption>
+            <thead><tr><th scope="col">Endepunkt</th><th scope="col">Hva du får</th><th scope="col">Bruk det når</th></tr></thead>
+            <tbody>
+              <tr><td><code>GET /api/vedtak/{id}/forklaring</code></td><td>Det <strong>frosne øyeblikksbildet</strong> av ett vedtak: bare det forklaringsloggen peker på, pluss oppløste referanser.</td><td>Du skal begrunne ett bestemt vedtak overfor en part, en klageinstans eller en revisor, og innholdet ikke skal endre seg.</td></tr>
+              <tr><td><code>GET /api/saker/{sakId}/forklaring</code></td><td>Hele <strong>saken levende</strong>: alt som finnes i saken nå, også det som ikke er frosset. Fungerer også uten vedtak, for eksempel for en sak rutet til manuell behandling.</td><td>Du skal vise saken komplett i en saksbehandlerløsning, eller se status før et vedtak er fattet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="footnote">Begge gir 404 hvis saken eller vedtaket ikke finnes. I saksvisningen viser <code>erLaast</code> på hver rad hva som er frosset av et vedtak.</p>
+
+        <h3>Felt på toppnivå: vedtakets forklaring</h3>
+        <p>Berikelsen er bakoverkompatibel: alle eksisterende felt er uendret, og de nye er lagt til.</p>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <caption class="ds-sr-only">Toppnivåfelt i GET /api/vedtak/{id}/forklaring</caption>
+            <thead><tr><th scope="col">Felt</th><th scope="col">Innhold</th></tr></thead>
+            <tbody>
+              <tr><td><code>vedtak</code>, <code>forklaringslogg</code>, <code>faktum</code>, <code>vurderinger</code>, <code>partsmedvirkninger</code>, <code>virkninger</code></td><td>Som før.</td></tr>
+              <tr><td><code>vurderingstre</code> <span class="pill info">ny</span></td><td>Vurderingene nøstet via <code>forelderVurderingId</code>. Hver node har alle vanlige vurderingsfelt og en liste <code>delvurderinger</code>.</td></tr>
+              <tr><td><code>referansedata</code> <span class="pill info">ny</span></td><td>De refererte <code>kilder</code>, <code>rettskilder</code>, <code>regler</code> og <code>vilkar</code>, oppløst så du slipper egne oppslag.</td></tr>
+              <tr><td><code>refererteVurderinger</code> <span class="pill info">ny</span></td><td>Vurderinger i andre, frosne saker som vurderingene her bygger på (regel 3.11). Ett nivå.</td></tr>
+              <tr><td><code>andreFaktum</code> <span class="pill info">ny</span></td><td>Faktum som er referert, men ikke oppført i forklaringsloggen, typisk fra en annen sak.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Felt på toppnivå: saksvisningen</h3>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <caption class="ds-sr-only">Toppnivåfelt i GET /api/saker/{sakId}/forklaring</caption>
+            <thead><tr><th scope="col">Felt</th><th scope="col">Innhold</th></tr></thead>
+            <tbody>
+              <tr><td><code>sak</code></td><td>Selve saksmappen.</td></tr>
+              <tr><td><code>oppsummering</code></td><td>Tellere: <code>harVedtak</code>, <code>antallVedtak</code>, <code>antallFaktum</code>, <code>antallVurderinger</code> og <code>antallEskalerteVurderinger</code>.</td></tr>
+              <tr><td><code>relasjoner</code></td><td>Saksrelasjonene.</td></tr>
+              <tr><td><code>faktum</code></td><td>Alle faktum i saken.</td></tr>
+              <tr><td><code>vurderinger</code></td><td>Alle vurderinger i saken, flatt.</td></tr>
+              <tr><td><code>vurderingstre</code></td><td>De samme vurderingene nøstet via <code>forelderVurderingId</code>.</td></tr>
+              <tr><td><code>partsmedvirkninger</code></td><td>Forhåndsvarsel, kommentarer og innsynskrav.</td></tr>
+              <tr><td><code>vedtak</code></td><td>Liste over vedtak i saken. Hvert element har <code>vedtak</code>, <code>forklaringslogg</code> og <code>virkninger</code>. Tom liste hvis saken ikke har vedtak.</td></tr>
+              <tr><td><code>refererteVurderinger</code>, <code>andreFaktum</code>, <code>referansedata</code></td><td>Som i vedtakets forklaring.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Flatt og nøstet er de samme radene</h3>
+        <p><code>vurderinger</code> og <code>vurderingstre</code> inneholder de samme vurderingene i to former: flatt for oppslag og filtrering, nøstet for å tegne hierarkiet uten å sette det sammen selv. Hver vurdering står dermed to ganger i svaret, og du skal ikke telle dem sammen.</p>
+
+        <h3>Referansedata, refererte vurderinger og andre faktum</h3>
+        <ul>
+          <li><strong><code>referansedata</code></strong> er katalograder svaret viser til, oppløst på stedet: kilder, rettskilder, regler og vilkår som er referert. Det inkluderer rettskildene som kilder, regler og vilkår selv peker på, og regelen et vilkår peker på.</li>
+          <li><strong><code>refererteVurderinger</code></strong> er vurderinger i <em>andre</em> frosne saker som vurderingene her bygger på (regel 3.11). Bare ett nivå følges.</li>
+          <li><strong><code>andreFaktum</code></strong> er faktum som er referert, men ikke oppført i forklaringsloggen, typisk fordi de tilhører en annen sak.</li>
+        </ul>
+
+        <div class="callout">
+          <h3>Avveining: størrelse</h3>
+          <p>Svaret kan bli stort for store saker, og vurderingene finnes både flatt og nøstet. Trenger du bare en liten del, er de enkle listeendepunktene fortsatt billigere. Endringen er additiv: ingen databasemigrasjon, ingen brytende endring og ingen ny forretningsregel.</p>
+        </div>
+      </section>
+
+      <!-- ===================== 6. KONFIGURASJON ===================== -->
+      <section id="konfigurasjon">
+        <span class="section-num">6</span>
         <h2>Konfigurasjon</h2>
         <p class="intro">Terskelen for når en KI-vurdering skal eskaleres er konfigurasjon, ikke en hardkodet konstant. I tillegg styrer en connection string hvilken database som brukes.</p>
 
@@ -506,9 +580,9 @@ dotnet run --project src/Forklaringsmodell.Api</code></pre>
         <p>Mangler verdien, brukes den samme SQLite-adressen som reserve. Leverandøren er satt til SQLite i <code>Program.cs</code>. For en annen database må du bytte EF Core-leverandør og lage nye migrasjoner.</p>
       </section>
 
-      <!-- ===================== 6. KODEORGANISERING ===================== -->
+      <!-- ===================== 7. KODEORGANISERING ===================== -->
       <section id="kodeorganisering">
-        <span class="section-num">6</span>
+        <span class="section-num">7</span>
         <h2>Kodeorganisering</h2>
         <p class="intro">Fire lag i <code>src/</code> og et testprosjekt i <code>tests/</code>. Avhengighetene peker innover: Api og Infrastructure bruker Application, og Application bruker Domain.</p>
         <div class="table-scroll">

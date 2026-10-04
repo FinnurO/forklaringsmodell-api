@@ -63,6 +63,7 @@ builder.Services.AddScoped<FaktumService>();
 builder.Services.AddScoped<VurderingService>();
 builder.Services.AddScoped<PartsmedvirkningService>();
 builder.Services.AddScoped<VedtakService>();
+builder.Services.AddScoped<ForklaringService>();
 
 var app = builder.Build();
 

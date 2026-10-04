@@ -3,20 +3,20 @@
   "path": "/api/saker/{sakId}/faktum",
   "status": 201,
   "request": {
-    "kildeId": "7a795ac6-5ce3-400e-a903-99a1845a9226",
+    "kildeId": "392f8932-5654-4c37-bd8c-342d4075e6ba",
     "type": "Raatt",
     "struktur": "Strukturert",
     "verdi": "Ansvarlig foretak har sentral godkjenning kun for tiltaksklasse 1 ildsted – ikke registrert for kategorien brannsikkerhet/skorstein som dette tiltaket krever."
   },
   "response": {
-    "faktumId": "52828432-d6b1-46dd-bd55-de3cfaf6b23d",
-    "sakId": "a1bd5c89-6250-43d6-8407-baf6ba97aab3",
-    "kildeId": "7a795ac6-5ce3-400e-a903-99a1845a9226",
+    "faktumId": "4a2f0d48-d49e-4774-a759-a3d0b429ef71",
+    "sakId": "452b23ad-2073-45c4-abda-f7dc13e25d11",
+    "kildeId": "392f8932-5654-4c37-bd8c-342d4075e6ba",
     "type": "Raatt",
     "struktur": "Strukturert",
     "verdi": "Ansvarlig foretak har sentral godkjenning kun for tiltaksklasse 1 ildsted – ikke registrert for kategorien brannsikkerhet/skorstein som dette tiltaket krever.",
     "avledetFraFaktumId": null,
-    "innhentetTidspunkt": "2026-10-04T19:36:24.3736886+00:00",
+    "innhentetTidspunkt": "2026-10-04T19:55:43.793489+00:00",
     "rettskildeIder": [],
     "erLaast": false
   }

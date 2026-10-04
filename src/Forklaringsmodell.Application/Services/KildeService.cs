@@ -1,4 +1,5 @@
 using Forklaringsmodell.Application.Dtos;
+using Forklaringsmodell.Application.Mapping;
 using Forklaringsmodell.Application.Exceptions;
 using Forklaringsmodell.Application.Repositories;
 using Forklaringsmodell.Domain.Entities;
@@ -78,14 +79,6 @@ public class KildeService
         }
     }
 
-    private async Task<KildeDto> ToDtoAsync(Kilde kilde, CancellationToken ct) => new()
-    {
-        KildeId = kilde.KildeId,
-        Navn = kilde.Navn,
-        Type = kilde.Type,
-        Autoritativ = kilde.Autoritativ,
-        RettskildeIder = kilde.KildeRettskilde.Select(kr => kr.RettskildeId).ToList(),
-        CccevReferanse = kilde.CccevReferanse,
-        ErLaast = await _repository.ErKildeReferertAsync(kilde.KildeId, ct)
-    };
+    private async Task<KildeDto> ToDtoAsync(Kilde kilde, CancellationToken ct) =>
+        DtoMapper.TilDto(kilde, await _repository.ErKildeReferertAsync(kilde.KildeId, ct));
 }

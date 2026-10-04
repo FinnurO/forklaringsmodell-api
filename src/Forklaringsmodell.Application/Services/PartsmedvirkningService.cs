@@ -1,4 +1,5 @@
 using Forklaringsmodell.Application.Dtos;
+using Forklaringsmodell.Application.Mapping;
 using Forklaringsmodell.Application.Exceptions;
 using Forklaringsmodell.Application.Repositories;
 using Forklaringsmodell.Domain.Entities;
@@ -48,12 +49,5 @@ public class PartsmedvirkningService
         return ToDto(partsmedvirkning);
     }
 
-    private static PartsmedvirkningDto ToDto(Partsmedvirkning p) => new()
-    {
-        MedvirkningId = p.MedvirkningId,
-        SakId = p.SakId,
-        Type = p.Type,
-        Tidspunkt = p.Tidspunkt,
-        Innhold = p.Innhold
-    };
+    private static PartsmedvirkningDto ToDto(Partsmedvirkning p) => DtoMapper.TilDto(p);
 }
