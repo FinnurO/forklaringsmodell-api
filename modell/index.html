@@ -14,6 +14,9 @@
 <meta property="og:title" content="Modell – Forklaringsmodell">
 <meta property="og:description" content="Entiteter, enumer og relasjoner i informasjonsmodellen som forklarer et vedtak: fra sak og faktum til vurdering, vedtak og frosset forklaringslogg.">
 <meta property="og:type" content="website">
+<style>
+  /* I enkeltkolonne-layout (under 860 px) skal sidemenyen ligge i normal flyt, ikke sticky oppå innholdet. */
+</style>
 </head>
 <body>
 
@@ -370,22 +373,22 @@
               <tr><th scope="col">Enum</th><th scope="col">Brukt i</th><th scope="col">Verdier</th><th scope="col">Merknad</th></tr>
             </thead>
             <tbody>
-              <tr><td><code>FaktumType</code></td><td>Faktum.Type</td><td><code>Raatt</code>, <code>Subsumert</code></td><td>Subsumert: rått faktum tolket mot rettsregelen</td></tr>
-              <tr><td><code>StrukturType</code></td><td>Faktum.Struktur</td><td><code>Strukturert</code>, <code>Ustrukturert</code></td><td></td></tr>
-              <tr><td><code>KildeType</code></td><td>Kilde.Type</td><td><code>AutoritativtRegister</code>, <code>Soknad</code>, <code>TredjepartsUttalelse</code>, <code>AnnenKilde</code></td><td>I tillegg har Kilde en egen Autoritativ-flagg</td></tr>
-              <tr><td><code>RettskildeType</code></td><td>Rettskilde.Type</td><td><code>Lov</code>, <code>Forskrift</code>, <code>Rundskriv</code>, <code>Forarbeider</code>, <code>Rettspraksis</code>, <code>InternasjonalRett</code>, <code>Forvaltningspraksis</code></td><td>Bare Lov og Forskrift har VersjonDato og EliReferanse</td></tr>
-              <tr><td><code>VurderingsType</code></td><td>Regel.Type, Vurdering.Type</td><td><code>Deterministisk</code>, <code>GenerativKI</code>, <code>Skjonn</code></td><td>Vurderingens faktiske type kan avvike fra regelens ved eskalering</td></tr>
-              <tr><td><code>UtfallType</code></td><td>Vurdering.Utfall</td><td><code>Oppfylt</code>, <code>IkkeOppfylt</code>, <code>Uaktuelt</code>, <code>IkkeVurdert</code>, <code>Uavklart</code></td><td>Se kapittel 04</td></tr>
-              <tr><td><code>GrunnlagsType</code></td><td>Vilkar.Grunnlagstype</td><td><code>Rettslig</code>, <code>InternPraksis</code>, <code>Datakvalitet</code></td><td>Rettslig krever minst én rettskilde (regel 3.15)</td></tr>
-              <tr><td><code>AutomatiseringsGrad</code></td><td>Vedtak.AutomatiseringsGrad</td><td><code>Helautomatisert</code>, <code>DelvisAutomatisert</code>, <code>Manuell</code></td><td>Beregnes av serveren, settes ikke av klienten</td></tr>
-              <tr><td><code>PartsmedvirkningType</code></td><td>Partsmedvirkning.Type</td><td><code>Forhaandsvarsel</code>, <code>Kommentar</code>, <code>InnsynsKrav</code></td><td></td></tr>
-              <tr><td><code>OppforingsType</code></td><td>ForklaringsloggOppforing.Type</td><td><code>Faktum</code>, <code>Vurdering</code>, <code>Partsmedvirkning</code></td><td>Hva oppføringen peker på</td></tr>
-              <tr><td><code>SakStatus</code></td><td>Sak.Status</td><td><code>UnderBehandling</code>, <code>Avsluttet</code>, <code>Klaget</code></td><td></td></tr>
-              <tr><td><code>VirkningType</code></td><td>Vedtaksvirkning.Type, Vilkar.Type</td><td><code>Tillatelse</code>, <code>Plikt</code>, <code>OkonomiskYtelse</code>, <code>Tilskudd</code>, <code>Gebyr</code></td><td></td></tr>
-              <tr><td><code>FastsettelsesmateType</code></td><td>Vedtaksvirkning.Fastsettelsesmate, Vilkar.Fastsettelsesmate</td><td><code>Statisk</code>, <code>Parametrisert</code>, <code>Skjonnsbasert</code>, <code>Avledet</code></td><td>Hvordan innholdet ble fastsatt</td></tr>
-              <tr><td><code>VarighetsType</code></td><td>Vedtaksvirkning.Varighet</td><td><code>Tidsbegrenset</code>, <code>Varig</code>, <code>LopendeInntilVilkarBrister</code></td><td>GyldigTil skal være null ved Varig</td></tr>
-              <tr><td><code>HendelseType</code></td><td>Sak.UtlosendeHendelse</td><td><code>Soknad</code>, <code>Innrapportering</code>, <code>Melding</code>, <code>Tilbakekall</code>, <code>Kontroll</code>, <code>Klage</code>, <code>Omgjoring</code></td><td>Hendelsen som utløste saken</td></tr>
-              <tr><td><code>SakRelasjonType</code></td><td>SakRelasjon.Type</td><td><code>Tilbakekall</code>, <code>Revurdering</code>, <code>OppfolgingAvMelding</code>, <code>Klage</code>, <code>Kontroll</code>, <code>Annet</code></td><td></td></tr>
+              <tr><td style="white-space:nowrap;"><code>FaktumType</code></td><td>Faktum.Type</td><td><code>Raatt</code>, <code>Subsumert</code></td><td>Subsumert: rått faktum tolket mot rettsregelen</td></tr>
+              <tr><td style="white-space:nowrap;"><code>StrukturType</code></td><td>Faktum.Struktur</td><td><code>Strukturert</code>, <code>Ustrukturert</code></td><td></td></tr>
+              <tr><td style="white-space:nowrap;"><code>KildeType</code></td><td>Kilde.Type</td><td><code>AutoritativtRegister</code>, <code>Soknad</code>, <code>TredjepartsUttalelse</code>, <code>AnnenKilde</code></td><td>I tillegg har Kilde en egen Autoritativ-flagg</td></tr>
+              <tr><td style="white-space:nowrap;"><code>RettskildeType</code></td><td>Rettskilde.Type</td><td><code>Lov</code>, <code>Forskrift</code>, <code>Rundskriv</code>, <code>Forarbeider</code>, <code>Rettspraksis</code>, <code>InternasjonalRett</code>, <code>Forvaltningspraksis</code></td><td>Bare Lov og Forskrift har VersjonDato og EliReferanse</td></tr>
+              <tr><td style="white-space:nowrap;"><code>VurderingsType</code></td><td>Regel.Type, Vurdering.Type</td><td><code>Deterministisk</code>, <code>GenerativKI</code>, <code>Skjonn</code></td><td>Vurderingens faktiske type kan avvike fra regelens ved eskalering</td></tr>
+              <tr><td style="white-space:nowrap;"><code>UtfallType</code></td><td>Vurdering.Utfall</td><td><code>Oppfylt</code>, <code>IkkeOppfylt</code>, <code>Uaktuelt</code>, <code>IkkeVurdert</code>, <code>Uavklart</code></td><td>Se kapittel 04</td></tr>
+              <tr><td style="white-space:nowrap;"><code>GrunnlagsType</code></td><td>Vilkar.Grunnlagstype</td><td><code>Rettslig</code>, <code>InternPraksis</code>, <code>Datakvalitet</code></td><td>Rettslig krever minst én rettskilde (regel 3.15)</td></tr>
+              <tr><td style="white-space:nowrap;"><code>AutomatiseringsGrad</code></td><td>Vedtak.AutomatiseringsGrad</td><td><code>Helautomatisert</code>, <code>DelvisAutomatisert</code>, <code>Manuell</code></td><td>Beregnes av serveren, settes ikke av klienten</td></tr>
+              <tr><td style="white-space:nowrap;"><code>PartsmedvirkningType</code></td><td>Partsmedvirkning.Type</td><td><code>Forhaandsvarsel</code>, <code>Kommentar</code>, <code>InnsynsKrav</code></td><td></td></tr>
+              <tr><td style="white-space:nowrap;"><code>OppforingsType</code></td><td>ForklaringsloggOppforing.Type</td><td><code>Faktum</code>, <code>Vurdering</code>, <code>Partsmedvirkning</code></td><td>Hva oppføringen peker på</td></tr>
+              <tr><td style="white-space:nowrap;"><code>SakStatus</code></td><td>Sak.Status</td><td><code>UnderBehandling</code>, <code>Avsluttet</code>, <code>Klaget</code></td><td></td></tr>
+              <tr><td style="white-space:nowrap;"><code>VirkningType</code></td><td>Vedtaksvirkning.Type, Vilkar.Type</td><td><code>Tillatelse</code>, <code>Plikt</code>, <code>OkonomiskYtelse</code>, <code>Tilskudd</code>, <code>Gebyr</code></td><td></td></tr>
+              <tr><td style="white-space:nowrap;"><code>FastsettelsesmateType</code></td><td>Vedtaksvirkning.Fastsettelsesmate, Vilkar.Fastsettelsesmate</td><td><code>Statisk</code>, <code>Parametrisert</code>, <code>Skjonnsbasert</code>, <code>Avledet</code></td><td>Hvordan innholdet ble fastsatt</td></tr>
+              <tr><td style="white-space:nowrap;"><code>VarighetsType</code></td><td>Vedtaksvirkning.Varighet</td><td><code>Tidsbegrenset</code>, <code>Varig</code>, <code>LopendeInntilVilkarBrister</code></td><td>GyldigTil skal være null ved Varig</td></tr>
+              <tr><td style="white-space:nowrap;"><code>HendelseType</code></td><td>Sak.UtlosendeHendelse</td><td><code>Soknad</code>, <code>Innrapportering</code>, <code>Melding</code>, <code>Tilbakekall</code>, <code>Kontroll</code>, <code>Klage</code>, <code>Omgjoring</code></td><td>Hendelsen som utløste saken</td></tr>
+              <tr><td style="white-space:nowrap;"><code>SakRelasjonType</code></td><td>SakRelasjon.Type</td><td><code>Tilbakekall</code>, <code>Revurdering</code>, <code>OppfolgingAvMelding</code>, <code>Klage</code>, <code>Kontroll</code>, <code>Annet</code></td><td></td></tr>
             </tbody>
           </table>
         </div>
@@ -428,9 +431,9 @@
               <tr><th scope="col">Felt</th><th scope="col">Peker til</th><th scope="col">Rekkevidde</th><th scope="col">Regel</th></tr>
             </thead>
             <tbody>
-              <tr><td><code>VilkarId</code></td><td>et katalogvilkår (<code>Vilkar</code>)</td><td>Ren merking av hvilket vilkår vurderingen gjelder. Ingen validering av struktur, samme kategori som <code>RettskildeIder</code>.</td><td>3.18</td></tr>
-              <tr><td><code>ForelderVurderingId</code></td><td>en annen vurdering i <em>samme</em> sak</td><td>Et tre innad i saken (v1.6.0). Forelderen må tilhøre samme sak, men trenger ikke være frosset. API-et gir også en beregnet liste <code>DelvurderingIder</code>.</td><td>3.18</td></tr>
-              <tr><td><code>RefererteVurderingIder</code></td><td>vurderinger i <em>andre</em> saker</td><td>Kryss-sak-sitering. Peker kun til rader som allerede er frosset, og er alltid skrivebeskyttet: en vurdering kan lese fra en annen sak, men aldri endre den.</td><td>3.11</td></tr>
+              <tr><td style="white-space:nowrap;"><code>VilkarId</code></td><td>et katalogvilkår (<code>Vilkar</code>)</td><td>Ren merking av hvilket vilkår vurderingen gjelder. Ingen validering av struktur, samme kategori som <code>RettskildeIder</code>.</td><td>3.18</td></tr>
+              <tr><td style="white-space:nowrap;"><code>ForelderVurderingId</code></td><td>en annen vurdering i <em>samme</em> sak</td><td>Et tre innad i saken (v1.6.0). Forelderen må tilhøre samme sak, men trenger ikke være frosset. API-et gir også en beregnet liste <code>DelvurderingIder</code>.</td><td>3.18</td></tr>
+              <tr><td style="white-space:nowrap;"><code>RefererteVurderingIder</code></td><td>vurderinger i <em>andre</em> saker</td><td>Kryss-sak-sitering. Peker kun til rader som allerede er frosset, og er alltid skrivebeskyttet: en vurdering kan lese fra en annen sak, men aldri endre den.</td><td>3.11</td></tr>
             </tbody>
           </table>
         </div>
@@ -537,11 +540,11 @@
               <tr><th scope="col">Felt</th><th scope="col">Er</th><th scope="col">Krav</th></tr>
             </thead>
             <tbody>
-              <tr><td><code>Vilkar.StandardTekst</code></td><td>fritekstmal for vilkåret</td><td>valgfri</td></tr>
-              <tr><td><code>Vurdering.Hovedhensyn</code></td><td>hovedhensynet bak en vurdering</td><td>obligatorisk når <code>Type == Skjonn</code></td></tr>
-              <tr><td><code>Vurdering.ForkastedeUtfall</code></td><td>kontrastiv forklaring: hva som ble forkastet</td><td>valgfri</td></tr>
-              <tr><td><code>Vedtaksvirkning.Beskrivelse</code></td><td>hva virkningen går ut på</td><td>påkrevd, minst én <code>TekstVariant</code></td></tr>
-              <tr><td><code>Vedtaksvirkning.LopendeVilkar</code></td><td>vilkår som må fortsette å være oppfylt</td><td>valgfri</td></tr>
+              <tr><td style="white-space:nowrap;"><code>Vilkar.StandardTekst</code></td><td>fritekstmal for vilkåret</td><td>valgfri</td></tr>
+              <tr><td style="white-space:nowrap;"><code>Vurdering.Hovedhensyn</code></td><td>hovedhensynet bak en vurdering</td><td>obligatorisk når <code>Type == Skjonn</code></td></tr>
+              <tr><td style="white-space:nowrap;"><code>Vurdering.ForkastedeUtfall</code></td><td>kontrastiv forklaring: hva som ble forkastet</td><td>valgfri</td></tr>
+              <tr><td style="white-space:nowrap;"><code>Vedtaksvirkning.Beskrivelse</code></td><td>hva virkningen går ut på</td><td>påkrevd, minst én <code>TekstVariant</code></td></tr>
+              <tr><td style="white-space:nowrap;"><code>Vedtaksvirkning.LopendeVilkar</code></td><td>vilkår som må fortsette å være oppfylt</td><td>valgfri</td></tr>
             </tbody>
           </table>
         </div>
@@ -572,12 +575,12 @@
               <tr><th scope="col">Felt</th><th scope="col">Peker til</th></tr>
             </thead>
             <tbody>
-              <tr><td><code>Sak.CpsvTjenesteReferanse</code></td><td>IRI til en <code>cpsvno:Service</code> i CPSV-AP-NO, den norske profilen for beskrivelse av offentlige tjenester</td></tr>
-              <tr><td><code>Regel.CpsvRegelReferanse</code></td><td>IRI til en <code>cpsvno:Rule</code> i CPSV-AP-NO</td></tr>
-              <tr><td><code>Kilde.CccevReferanse</code></td><td>IRI til en <code>cccev:Evidence</code> eller <code>cccev:Criterion</code> (CCCEV er et europeisk vokabular for kriterier og dokumentasjon)</td></tr>
-              <tr><td><code>Vilkar.CpsvTjenesteReferanse</code></td><td>IRI til tjenesten(e) vilkåret kan inngå i</td></tr>
-              <tr><td><code>Regel.RegeldefinisjonReferanse</code></td><td>URI til selve regelartefaktet, for eksempel DMN-XML i et regelrepo</td></tr>
-              <tr><td><code>Vilkar.Kode</code> og <code>Vilkar.Kodeverk</code></td><td>kode fra et kildesystems eget kodeverk (for eksempel <code>VILKAR_TYPE</code>), og hvilket kodeverk koden er hentet fra</td></tr>
+              <tr><td style="white-space:nowrap;"><code>Sak.CpsvTjenesteReferanse</code></td><td>IRI til en <code>cpsvno:Service</code> i CPSV-AP-NO, den norske profilen for beskrivelse av offentlige tjenester</td></tr>
+              <tr><td style="white-space:nowrap;"><code>Regel.CpsvRegelReferanse</code></td><td>IRI til en <code>cpsvno:Rule</code> i CPSV-AP-NO</td></tr>
+              <tr><td style="white-space:nowrap;"><code>Kilde.CccevReferanse</code></td><td>IRI til en <code>cccev:Evidence</code> eller <code>cccev:Criterion</code> (CCCEV er et europeisk vokabular for kriterier og dokumentasjon)</td></tr>
+              <tr><td style="white-space:nowrap;"><code>Vilkar.CpsvTjenesteReferanse</code></td><td>IRI til tjenesten(e) vilkåret kan inngå i</td></tr>
+              <tr><td style="white-space:nowrap;"><code>Regel.RegeldefinisjonReferanse</code></td><td>URI til selve regelartefaktet, for eksempel DMN-XML i et regelrepo</td></tr>
+              <tr><td style="white-space:nowrap;"><code>Vilkar.Kode</code> og <code>Vilkar.Kodeverk</code></td><td>kode fra et kildesystems eget kodeverk (for eksempel <code>VILKAR_TYPE</code>), og hvilket kodeverk koden er hentet fra</td></tr>
             </tbody>
           </table>
         </div>
