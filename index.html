@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="nb" data-color-scheme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forklaringsmodell – forklar hvorfor et vedtak ble som det ble</title>
+<meta name="description" content="Et API og en informasjonsmodell som dokumenterer hva som lå til grunn for et vedtak — uavhengig av om vurderingen er en regel, en KI eller et menneskelig skjønn.">
+<link rel="canonical" href="https://finnuro.github.io/forklaringsmodell-api/">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/vendor/designsystemet.css">
+<link rel="stylesheet" href="assets/css/vendor/designsystemet-theme.css">
+<link rel="stylesheet" href="assets/css/site.css">
+<meta property="og:title" content="Forklaringsmodell">
+<meta property="og:description" content="Dokumenter hva som lå til grunn for et vedtak — regel, KI eller skjønn — som en frosset, etterprøvbar forklaring.">
+<meta property="og:type" content="website">
+</head>
+<body>
+
+<a class="ds-link skip-to-content" href="#main">Hopp til innhold</a>
+
+<div class="disclaimer-bar">
+  <div class="wrap">
+    <span>📎 <strong>Prototype / proof of concept</strong> — ikke en produksjonstjeneste og ikke en offisiell Digdir-tjeneste. <strong>Utviklet sammen med Claude Code.</strong></span>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand plain" href="./">
+      <span class="brand__mark" aria-hidden="true">FM</span>
+      <span class="brand__text">
+        <span class="brand__title">Forklaringsmodell</span>
+        <span class="brand__subtitle">API for forklarbare vedtak</span>
+      </span>
+    </a>
+    <nav class="main-nav" aria-label="Hovedmeny">
+      <a href="./" aria-current="page">Forside</a>
+      <a href="modell/">Modell</a>
+      <a href="regler/">Regler</a>
+      <a href="eksempel/">Eksempel</a>
+      <a href="api/">API</a>
+      <a href="versjoner/">Versjoner</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow">Forvaltningsloven § 25 · digital rettsstat</span>
+        <h1>Forklar hvorfor et vedtak ble som det ble</h1>
+        <p class="lead">Forklaringsmodellen er et API og en informasjonsmodell som lar en saksbehandlingsløsning dokumentere hva som lå til grunn for et vedtak — fakta, kilder, hjemler, regler og vurderinger — uavhengig av om vurderingen bak var en regel, en KI eller et menneskelig skjønn.</p>
+        <div class="cta-row">
+          <a class="ds-button" data-color="accent" href="eksempel/">Se et konkret eksempel</a>
+          <a class="ds-button" data-variant="secondary" data-color="accent" href="modell/">Utforsk modellen</a>
+          <a class="ds-button" data-variant="tertiary" data-color="accent" href="https://github.com/FinnurO/forklaringsmodell-api" target="_blank" rel="noopener">Kildekode på GitHub</a>
+        </div>
+      </div>
+      <aside class="hero-panel">
+        <h2>Kort fortalt</h2>
+        <ul class="source-list">
+          <li><span class="dot" aria-hidden="true"></span><span><strong>Én modell, tre vurderingstyper</strong><span class="desc">Deterministisk regelanvendelse, generativ KI og skjønn dokumenteres likt.</span></span></li>
+          <li><span class="dot" aria-hidden="true"></span><span><strong>Frosset etter vedtak</strong><span class="desc">Alt som forklarer vedtaket blir skrivebeskyttet. Rettelser er nye rader.</span></span></li>
+          <li><span class="dot" aria-hidden="true"></span><span><strong>Hele beslutningstreet</strong><span class="desc">Også delvilkår, og hvorfor et vilkår ikke var aktuelt eller ikke slo til.</span></span></li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section" id="hvorfor">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">Hvorfor</span>
+        <h2>Vedtak skal kunne begrunnes — også når en maskin har vurdert</h2>
+        <p>Forvaltningsloven § 25 gir parten rett til en begrunnelse for vedtaket. Når vurderingene gjøres av regelmotorer, KI-modeller eller en blanding av maskin og saksbehandler, blir det vanskelig å vise i ettertid hvilke fakta, hvilke regler og hvilken hjemmel som faktisk avgjorde utfallet. Forklaringsmodellen er et forslag til en felles måte å lagre akkurat det på.</p>
+      </div>
+      <div class="card-grid">
+        <div class="ds-card">
+          <div class="pillar">
+            <span class="num">01</span>
+            <h3>Deterministisk regel</h3>
+            <p>Regelen er en egen, versjonert rad med peker til selve regelartefaktet (for eksempel DMN). Beregningssporet viser input, mellomverdier og resultat.</p>
+            <div class="tag-row"><span class="ds-tag" data-color="accent">Regel</span><span class="ds-tag" data-color="accent">Beregningsspor</span></div>
+          </div>
+        </div>
+        <div class="ds-card">
+          <div class="pillar">
+            <span class="num">02</span>
+            <h3>Generativ KI</h3>
+            <p>Konfidens registreres, og lav konfidens eskalerer vurderingen til et menneske. Terskelen er konfigurasjon, ikke en hardkodet konstant.</p>
+            <div class="tag-row"><span class="ds-tag" data-color="accent">Konfidens</span><span class="ds-tag" data-color="accent">Eskalering</span></div>
+          </div>
+        </div>
+        <div class="ds-card">
+          <div class="pillar">
+            <span class="num">03</span>
+            <h3>Menneskelig skjønn</h3>
+            <p>Skjønn må alltid forklares: hovedhensynet er obligatorisk, og de alternativene som ble forkastet kan angis, på bokmål, nynorsk og flere språk.</p>
+            <div class="tag-row"><span class="ds-tag" data-color="accent">Hovedhensyn</span><span class="ds-tag" data-color="accent">Forkastede utfall</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="flyt">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">Slik henger det sammen</span>
+        <h2>Fra faktum til frosset forklaring</h2>
+        <p>En <code>Sak</code> er en levende saksmappe som kan endres helt til det fattes et <code>Vedtak</code>. I det øyeblikket fryses forklaringsloggen: alt den peker på blir skrivebeskyttet.</p>
+      </div>
+      <ol class="flow">
+        <li><strong>Faktum</strong><span>Rått eller subsumert data om saken, med <code>Kilde</code> og eventuell tilleggshjemmel.</span></li>
+        <li><strong>Regel</strong><span>Operasjonalisert regelversjon, koblet til én eller flere <code>Rettskilde</code>.</span></li>
+        <li><strong>Vurdering</strong><span>Regelen anvendt på faktum. Har alltid et <code>Utfall</code> og kan ha delvurderinger.</span></li>
+        <li><strong>Vedtak + virkning</strong><span>Utfallet, med konkrete virkninger som tillatelse, plikt, ytelse eller gebyr.</span></li>
+        <li class="frozen"><strong>Forklaringslogg</strong><span>Det frosne øyeblikksbildet av hva som forklarer vedtaket.</span></li>
+      </ol>
+      <div class="link-row">
+        <a class="ds-button" data-variant="secondary" data-color="accent" href="modell/">Alle entiteter og relasjoner →</a>
+        <a class="ds-button" data-variant="secondary" data-color="accent" href="regler/">De 18 forretningsreglene →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="prinsipper">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">Prinsipper</span>
+        <h2>Fire valg som former modellen</h2>
+      </div>
+      <ul class="principle-list" style="max-width:46rem;">
+        <li><span class="n">1</span><div><h4>Frosset og append-only</h4><p>Et vedtak og alt det refererer til kan ikke endres. En korrigering er alltid en ny rad som peker til den opprinnelige — aldri en overskriving.</p></div></li>
+        <li><span class="n">2</span><div><h4>Forklar også det som ikke ble vurdert</h4><p>En vurdering opprettes selv når et vilkår var uaktuelt, ikke ble nådd, eller ble stående uavklart. Fravær av en rad skal aldri være eneste dokumentasjon.</p></div></li>
+        <li><span class="n">3</span><div><h4>Gjengi — ikke foreskriv</h4><p>Modellen eier ikke vilkårsstrukturen og validerer ikke om en nedbryting er «riktig». Det er det kallende systemets regelmotor eller saksbehandler som bestemmer, og modellen gjengir det trofast i ettertid.</p></div></li>
+        <li><span class="n">4</span><div><h4>Referanse, ikke kopi</h4><p>Sektorspesifikke kodeverk, regelartefakter og tjenestebeskrivelser lagres som eksterne referanser. Modellen er ingen prosessmotor og ingen kopi av andres kataloger.</p></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="eksempel">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">I praksis</span>
+        <h2>Stavangers automatiske byggetillatelse</h2>
+        <p>Stavanger kommune godkjenner søknader om piperehabilitering automatisk. Vi har fylt ut forklaringsmodellen for to scenarioer — ett som ble godkjent på sekunder, og ett som ble rutet til manuell behandling — og viser hele beslutningstreet bak begge.</p>
+      </div>
+      <div class="callout">
+        <h3>To saker, samme regel</h3>
+        <p>Den første sakens fire vurderinger gir et helautomatisert vedtak. I den andre mangler foretaket riktig ansvarsrett, og saken eskaleres uten at noe vedtak er fattet ennå. Begge kan forklares fullt ut.</p>
+        <p><a class="ds-link" href="eksempel/">Åpne eksempelet →</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="border-bottom:none;" id="for-hvem">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">For hvem</span>
+        <h2>Laget for dem som bygger og kontrollerer vedtaksløsninger</h2>
+      </div>
+      <div class="card-grid cols-2">
+        <div class="ds-card">
+          <div class="pillar">
+            <h3>Leverandører av saksbehandlingssystemer</h3>
+            <p>Få et ferdig mål for hva som skal lagres og eksponeres når et vedtak skal kunne forklares overfor part, klageinstans og tilsyn.</p>
+            <div class="tag-row"><a class="ds-tag" data-color="accent" href="api/">API</a><a class="ds-tag" data-color="accent" href="modell/">Modell</a></div>
+          </div>
+        </div>
+        <div class="ds-card">
+          <div class="pillar">
+            <h3>Regelmotor- og KI-leverandører</h3>
+            <p>Se hvordan en deterministisk regel, en KI-vurdering med konfidens og et skjønn kan dokumenteres likt — uten at modellen krever en bestemt teknologi.</p>
+            <div class="tag-row"><a class="ds-tag" data-color="accent" href="regler/">Forretningsregler</a></div>
+          </div>
+        </div>
+        <div class="ds-card">
+          <div class="pillar">
+            <h3>Jurister, forvaltning og tilsyn</h3>
+            <p>Forstå hva en etterprøvbar begrunnelse faktisk krever av data, og hvilke garantier (frysing, sporbarhet, hjemmelskobling) modellen gir.</p>
+            <div class="tag-row"><a class="ds-tag" data-color="accent" href="eksempel/">Eksempel</a><a class="ds-tag" data-color="accent" href="regler/">Regler</a></div>
+          </div>
+        </div>
+        <div class="ds-card">
+          <div class="pillar">
+            <h3>Arkitekter og fellesløsninger</h3>
+            <p>Se hvordan modellen forholder seg til CPSV-AP-NO og CCCEV, andre sektorers kodeverk og et felles rammeverk for digital rettsstat.</p>
+            <div class="tag-row"><a class="ds-tag" data-color="accent" href="modell/">Modell</a><a class="ds-tag" data-color="accent" href="versjoner/">Versjoner</a></div>
+          </div>
+        </div>
+      </div>
+      <p class="footnote" style="margin-top:var(--ds-size-6);">Status: prototype, versjon 1.6.0, bygget på .NET 10 med SQLite lokalt. Se <a href="versjoner/">versjonshistorikken</a> for hva som er med.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <h3>Om nettstedet</h3>
+      <p style="font-size:var(--ds-body-sm-font-size); color:var(--ds-color-text-subtle); max-width:32ch; margin:0;">
+        Dokumentasjon for <a href="https://github.com/FinnurO/forklaringsmodell-api" target="_blank" rel="noopener">forklaringsmodell-api</a>:
+        en prototype for en felles informasjonsmodell som forklarer vedtak. Bygget med
+        <a href="https://designsystemet.no/" target="_blank" rel="noopener">designsystemet.no</a>.
+      </p>
+    </div>
+    <div>
+      <h3>Dokumentasjon</h3>
+      <ul>
+        <li><a href="modell/">Modell</a></li>
+        <li><a href="regler/">Forretningsregler</a></li>
+        <li><a href="eksempel/">Eksempel: piperehabilitering</a></li>
+        <li><a href="api/">API</a></li>
+        <li><a href="versjoner/">Versjoner</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Relatert</h3>
+      <ul>
+        <li><a href="https://github.com/FinnurO/digital-rettsstat" target="_blank" rel="noopener">Rammeverk for digital rettsstat</a></li>
+        <li><a href="https://github.com/FinnurO/regel-ide" target="_blank" rel="noopener">Regel-IDE</a></li>
+        <li><a href="https://lovdata.no/lov/1967-02-10" target="_blank" rel="noopener">Forvaltningsloven (Lovdata)</a></li>
+        <li><a href="https://data.norge.no/" target="_blank" rel="noopener">Felles datakatalog</a></li>
+        <li><a href="https://sjekkliste-bygg.ft.dibk.no/" target="_blank" rel="noopener">DiBKs sjekkliste for bygg</a></li>
+      </ul>
+    </div>
+    <p class="fine">
+      Prototype og proof of concept — ikke en offisiell nettside for Digitaliseringsdirektoratet (Digdir), og ikke en produksjonsklar tjeneste. Eksemplene bruker fiktive adresser og saker, og er utledet fra offentlig tilgjengelig informasjon.
+      Kildekode på <a href="https://github.com/FinnurO/forklaringsmodell-api" target="_blank" rel="noopener">GitHub</a>.
+    </p>
+    <p class="fine">
+      <strong>Utviklet sammen med Claude Code</strong> (Anthropic) — kode, tester og dokumentasjon. Innholdet er ikke fasitsjekket av jurister; behandle det som et utkast og meld gjerne fra via «Gi tilbakemelding».
+    </p>
+  </div>
+</footer>
+
+<script src="assets/js/site.js" defer></script>
+</body>
+</html>

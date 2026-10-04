@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="nb" data-color-scheme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API – Forklaringsmodell</title>
+<meta name="description" content="Slik kjører du Forklaringsmodell-API-et lokalt og bruker det: konvensjoner, alle endepunkter, en typisk flyt fra referansedata til hydrert forklaring, konfigurasjon og kodeorganisering.">
+<link rel="canonical" href="https://finnuro.github.io/forklaringsmodell-api/api/">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/vendor/designsystemet.css">
+<link rel="stylesheet" href="../assets/css/vendor/designsystemet-theme.css">
+<link rel="stylesheet" href="../assets/css/site.css">
+<meta property="og:title" content="API – Forklaringsmodell">
+<meta property="og:description" content="Kom i gang, konvensjoner, endepunkter og en typisk flyt for Forklaringsmodell-API-et (.NET 10).">
+<meta property="og:type" content="website">
+</head>
+<body>
+
+<a class="ds-link skip-to-content" href="#main">Hopp til innhold</a>
+
+<div class="disclaimer-bar">
+  <div class="wrap">
+    <span>📎 <strong>Prototype / proof of concept</strong> — ikke en produksjonstjeneste og ikke en offisiell Digdir-tjeneste. <strong>Utviklet sammen med Claude Code.</strong></span>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand plain" href="../">
+      <span class="brand__mark" aria-hidden="true">FM</span>
+      <span class="brand__text">
+        <span class="brand__title">Forklaringsmodell</span>
+        <span class="brand__subtitle">API for forklarbare vedtak</span>
+      </span>
+    </a>
+    <nav class="main-nav" aria-label="Hovedmeny">
+      <a href="../">Forside</a>
+      <a href="../modell/">Modell</a>
+      <a href="../regler/">Regler</a>
+      <a href="../eksempel/">Eksempel</a>
+      <a href="./" aria-current="page">API</a>
+      <a href="../versjoner/">Versjoner</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap page-head">
+    <nav aria-label="Du er her">
+      <ul class="ds-breadcrumbs">
+        <li><a href="../">Forside</a></li>
+        <li><a href="./" aria-current="page">API</a></li>
+      </ul>
+    </nav>
+    <h1>API</h1>
+    <p class="lead">Et REST-API i .NET 10 som lar en saksbehandlingsløsning registrere fakta, vurderinger og vedtak, og lese ut en frosset, hydrert forklaring av hvorfor et vedtak ble som det ble. Her er det du trenger for å kjøre det og bruke det.</p>
+  </div>
+
+  <div class="wrap guide-layout">
+    <nav class="guide-nav" aria-label="Innhold på siden">
+      <a href="#kom-i-gang" data-anchor="kom-i-gang">Kom i gang</a>
+      <a href="#konvensjoner" data-anchor="konvensjoner">Konvensjoner</a>
+      <a href="#endepunkter" data-anchor="endepunkter">Endepunkter</a>
+      <a href="#flyt" data-anchor="flyt">Typisk flyt</a>
+      <a href="#konfigurasjon" data-anchor="konfigurasjon">Konfigurasjon</a>
+      <a href="#kodeorganisering" data-anchor="kodeorganisering">Kodeorganisering</a>
+    </nav>
+
+    <div class="guide-article">
+
+      <!-- ===================== 1. KOM I GANG ===================== -->
+      <section id="kom-i-gang">
+        <span class="section-num">1</span>
+        <h2>Kom i gang</h2>
+        <p class="intro">Alt du trenger er .NET 10 SDK. Databasen er en lokal SQLite-fil som opprettes og fylles med eksempeldata første gang du starter API-et.</p>
+
+        <p>Fra rotmappen i <a href="https://github.com/FinnurO/forklaringsmodell-api" target="_blank" rel="noopener">repoet</a>:</p>
+        <pre class="code"><code>dotnet build
+dotnet test
+dotnet run --project src/Forklaringsmodell.Api</code></pre>
+
+        <ul>
+          <li><strong>Forutsetning:</strong> .NET 10 SDK. Alle fire prosjektene i løsningen bygger mot <code>net10.0</code>.</li>
+          <li><strong>Databasen migreres og seedes automatisk</strong> ved oppstart når miljøet er <code>Development</code>. Seed-dataen kjøres bare hvis databasen er tom, og gir et komplett dagpenger-eksempel (sak, faktum, vurderinger med alle utfallstyper, vedtak med virkning) pluss en oppfølgende sak med saksrelasjon og kryss-sak-referanser. SQLite-filen heter <code>forklaringsmodell.db</code>; slett den for å starte på nytt.</li>
+          <li><strong>Swagger UI</strong> er slått på i <code>Development</code> og gir en utprøvbar oversikt over alle endepunkter:
+            <code>http://localhost:5013/swagger</code>. Startprofilen <code>https</code> åpner i tillegg <code>https://localhost:7151/swagger</code>.</li>
+          <li><strong>Utforsker:</strong> API-et serverer også en enkel utforskningsside fra <code>wwwroot/index.html</code> på rotadressen.</li>
+        </ul>
+
+        <p>Vil du bruke HTTPS-porten, velg profilen eksplisitt:</p>
+        <pre class="code"><code>dotnet run --project src/Forklaringsmodell.Api --launch-profile https</code></pre>
+
+        <div class="callout">
+          <h3>Utenfor utvikling</h3>
+          <p>Swagger, automatisk migrering og seeding er bare aktive i <code>Development</code>. I andre miljøer må databasen settes opp separat.</p>
+        </div>
+      </section>
+
+      <!-- ===================== 2. KONVENSJONER ===================== -->
+      <section id="konvensjoner">
+        <span class="section-num">2</span>
+        <h2>Konvensjoner</h2>
+        <p class="intro">Noen få regler gjelder for hele API-et.</p>
+
+        <h3>Format</h3>
+        <ul>
+          <li><strong>JSON med camelCase</strong> i både forespørsel og svar (<code>sakId</code>, <code>utlosendeHendelse</code>, <code>forelderVurderingId</code>). Norske tegn er skrevet om i feltnavn: <code>spraakKode</code>, <code>belop</code>, <code>erLaast</code>.</li>
+          <li><strong>Enumer er strenger</strong> (<code>"GenerativKI"</code>, <code>"IkkeOppfylt"</code>), ikke tall.</li>
+          <li><strong>Id-er er GUID-er</strong> og genereres av serveren. Du oppgir aldri en id når du oppretter en rad, bare når du refererer til en annen.</li>
+          <li><strong>Tidspunkter</strong> er ISO 8601 med tidssone (<code>2026-10-01T09:30:00Z</code>). Utelater du <code>innhentetTidspunkt</code> på faktum eller <code>tidspunkt</code> på partsmedvirkning, settes «nå».</li>
+          <li><strong>Flerspråklige felt</strong> er lister med én variant per språk:
+            <pre class="code"><code>[
+  { "spraakKode": "nb", "verdi": "Tillatelse til rehabilitering av skorstein" },
+  { "spraakKode": "nn", "verdi": "Løyve til rehabilitering av skorstein" }
+]</code></pre>
+            Gjelder <code>hovedhensyn</code>, <code>forkastedeUtfall</code> (vurdering), <code>beskrivelse</code>, <code>lopendeVilkar</code> (virkning) og <code>standardTekst</code> (vilkår). <code>spraakKode</code> er fri tekst, men samme språk kan ikke forekomme to ganger i samme felt, og både <code>spraakKode</code> og <code>verdi</code> må være utfylt.</li>
+        </ul>
+
+        <h3>Append-only</h3>
+        <p>Det finnes <strong>ingen <code>PUT</code> eller <code>DELETE</code></strong> på vedtak, forklaringslogg, virkninger, faktum, vurderinger eller referansedata. Det eneste <code>PUT</code>-endepunktet i hele API-et er <code>/api/saker/{id}</code>, og det endrer bare tittel og status på selve saksmappen. Korrigeringer gjøres ved å opprette nye rader, for eksempel <code>POST /api/faktum/{id}/transformer</code>, som lager et nytt subsumert faktum som peker tilbake til det opprinnelige via <code>avledetFraFaktumId</code>.</p>
+        <p>Når et vedtak opprettes, fryses alt det refererer til. I svarene vises det som <code>erLaast: true</code> på faktum, vurderinger, kilder, regler og vilkår. Referanser på tvers av saker (<code>faktumIder</code> eller <code>refererteVurderingIder</code> som tilhører en annen sak) kreves å peke på rader som allerede er frosset der.</p>
+
+        <h3>Statuskoder og feil</h3>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <caption class="ds-sr-only">Statuskoder API-et bruker</caption>
+            <thead><tr><th scope="col">Kode</th><th scope="col">Når</th></tr></thead>
+            <tbody>
+              <tr><td><span class="pill ok">200 OK</span></td><td>Vellykket <code>GET</code> og <code>PUT</code>.</td></tr>
+              <tr><td><span class="pill ok">201 Created</span></td><td>Vellykket <code>POST</code> som oppretter en rad. Svaret er den opprettede raden.</td></tr>
+              <tr><td><span class="pill warn">400 Bad Request</span></td><td>Validering feilet (<code>AppValidationException</code>). Svaret er <code>application/problem+json</code> med en <code>errors</code>-ordbok per egenskap. Ugyldig JSON eller ukjent enumverdi avvises også med 400 av ASP.NET Core før valideringen kjører.</td></tr>
+              <tr><td><span class="pill warn">404 Not Found</span></td><td>En rad som er oppgitt i stien eller i en referanse (<code>kildeId</code>, <code>regelId</code>, <code>faktumIder</code> …) finnes ikke. Gjelder også en <code>forelderVurderingId</code> som peker til en annen sak.</td></tr>
+              <tr><td><span class="pill bad">409 Conflict</span></td><td>Append-only-brudd (<code>AppendOnlyViolationException</code>), for eksempel en kryss-sak-referanse til faktum eller en vurdering som ikke er frosset i en forklaringslogg ennå.</td></tr>
+              <tr><td><span class="pill bad">405 Method Not Allowed</span></td><td>Et verb som ikke finnes, for eksempel <code>PUT</code> eller <code>DELETE</code> mot <code>/api/vedtak/{id}</code> eller <code>/api/vedtak/{id}/forklaring</code>. Gis av ASP.NET Cores routing, ikke av egen kode, og dekkes av integrasjonstester.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p style="margin-top:var(--ds-size-5);">Feilsvarene har disse formene (<code>errors</code> er nøklet på egenskapsnavn slik FluentValidation rapporterer dem):</p>
+        <span class="code-label">400 – validering</span>
+        <pre class="code"><code>{
+  "type": "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+  "title": "Validering feilet",
+  "status": 400,
+  "errors": { "Utfall": ["Utfall er obligatorisk."] }
+}</code></pre>
+        <span class="code-label">404 og 409</span>
+        <pre class="code"><code>{
+  "type": "https://tools.ietf.org/html/rfc9110#section-409",
+  "title": "Append-only-brudd",
+  "status": 409,
+  "detail": "Faktum … tilhører en annen sak (…) og er ikke del av en frosset Forklaringslogg der ennå — kan ikke refereres."
+}</code></pre>
+
+        <h3>Påkrevde og valgfrie enumfelt</h3>
+        <p>De fleste enumfeltene i forespørslene er vanlige, ikke-nullable felt. Utelater du dem, får de enumens første verdi som standard (for eksempel <code>type: "Raatt"</code> på faktum eller <code>fastsettelsesmate: "Statisk"</code> på en virkning). Tre felt er derimot gjort <em>nullable i forespørsels-DTO-en</em> nettopp for at valideringen skal kunne kreve dem. Uten dette ville standardverdien alltid sett «utfylt» ut:</p>
+        <ul>
+          <li><code>utlosendeHendelse</code> på <code>POST /api/saker</code>.</li>
+          <li><code>utfall</code> på <code>POST /api/saker/{sakId}/vurderinger</code>. En vurdering skal finnes selv når vilkåret ikke ble vurdert, og utfallet skiller det fra en reell konklusjon.</li>
+          <li><code>grunnlagstype</code> på <code>POST /api/vilkar</code>.</li>
+        </ul>
+        <p>Mangler ett av dem, får du 400 med «… er obligatorisk». Øvrige valideringsregler:</p>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <caption class="ds-sr-only">Valideringsregler per ressurs</caption>
+            <thead><tr><th scope="col">Ressurs</th><th scope="col">Regel</th></tr></thead>
+            <tbody>
+              <tr><td>Sak</td><td><code>tittel</code> kan ikke være tom. (Også ved <code>PUT</code>.)</td></tr>
+              <tr><td>Kilde</td><td><code>navn</code> påkrevd, og minst én <code>rettskildeIder</code> (hjemmel for innhenting).</td></tr>
+              <tr><td>Rettskilde</td><td><code>henvisning</code> påkrevd.</td></tr>
+              <tr><td>Regel</td><td><code>teknologi</code> påkrevd, og minst én <code>rettskildeIder</code>.</td></tr>
+              <tr><td>Vilkår</td><td><code>navn</code> påkrevd. Minst én <code>rettskildeIder</code> når <code>grunnlagstype</code> er <code>Rettslig</code>.</td></tr>
+              <tr><td>Faktum</td><td><code>kildeId</code> og <code>verdi</code> påkrevd (transformer: <code>verdi</code>).</td></tr>
+              <tr><td>Vurdering</td><td><code>regelId</code> påkrevd. <code>hovedhensyn</code> er påkrevd når <code>type</code> er <code>Skjonn</code>. <code>konfidens</code> skal være mellom 0 og 1 og kan bare settes når <code>type</code> er <code>GenerativKI</code>.</td></tr>
+              <tr><td>Partsmedvirkning</td><td><code>innhold</code> påkrevd.</td></tr>
+              <tr><td>Saksrelasjon</td><td><code>relatertSakId</code> påkrevd.</td></tr>
+              <tr><td>Vedtak</td><td><code>utfall</code> påkrevd. Hver virkning trenger <code>beskrivelse</code>; <code>gyldigTil</code> må være utelatt ved <code>varighet: "Varig"</code>; <code>rapporteringsFrekvens</code> kan bare settes ved <code>type: "Plikt"</code>.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Enumverdier</h3>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <caption class="ds-sr-only">Gyldige enumverdier</caption>
+            <thead><tr><th scope="col">Enum</th><th scope="col">Brukt i</th><th scope="col">Verdier</th></tr></thead>
+            <tbody>
+              <tr><td><code>HendelseType</code></td><td><code>sak.utlosendeHendelse</code></td><td>Soknad, Innrapportering, Melding, Tilbakekall, Kontroll, Klage, Omgjoring</td></tr>
+              <tr><td><code>SakStatus</code></td><td><code>sak.status</code></td><td>UnderBehandling (standard), Avsluttet, Klaget</td></tr>
+              <tr><td><code>SakRelasjonType</code></td><td>saksrelasjon</td><td>Tilbakekall, Revurdering, OppfolgingAvMelding, Klage, Kontroll, Annet</td></tr>
+              <tr><td><code>RettskildeType</code></td><td>rettskilde</td><td>Lov, Forskrift, Rundskriv, Forarbeider, Rettspraksis, InternasjonalRett, Forvaltningspraksis</td></tr>
+              <tr><td><code>KildeType</code></td><td>kilde</td><td>AutoritativtRegister, Soknad, TredjepartsUttalelse, AnnenKilde</td></tr>
+              <tr><td><code>FaktumType</code> / <code>StrukturType</code></td><td>faktum</td><td>Raatt, Subsumert / Strukturert, Ustrukturert</td></tr>
+              <tr><td><code>VurderingsType</code></td><td>regel, vurdering</td><td>Deterministisk, GenerativKI, Skjonn</td></tr>
+              <tr><td><code>UtfallType</code></td><td>vurdering</td><td>Oppfylt, IkkeOppfylt, Uaktuelt, IkkeVurdert, Uavklart</td></tr>
+              <tr><td><code>GrunnlagsType</code></td><td>vilkår</td><td>Rettslig, InternPraksis, Datakvalitet</td></tr>
+              <tr><td><code>VirkningType</code></td><td>vilkår, virkning</td><td>Tillatelse, Plikt, OkonomiskYtelse, Tilskudd, Gebyr</td></tr>
+              <tr><td><code>FastsettelsesmateType</code></td><td>vilkår, virkning</td><td>Statisk, Parametrisert, Skjonnsbasert, Avledet</td></tr>
+              <tr><td><code>VarighetsType</code></td><td>virkning</td><td>Tidsbegrenset, Varig, LopendeInntilVilkarBrister</td></tr>
+              <tr><td><code>PartsmedvirkningType</code></td><td>partsmedvirkning</td><td>Forhaandsvarsel, Kommentar, InnsynsKrav</td></tr>
+              <tr><td><code>AutomatiseringsGrad</code></td><td>vedtak (kun i svar)</td><td>Helautomatisert, DelvisAutomatisert, Manuell</td></tr>
+              <tr><td><code>OppforingsType</code></td><td>forklaringslogg (kun i svar)</td><td>Faktum, Vurdering, Partsmedvirkning</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===================== 3. ENDEPUNKTER ===================== -->
+      <section id="endepunkter">
+        <span class="section-num">3</span>
+        <h2>Endepunkter</h2>
+        <p class="intro">Alle ruter ligger under <code>/api</code>. Tabellene er hentet fra kontrollerne i <code>src/Forklaringsmodell.Api/Controllers</code>.</p>
+
+        <h3>Saker</h3>
+        <p>Selve saksmappen, saksrelasjoner og partsmedvirkning.</p>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <caption class="ds-sr-only">Endepunkter for saker</caption>
+            <thead><tr><th scope="col">Metode</th><th scope="col">Sti</th><th scope="col">Beskrivelse</th></tr></thead>
+            <tbody>
+              <tr><td><span class="pill info">GET</span></td><td><code>/api/saker</code></td><td>List alle saker.</td></tr>
+              <tr><td><span class="pill ok">POST</span></td><td><code>/api/saker</code></td><td>Opprett sak. <code>tittel</code> og <code>utlosendeHendelse</code> er påkrevd.</td></tr>
+              <tr><td><span class="pill info">GET</span></td><td><code>/api/saker/{id}</code></td><td>Les én sak.</td></tr>
+              <tr><td><span class="pill warn">PUT</span></td><td><code>/api/saker/{id}</code></td><td>Oppdater <code>tittel</code> og <code>status</code>. Saken er levende og kan endres også etter at et vedtak er fattet.</td></tr>
+              <tr><td><span class="pill info">GET</span></td><td><code>/api/saker/{sakId}/relasjoner</code></td><td>List saksrelasjoner.</td></tr>
+              <tr><td><span class="pill ok">POST</span></td><td><code>/api/saker/{sakId}/relasjoner</code></td><td>Koble saken til en relatert sak (<code>relatertSakId</code>, <code>type</code>).</td></tr>
+              <tr><td><span class="pill info">GET</span></td><td><code>/api/saker/{sakId}/partsmedvirkning</code></td><td>List partsmedvirkning (forhåndsvarsel, kommentar, innsynskrav).</td></tr>
+              <tr><td><span class="pill ok">POST</span></td><td><code>/api/saker/{sakId}/partsmedvirkning</code></td><td>Registrer partsmedvirkning (<code>type</code>, <code>innhold</code>, valgfri <code>tidspunkt</code>).</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Faktum</h3>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <caption class="ds-sr-only">Endepunkter for faktum</caption>
+            <thead><tr><th scope="col">Metode</th><th scope="col">Sti</th><th scope="col">Beskrivelse</th></tr></thead>
+            <tbody>
+              <tr><td><span class="pill info">GET</span></td><td><code>/api/saker/{sakId}/faktum</code></td><td>List faktum i saken.</td></tr>
+              <tr><td><span class="pill ok">POST</span></td><td><code>/api/saker/{sakId}/faktum</code></td><td>Registrer faktum med kilde og eventuell tilleggshjemmel (<code>rettskildeIder</code>).</td></tr>
+              <tr><td><span class="pill info">GET</span></td><td><code>/api/faktum/{id}</code></td><td>Les ett faktum.</td></tr>
+              <tr><td><span class="pill ok">POST</span></td><td><code>/api/faktum/{id}/transformer</code></td><td>Opprett et nytt, subsumert faktum avledet fra et eksisterende. Kilden gjenbrukes hvis <code>kildeId</code> utelates.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Referansedata</h3>
+        <p>Delte kataloger som brukes på tvers av saker. Hver ressurs har liste og opprett, men ingen «hent én»-rute og ingen endring.</p>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <caption class="ds-sr-only">Endepunkter for referansedata</caption>
+            <thead><tr><th scope="col">Metode</th><th scope="col">Sti</th><th scope="col">Beskrivelse</th></tr></thead>
+            <tbody>
+              <tr><td><span class="pill info">GET</span> <span class="pill ok">POST</span></td><td><code>/api/rettskilder</code></td><td>Lov, forskrift, rundskriv m.m. med henvisning og valgfri ELI-referanse.</td></tr>
+              <tr><td><span class="pill info">GET</span> <span class="pill ok">POST</span></td><td><code>/api/kilder</code></td><td>Hvor et faktum kommer fra. Må ha minst én rettskilde som hjemmel for innhenting.</td></tr>
+              <tr><td><span class="pill info">GET</span> <span class="pill ok">POST</span></td><td><code>/api/regler</code></td><td>Operasjonalisert regelversjon med teknologi og referanse til regelartefaktet.</td></tr>
+              <tr><td><span class="pill info">GET</span> <span class="pill ok">POST</span></td><td><code>/api/vilkar</code></td><td>Gjenbrukbar vilkårskatalog med standardtekst på flere språk.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Vurderinger</h3>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <caption class="ds-sr-only">Endepunkter for vurderinger</caption>
+            <thead><tr><th scope="col">Metode</th><th scope="col">Sti</th><th scope="col">Beskrivelse</th></tr></thead>
+            <tbody>
+              <tr><td><span class="pill info">GET</span></td><td><code>/api/saker/{sakId}/vurderinger</code></td><td>List vurderinger i saken. <code>delvurderingIder</code> beregnes fra <code>forelderVurderingId</code> på de andre.</td></tr>
+              <tr><td><span class="pill ok">POST</span></td><td><code>/api/saker/{sakId}/vurderinger</code></td><td>Registrer en vurdering. Se <a href="#konfigurasjon">konfigurasjon</a> for automatisk eskalering.</td></tr>
+              <tr><td><span class="pill info">GET</span></td><td><code>/api/vurderinger/{id}</code></td><td>Les én vurdering.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Vedtak</h3>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <caption class="ds-sr-only">Endepunkter for vedtak</caption>
+            <thead><tr><th scope="col">Metode</th><th scope="col">Sti</th><th scope="col">Beskrivelse</th></tr></thead>
+            <tbody>
+              <tr><td><span class="pill info">GET</span></td><td><code>/api/saker/{sakId}/vedtak</code></td><td>List vedtak i saken.</td></tr>
+              <tr><td><span class="pill ok">POST</span></td><td><code>/api/saker/{sakId}/vedtak</code></td><td>Opprett vedtak med forklaringslogg og virkninger i én transaksjon. Fryser alt som refereres.</td></tr>
+              <tr><td><span class="pill info">GET</span></td><td><code>/api/vedtak/{id}</code></td><td>Les vedtaket.</td></tr>
+              <tr><td><span class="pill info">GET</span></td><td><code>/api/vedtak/{id}/forklaring</code></td><td>Hydrert forklaring: vedtak, forklaringslogg og alle refererte faktum, vurderinger, partsmedvirkninger og virkninger utfoldet.</td></tr>
+              <tr><td><span class="pill info">GET</span></td><td><code>/api/vedtak/{id}/virkninger</code></td><td>List virkningene til vedtaket.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="footnote">Virkninger kan bare opprettes sammen med vedtaket sitt; det finnes ingen frittstående <code>POST</code> for dem. <code>automatiseringsGrad</code> beregnes av serveren og kan ikke settes av klienten.</p>
+      </section>
+
+      <!-- ===================== 4. TYPISK FLYT ===================== -->
+      <section id="flyt">
+        <span class="section-num">4</span>
+        <h2>Typisk flyt</h2>
+        <p class="intro">Fra tom database til en lesbar forklaring i sju steg. Eksemplene er kortet ned til det vesentlige og bygget på piperehabiliterings-<a href="../eksempel/">eksempelet</a>. Verdier i <code>&lt;vinkelparenteser&gt;</code> er id-er du har fått i svaret fra et tidligere steg.</p>
+
+        <h3>1. Opprett referansedata</h3>
+        <p>Rettskilder først, siden kilder, regler og vilkår skal peke på dem. Hvert <code>POST</code>-svar inneholder id-en (<code>rettskildeId</code>, <code>kildeId</code>, <code>regelId</code>, <code>vilkarId</code>) du trenger videre.</p>
+        <span class="code-label">POST /api/rettskilder</span>
+        <pre class="code"><code>{
+  "type": "Lov",
+  "henvisning": "plan- og bygningsloven § 20-1 bokstav f",
+  "versjonDato": "2026-01-01T00:00:00Z",
+  "eliReferanse": "https://lovdata.no/lov/2008-06-27-71"
+}</code></pre>
+        <span class="code-label">POST /api/kilder</span>
+        <pre class="code"><code>{
+  "navn": "eByggesøk Proff (søknadsportal)",
+  "type": "Soknad",
+  "autoritativ": false,
+  "rettskildeIder": ["&lt;rettskildeId&gt;"]
+}</code></pre>
+        <span class="code-label">POST /api/regler</span>
+        <pre class="code"><code>{
+  "rettskildeIder": ["&lt;rettskildeId&gt;"],
+  "teknologi": "DiBK nasjonal sjekkliste (DMN-aktig regelsett)",
+  "type": "Deterministisk",
+  "regeldefinisjonReferanse": "https://sjekkliste-bygg-api.ft.dibk.no/api/sjekkliste"
+}</code></pre>
+        <span class="code-label">POST /api/vilkar</span>
+        <pre class="code"><code>{
+  "navn": "Automatisk godkjenning av piperehabilitering",
+  "kode": "PIPEREHAB_AUTOMATISK",
+  "type": "Tillatelse",
+  "grunnlagstype": "Rettslig",
+  "fastsettelsesmate": "Parametrisert",
+  "rettskildeIder": ["&lt;rettskildeId&gt;"],
+  "regelId": "&lt;regelId&gt;",
+  "standardTekst": [
+    { "spraakKode": "nb", "verdi": "Kan godkjennes automatisk når alle delvilkår er oppfylt." }
+  ]
+}</code></pre>
+
+        <h3>2. Opprett sak</h3>
+        <span class="code-label">POST /api/saker</span>
+        <pre class="code"><code>{
+  "tittel": "Søknad om rehabilitering av skorstein – Eiganesveien 12",
+  "status": "UnderBehandling",
+  "utlosendeHendelse": "Soknad"
+}</code></pre>
+        <p>Svaret (201) har <code>sakId</code>, <code>opprettet</code> og <code>sistEndret</code>. Videre bruker du <code>sakId</code> i stiene.</p>
+
+        <h3>3. Registrer faktum</h3>
+        <span class="code-label">POST /api/saker/{sakId}/faktum</span>
+        <pre class="code"><code>{
+  "kildeId": "&lt;kildeId&gt;",
+  "type": "Raatt",
+  "struktur": "Strukturert",
+  "verdi": "Tiltaket er innvendig fôring av eksisterende skorstein, uten endring av utvendige dimensjoner."
+}</code></pre>
+        <p>Må et faktum korrigeres eller tolkes, kaller du <code>POST /api/faktum/{id}/transformer</code> med en ny <code>verdi</code>. Originalen blir stående.</p>
+
+        <h3>4. Registrer vurderinger</h3>
+        <p>Start med rotvurderingen (hovedvilkåret), og registrer deretter delvurderingene med <code>forelderVurderingId</code> som peker på den. Foreldrevurderingen må tilhøre samme sak. Alle vurderingene kan peke på samme <code>vilkarId</code>, og <code>utfall</code> er påkrevd, også for vilkår som ikke ble vurdert (<code>Uaktuelt</code>, <code>IkkeVurdert</code>, <code>Uavklart</code>).</p>
+        <span class="code-label">POST /api/saker/{sakId}/vurderinger – rot</span>
+        <pre class="code"><code>{
+  "regelId": "&lt;regelId&gt;",
+  "type": "Deterministisk",
+  "utfall": "Oppfylt",
+  "beregningsspor": "Alle tre delvilkår i sjekklisten er oppfylt => automatisk godkjent",
+  "vilkarId": "&lt;vilkarId&gt;",
+  "rettskildeIder": ["&lt;rettskildeId&gt;"]
+}</code></pre>
+        <span class="code-label">POST /api/saker/{sakId}/vurderinger – delvurdering</span>
+        <pre class="code"><code>{
+  "regelId": "&lt;regelId&gt;",
+  "type": "Deterministisk",
+  "utfall": "Oppfylt",
+  "beregningsspor": "Innvendig fôring uten utvendig dimensjonsendring => rehabilitering",
+  "vilkarId": "&lt;vilkarId&gt;",
+  "forelderVurderingId": "&lt;rotVurderingId&gt;",
+  "faktumIder": ["&lt;faktumId&gt;"]
+}</code></pre>
+        <p>For en <code>Skjonn</code>-vurdering legger du i tillegg ved <code>hovedhensyn</code> (påkrevd) og eventuelt <code>forkastedeUtfall</code>, begge som flerspråklige lister.</p>
+
+        <h3>5. Partsmedvirkning (valgfritt)</h3>
+        <p>Forhåndsvarsel, kommentarer og innsynskrav registreres med <code>POST /api/saker/{sakId}/partsmedvirkning</code>, og id-ene tas med i <code>partsmedvirkningIder</code> i neste steg.</p>
+
+        <h3>6. Opprett vedtak</h3>
+        <p>Vedtaket oppgir hvilke faktum, vurderinger og partsmedvirkninger som forklarer utfallet, pluss konkrete <code>virkninger</code>. Dette er øyeblikket alt fryses. Serveren setter <code>tidspunkt</code> og beregner <code>automatiseringsGrad</code>.</p>
+        <span class="code-label">POST /api/saker/{sakId}/vedtak</span>
+        <pre class="code"><code>{
+  "utfall": "Tillatelse til rehabilitering av skorstein innvilget",
+  "faktumIder": ["&lt;faktumId&gt;"],
+  "vurderingIder": ["&lt;rotVurderingId&gt;", "&lt;delvurderingId&gt;"],
+  "partsmedvirkningIder": [],
+  "virkninger": [
+    {
+      "type": "Tillatelse",
+      "fastsettelsesmate": "Parametrisert",
+      "vilkarId": "&lt;vilkarId&gt;",
+      "varighet": "Varig",
+      "beskrivelse": [
+        { "spraakKode": "nb", "verdi": "Tillatelse til rehabilitering av skorstein" },
+        { "spraakKode": "nn", "verdi": "Løyve til rehabilitering av skorstein" }
+      ],
+      "vurderingIder": ["&lt;rotVurderingId&gt;"],
+      "faktumIder": ["&lt;faktumId&gt;"]
+    }
+  ]
+}</code></pre>
+        <p>Svaret (201) har <code>vedtakId</code>, <code>tidspunkt</code>, <code>utfall</code> og <code>automatiseringsGrad</code>. For virkninger med økonomisk innhold bruker du <code>belop</code>; for tidsbegrensede virkninger <code>gyldigFra</code> og <code>gyldigTil</code>; for plikter <code>rapporteringsFrekvens</code> og <code>lopendeVilkar</code>.</p>
+
+        <h3>7. Les forklaringen</h3>
+        <span class="code-label">GET /api/vedtak/{vedtakId}/forklaring</span>
+        <pre class="code"><code>GET /api/vedtak/&lt;vedtakId&gt;/forklaring</code></pre>
+        <p>Utdrag av svaret (kortet ned; id-er og lister er forkortet):</p>
+        <pre class="code"><code>{
+  "vedtak": {
+    "vedtakId": "…",
+    "sakId": "…",
+    "tidspunkt": "2026-10-01T09:30:12Z",
+    "utfall": "Tillatelse til rehabilitering av skorstein innvilget",
+    "automatiseringsGrad": "Helautomatisert"
+  },
+  "forklaringslogg": {
+    "loggId": "…",
+    "vedtakId": "…",
+    "oppforinger": [
+      { "oppforingId": "…", "type": "Faktum", "referanseId": "&lt;faktumId&gt;" },
+      { "oppforingId": "…", "type": "Vurdering", "referanseId": "&lt;rotVurderingId&gt;" }
+    ]
+  },
+  "faktum": [
+    { "faktumId": "…", "type": "Raatt", "struktur": "Strukturert",
+      "verdi": "Tiltaket er innvendig fôring …", "erLaast": true }
+  ],
+  "vurderinger": [
+    { "vurderingId": "&lt;rotVurderingId&gt;", "type": "Deterministisk", "utfall": "Oppfylt",
+      "eskalert": false, "forelderVurderingId": null,
+      "delvurderingIder": ["&lt;delvurderingId&gt;"], "erLaast": true },
+    { "vurderingId": "&lt;delvurderingId&gt;", "utfall": "Oppfylt",
+      "forelderVurderingId": "&lt;rotVurderingId&gt;", "faktumIder": ["&lt;faktumId&gt;"], "erLaast": true }
+  ],
+  "partsmedvirkninger": [],
+  "virkninger": [
+    { "virkningId": "…", "type": "Tillatelse", "varighet": "Varig",
+      "beskrivelse": [ { "spraakKode": "nb", "verdi": "Tillatelse til rehabilitering av skorstein" } ] }
+  ]
+}</code></pre>
+        <p>Dette er hele beslutningstreet i ett kall: hvem som vurderte hva, på hvilket grunnlag, hvilke delvilkår som inngikk og hva vedtaket førte til. Alt er <code>erLaast: true</code>.</p>
+      </section>
+
+      <!-- ===================== 5. KONFIGURASJON ===================== -->
+      <section id="konfigurasjon">
+        <span class="section-num">5</span>
+        <h2>Konfigurasjon</h2>
+        <p class="intro">Terskelen for når en KI-vurdering skal eskaleres er konfigurasjon, ikke en hardkodet konstant. I tillegg styrer en connection string hvilken database som brukes.</p>
+
+        <h3>KonfidensTerskler</h3>
+        <p>Seksjonen ligger i <code>appsettings.json</code> og bindes til <code>KonfidensTerskelOptions</code>:</p>
+        <pre class="code"><code>{
+  "KonfidensTerskler": {
+    "Default": 0.7,
+    "PerRegel": {
+      "&lt;regelId&gt;": 0.85
+    }
+  }
+}</code></pre>
+        <ul>
+          <li><code>Default</code> er terskelen for alle regler som ikke har en egen verdi. Standardverdien er 0,7.</li>
+          <li><code>PerRegel</code> er en ordbok der nøkkelen er <code>regelId</code> (GUID som tekst) og verdien er terskelen for akkurat den regelen. Den er tom som standard.</li>
+          <li>Som all ASP.NET Core-konfigurasjon kan verdiene overstyres med miljøvariabler, for eksempel <code>KonfidensTerskler__Default=0.8</code>.</li>
+        </ul>
+
+        <h3>Slik eskaleres en GenerativKI-vurdering</h3>
+        <p>Når du registrerer en vurdering, slår <code>VurderingService</code> opp terskelen for vurderingens <code>regelId</code> (egen verdi i <code>PerRegel</code>, ellers <code>Default</code>). Så gjelder dette:</p>
+        <ul>
+          <li>Er <code>type</code> <code>GenerativKI</code> og <code>konfidens</code> satt, og <code>konfidens</code> er <strong>lavere enn</strong> terskelen, settes <code>eskalert</code> til <code>true</code> av serveren. En konfidens lik terskelen eskalerer ikke.</li>
+          <li>Setter klienten selv <code>eskalert: true</code>, beholdes det. Serveren kan bare skru eskalering på, aldri av.</li>
+          <li>For andre vurderingstyper brukes terskelen ikke, og <code>konfidens</code> avvises med 400 hvis den er satt.</li>
+        </ul>
+        <span class="code-label">POST /api/saker/{sakId}/vurderinger – konfidens 0,62 mot terskel 0,7</span>
+        <pre class="code"><code>{
+  "regelId": "&lt;regelId&gt;",
+  "type": "GenerativKI",
+  "utfall": "Oppfylt",
+  "konfidens": 0.62,
+  "beregningsspor": "Modellens tolkning av vedleggene"
+}</code></pre>
+        <p>Svaret har <code>"eskalert": true</code>, selv om klienten ikke sendte det.</p>
+
+        <p>Eskalering har konsekvens for vedtaket. <code>automatiseringsGrad</code> beregnes av serveren ut fra vurderingene som er listet i <code>vurderingIder</code>, der en vurdering teller som «ikke automatisk» hvis den er <code>Skjonn</code> eller eskalert:</p>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <caption class="ds-sr-only">Hvordan automatiseringsGrad beregnes</caption>
+            <thead><tr><th scope="col">Vurderinger i vedtaket</th><th scope="col">automatiseringsGrad</th></tr></thead>
+            <tbody>
+              <tr><td>Ingen skjønn eller eskalerte</td><td><span class="pill ok">Helautomatisert</span></td></tr>
+              <tr><td>Noen, men ikke alle</td><td><span class="pill warn">DelvisAutomatisert</span></td></tr>
+              <tr><td>Alle er skjønn eller eskalerte</td><td><span class="pill bad">Manuell</span></td></tr>
+              <tr><td>Ingen vurderinger oppgitt</td><td><span class="pill bad">Manuell</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Connection string</h3>
+        <p>Databasen konfigureres under <code>ConnectionStrings:Forklaringsmodell</code>:</p>
+        <pre class="code"><code>{
+  "ConnectionStrings": {
+    "Forklaringsmodell": "Data Source=forklaringsmodell.db"
+  }
+}</code></pre>
+        <p>Mangler verdien, brukes den samme SQLite-adressen som reserve. Leverandøren er satt til SQLite i <code>Program.cs</code>. For en annen database må du bytte EF Core-leverandør og lage nye migrasjoner.</p>
+      </section>
+
+      <!-- ===================== 6. KODEORGANISERING ===================== -->
+      <section id="kodeorganisering">
+        <span class="section-num">6</span>
+        <h2>Kodeorganisering</h2>
+        <p class="intro">Fire lag i <code>src/</code> og et testprosjekt i <code>tests/</code>. Avhengighetene peker innover: Api og Infrastructure bruker Application, og Application bruker Domain.</p>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <caption class="ds-sr-only">Prosjektene i løsningen</caption>
+            <thead><tr><th scope="col">Prosjekt</th><th scope="col">Ansvar</th></tr></thead>
+            <tbody>
+              <tr><td><code>Forklaringsmodell.Domain</code></td><td>Entiteter og enumer. Ingen avhengigheter til resten.</td></tr>
+              <tr><td><code>Forklaringsmodell.Application</code></td><td>DTO-er, FluentValidation-validatorer, use-case-services, unntakstyper, <code>KonfidensTerskelOptions</code> og repository-grensesnittet.</td></tr>
+              <tr><td><code>Forklaringsmodell.Infrastructure</code></td><td>EF Core mot SQLite: <code>DbContext</code>, konfigurasjoner, migrasjoner, repository-implementasjon og seed-data.</td></tr>
+              <tr><td><code>Forklaringsmodell.Api</code></td><td>Kontrollere, middleware som oversetter unntak til statuskoder, Swagger og <code>Program.cs</code>.</td></tr>
+              <tr><td><code>Forklaringsmodell.Tests</code></td><td>xUnit: enhetstester av validatorer og services, og integrasjonstester mot hele API-et med <code>WebApplicationFactory</code> og en SQLite-database i minnet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="footnote" style="margin-top:var(--ds-size-4);">Kontrollerne er tynne: de kaller en service, som validerer manuelt, slår opp i repositoryet og kaster <code>AppValidationException</code>, <code>NotFoundException</code> eller <code>AppendOnlyViolationException</code>. Det er <code>ExceptionHandlingMiddleware</code> som gjør dem til 400, 404 og 409. Modellen bak endepunktene er beskrevet på <a href="../modell/">Modell</a>-siden og forretningsreglene på <a href="../regler/">Regler</a>-siden.</p>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <h3>Om nettstedet</h3>
+      <p style="font-size:var(--ds-body-sm-font-size); color:var(--ds-color-text-subtle); max-width:32ch; margin:0;">
+        Dokumentasjon for <a href="https://github.com/FinnurO/forklaringsmodell-api" target="_blank" rel="noopener">forklaringsmodell-api</a>:
+        en prototype for en felles informasjonsmodell som forklarer vedtak. Bygget med
+        <a href="https://designsystemet.no/" target="_blank" rel="noopener">designsystemet.no</a>.
+      </p>
+    </div>
+    <div>
+      <h3>Dokumentasjon</h3>
+      <ul>
+        <li><a href="../modell/">Modell</a></li>
+        <li><a href="../regler/">Forretningsregler</a></li>
+        <li><a href="../eksempel/">Eksempel: piperehabilitering</a></li>
+        <li><a href="./">API</a></li>
+        <li><a href="../versjoner/">Versjoner</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Relatert</h3>
+      <ul>
+        <li><a href="https://github.com/FinnurO/digital-rettsstat" target="_blank" rel="noopener">Rammeverk for digital rettsstat</a></li>
+        <li><a href="https://github.com/FinnurO/regel-ide" target="_blank" rel="noopener">Regel-IDE</a></li>
+        <li><a href="https://lovdata.no/lov/1967-02-10" target="_blank" rel="noopener">Forvaltningsloven (Lovdata)</a></li>
+        <li><a href="https://data.norge.no/" target="_blank" rel="noopener">Felles datakatalog</a></li>
+        <li><a href="https://sjekkliste-bygg.ft.dibk.no/" target="_blank" rel="noopener">DiBKs sjekkliste for bygg</a></li>
+      </ul>
+    </div>
+    <p class="fine">
+      Prototype og proof of concept — ikke en offisiell nettside for Digitaliseringsdirektoratet (Digdir), og ikke en produksjonsklar tjeneste. Eksemplene bruker fiktive adresser og saker, og er utledet fra offentlig tilgjengelig informasjon.
+      Kildekode på <a href="https://github.com/FinnurO/forklaringsmodell-api" target="_blank" rel="noopener">GitHub</a>.
+    </p>
+    <p class="fine">
+      <strong>Utviklet sammen med Claude Code</strong> (Anthropic) — kode, tester og dokumentasjon. Innholdet er ikke fasitsjekket av jurister; behandle det som et utkast og meld gjerne fra via «Gi tilbakemelding».
+    </p>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>

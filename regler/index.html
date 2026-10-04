@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="nb" data-color-scheme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forretningsregler – de 18 reglene bak forklaringsmodellen</title>
+<meta name="description" content="De 18 forretningsreglene i forklaringsmodellen: frysing og append-only, forklarbarhet, automatisering og KI, hjemler, kryss-sak-referanser og vilkårsstruktur — og hvor de håndheves i koden.">
+<link rel="canonical" href="https://finnuro.github.io/forklaringsmodell-api/regler/">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/vendor/designsystemet.css">
+<link rel="stylesheet" href="../assets/css/vendor/designsystemet-theme.css">
+<link rel="stylesheet" href="../assets/css/site.css">
+<meta property="og:title" content="Forretningsregler – forklaringsmodell">
+<meta property="og:description" content="De 18 forretningsreglene som gjør forklaringsmodellen til mer enn et skjema — og hvor de håndheves.">
+<meta property="og:type" content="website">
+<style>
+  .guide-nav .nums{ display:flex; flex-wrap:wrap; gap:var(--ds-size-1); padding:0 var(--ds-size-3) var(--ds-size-2) var(--ds-size-4); }
+  .guide-nav .nums a{ display:inline-block; padding:var(--ds-size-1) var(--ds-size-2); font-size:var(--ds-body-xs-font-size); }
+</style>
+</head>
+<body>
+
+<a class="ds-link skip-to-content" href="#main">Hopp til innhold</a>
+
+<div class="disclaimer-bar">
+  <div class="wrap">
+    <span>📎 <strong>Prototype / proof of concept</strong> — ikke en produksjonstjeneste og ikke en offisiell Digdir-tjeneste. <strong>Utviklet sammen med Claude Code.</strong></span>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand plain" href="../">
+      <span class="brand__mark" aria-hidden="true">FM</span>
+      <span class="brand__text">
+        <span class="brand__title">Forklaringsmodell</span>
+        <span class="brand__subtitle">API for forklarbare vedtak</span>
+      </span>
+    </a>
+    <nav class="main-nav" aria-label="Hovedmeny">
+      <a href="../">Forside</a>
+      <a href="../modell/">Modell</a>
+      <a href="./" aria-current="page">Regler</a>
+      <a href="../eksempel/">Eksempel</a>
+      <a href="../api/">API</a>
+      <a href="../versjoner/">Versjoner</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap page-head">
+    <span style="font-size:var(--ds-body-xs-font-size); color:var(--ds-color-text-subtle);"><a class="ds-link" href="../">Forside</a> / Regler</span>
+    <h1>Forretningsregler</h1>
+    <p class="lead">Reglene er det viktigste i forklaringsmodellen — ikke bare skjemaet. Tabellene og feltene sier hva som kan lagres; reglene sier hva som <em>ikke</em> kan skje, og det er dem som gjør en forklaring til noe man kan stole på i ettertid. Her er alle 18, gruppert etter tema.</p>
+    <p class="lead" style="margin-top:var(--ds-size-3);">Når du ser «3.11» i kildekoden eller i kommentarer, betyr det regel 11 i punkt 3 («Forretningsregler») i <a class="ds-link" href="https://github.com/FinnurO/forklaringsmodell-api/blob/master/docs/api-spesifikasjon-forklaringsmodell.md" target="_blank" rel="noopener">API-spesifikasjonen på GitHub</a>. Hver regel under har samme nummer her, så du kan hoppe rett fra en kodekommentar til forklaringen.</p>
+  </div>
+
+  <div class="wrap guide-layout">
+    <nav class="guide-nav" aria-label="Innhold på siden">
+      <a href="#oversikt" data-anchor="oversikt">Oversikt</a>
+      <a href="#frysing" data-anchor="frysing">Frysing og append-only</a>
+      <div class="nums">
+        <a href="#regel-1" data-anchor="regel-1" aria-label="Regel 1">1</a>
+        <a href="#regel-4" data-anchor="regel-4" aria-label="Regel 4">4</a>
+        <a href="#regel-10" data-anchor="regel-10" aria-label="Regel 10">10</a>
+        <a href="#regel-12" data-anchor="regel-12" aria-label="Regel 12">12</a>
+      </div>
+      <a href="#forklarbarhet" data-anchor="forklarbarhet">Forklarbarhet</a>
+      <div class="nums">
+        <a href="#regel-2" data-anchor="regel-2" aria-label="Regel 2">2</a>
+        <a href="#regel-14" data-anchor="regel-14" aria-label="Regel 14">14</a>
+        <a href="#regel-17" data-anchor="regel-17" aria-label="Regel 17">17</a>
+      </div>
+      <a href="#automatisering" data-anchor="automatisering">Automatisering og KI</a>
+      <div class="nums">
+        <a href="#regel-3" data-anchor="regel-3" aria-label="Regel 3">3</a>
+        <a href="#regel-5" data-anchor="regel-5" aria-label="Regel 5">5</a>
+      </div>
+      <a href="#hjemler" data-anchor="hjemler">Hjemler og referanser</a>
+      <div class="nums">
+        <a href="#regel-7" data-anchor="regel-7" aria-label="Regel 7">7</a>
+        <a href="#regel-8" data-anchor="regel-8" aria-label="Regel 8">8</a>
+        <a href="#regel-9" data-anchor="regel-9" aria-label="Regel 9">9</a>
+        <a href="#regel-16" data-anchor="regel-16" aria-label="Regel 16">16</a>
+      </div>
+      <a href="#saker" data-anchor="saker">Saker og kryss-sak</a>
+      <div class="nums">
+        <a href="#regel-6" data-anchor="regel-6" aria-label="Regel 6">6</a>
+        <a href="#regel-11" data-anchor="regel-11" aria-label="Regel 11">11</a>
+        <a href="#regel-13" data-anchor="regel-13" aria-label="Regel 13">13</a>
+      </div>
+      <a href="#struktur" data-anchor="struktur">Struktur og vilkår</a>
+      <div class="nums">
+        <a href="#regel-15" data-anchor="regel-15" aria-label="Regel 15">15</a>
+        <a href="#regel-18" data-anchor="regel-18" aria-label="Regel 18">18</a>
+      </div>
+      <a href="#lese" data-anchor="lese">Slik leser du reglene</a>
+    </nav>
+
+    <div class="guide-article">
+
+      <section id="oversikt">
+        <span class="section-num">Oversikt</span>
+        <h2>Seks temaer, atten regler</h2>
+        <p class="intro">Reglene henger tett sammen. Noen sikrer at en forklaring ikke kan endres i ettertid, noen at den faktisk forklarer noe, og noen at den peker på riktig hjemmel.</p>
+        <div class="fact-row">
+          <div class="fact"><span class="big">18</span><span class="lbl">forretningsregler i spesifikasjonens punkt 3</span></div>
+          <div class="fact"><span class="big">Append-only</span><span class="lbl">etter frysing: vedtaket har kun GET og POST, PUT/DELETE gir 405</span></div>
+          <div class="fact"><span class="big">Serverberegnet</span><span class="lbl">automatiseringsgrad — klienten kan ikke sette den selv</span></div>
+          <div class="fact"><span class="big">0,7</span><span class="lbl">standard konfidensterskel, i konfigurasjon og ikke hardkodet i vurderingen</span></div>
+        </div>
+        <p>Under hver regel står først hva regelen sier («Regelen»), deretter hvorfor den finnes og hvor den håndheves i koden. Der koden ikke gjør nøyaktig det spesifikasjonen sier, står det uttrykkelig.</p>
+      </section>
+
+      <section id="frysing">
+        <span class="section-num">Tema 1 · regel 1, 4, 10 og 12</span>
+        <h2>Frysing og append-only</h2>
+        <p class="intro">Et vedtak skal kunne forklares slik det var den dagen det ble fattet. Derfor kan ikke det som forklarer vedtaket skrives om etterpå — en rettelse er alltid en ny rad.</p>
+
+        <div class="rule-card" id="regel-1">
+          <span class="n">1</span>
+          <div>
+            <h3>Append-only etter frysing</h3>
+            <p><strong>Regelen.</strong> Når et vedtak er opprettet, kan verken vedtaket eller forklaringsloggen endres eller slettes. Faktum, vurderinger og partsmedvirkning som loggen peker på, blir også skrivebeskyttet. Skal noe rettes, opprettes en ny rad som peker tilbake til den opprinnelige.</p>
+            <p class="why"><strong>Hvorfor:</strong> En forklaring som kan endres i ettertid, er ikke en forklaring.<br><strong>Håndheves:</strong> <code>VedtakService.OpprettAsync</code> lager vedtak, logg og loggoppføringer i én transaksjon. <code>VedtakController</code> har bare GET og POST, så PUT/DELETE mot vedtak gir 405 (<code>VedtakEndpointTests</code>). For faktum og vurderinger kaster <code>SjekkKanEndreAsync</code> i <code>FaktumService</code> og <code>VurderingService</code> en <code>AppendOnlyViolationException</code>, som <code>ExceptionHandlingMiddleware</code> gjør om til 409. Rettelse av faktum går via <code>POST /api/faktum/{id}/transformer</code>. Det finnes ikke noe endepunkt for å endre faktum eller vurderinger i dag; vernet ligger klart i servicene.</p>
+          </div>
+        </div>
+
+        <div class="rule-card" id="regel-4">
+          <span class="n">4</span>
+          <div>
+            <h3>Regelspeilet er også append-only</h3>
+            <p><strong>Regelen.</strong> En regel som en vurdering har brukt, skal ikke overskrives. Ny versjon av en regeloperasjonalisering blir en ny regelrad, koblet til de samme eller oppdaterte rettskildene.</p>
+            <p class="why"><strong>Hvorfor:</strong> Man må kunne se hvilken regelversjon som faktisk ble kjørt.<br><strong>Håndheves:</strong> <code>ReglerController</code> har bare GET og POST. <code>RegelDto.ErLaast</code> beregnes fra <code>ErRegelReferertAsync</code>. Ulikt de andre entitetene har <code>RegelService</code> ingen egen <code>SjekkKanEndreAsync</code>, så vernet hviler i dag på at endringsendepunkt mangler.</p>
+          </div>
+        </div>
+
+        <div class="rule-card" id="regel-10">
+          <span class="n">10</span>
+          <div>
+            <h3>Vedtaksvirkning er en del av det frosne vedtaket</h3>
+            <p><strong>Regelen.</strong> Virkningene av et vedtak (ytelse, plikt, tillatelse, gebyr) er append-only på lik linje med forklaringsloggen. En varig virkning har ikke sluttdato, og rapporteringsfrekvens hører bare til plikter.</p>
+            <p class="why"><strong>Hvorfor:</strong> Virkningen er det parten faktisk blir bundet av, og må derfor ligge fast.<br><strong>Håndheves:</strong> <code>OpprettVedtaksvirkningDtoValidator</code> avviser <code>GyldigTil</code> når varigheten er «Varig», og <code>RapporteringsFrekvens</code> når typen ikke er «Plikt» (<code>VedtaksvirkningValidatorTests</code>). Spesifikasjonen sier «bør» om siste punkt; koden gjør det til en valideringsfeil. Virkninger opprettes bare sammen med vedtaket i <code>VedtakService</code>, og <code>GET /api/vedtak/{id}/virkninger</code> er rent lesende.</p>
+          </div>
+        </div>
+
+        <div class="rule-card" id="regel-12">
+          <span class="n">12</span>
+          <div>
+            <h3>Vilkår er referansedata, ikke en del av vedtaket</h3>
+            <p><strong>Regelen.</strong> Et vilkår i katalogen kan gjenbrukes av mange virkninger på tvers av saker. Er det brukt av minst én virkning, skal det ikke overskrives; en endring (for eksempel ny standardtekst) blir en ny vilkårsrad.</p>
+            <p class="why"><strong>Hvorfor:</strong> Ellers ville en katalogendring i stillhet endre innholdet i gamle vedtak.<br><strong>Håndheves:</strong> <code>VilkarService.SjekkKanEndreAsync</code> kaster <code>AppendOnlyViolationException</code> (409) når vilkåret er referert, og <code>VilkarDto.ErLaast</code> viser status (<code>VilkarAppendOnlyTests</code>). Det finnes ikke noe endringsendepunkt for vilkår i dag.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="forklarbarhet">
+        <span class="section-num">Tema 2 · regel 2, 14 og 17</span>
+        <h2>Forklarbarhet</h2>
+        <p class="intro">Å lagre et utfall er ikke nok. Reglene her sørger for at begrunnelsen faktisk finnes, også der vurderingen var skjønn eller ikke ble gjort.</p>
+
+        <div class="rule-card" id="regel-2">
+          <span class="n">2</span>
+          <div>
+            <h3>Skjønn må alltid forklares</h3>
+            <p><strong>Regelen.</strong> En vurdering av typen skjønn må ha et hovedhensyn. Forkastede utfall bør oppgis der det fantes relevante alternativer.</p>
+            <p class="why"><strong>Hvorfor:</strong> Skjønn uten begrunnelse er det forvaltningsloven § 25 skal forhindre.<br><strong>Håndheves:</strong> Kravet til hovedhensyn sjekkes i API-laget av <code>OpprettVurderingDtoValidator</code>, som gir 400 hvis det mangler (<code>VurderingValidatorTests</code>). Forkastede utfall er valgfritt.</p>
+          </div>
+        </div>
+
+        <div class="rule-card" id="regel-14">
+          <span class="n">14</span>
+          <div>
+            <h3>Vurdering opprettes også når vilkåret ikke ble vurdert</h3>
+            <p><strong>Regelen.</strong> Et vilkår som ikke var aktuelt, ikke ble nådd eller ble stående uavklart, får likevel en vurderingsrad. Utfallet skiller mellom «oppfylt», «ikke oppfylt», «uaktuelt», «ikke vurdert» og «uavklart».</p>
+            <p class="why"><strong>Hvorfor:</strong> Fravær av en rad skal aldri være eneste dokumentasjon på at noe ikke ble vurdert.<br><strong>Håndheves:</strong> <code>Utfall</code> er obligatorisk i <code>OpprettVurderingDtoValidator</code> (<code>VurderingValidatorTests</code>). At årsaken står i <code>Beregningsspor</code>, valideres ikke; det er det kallende systemets ansvar.</p>
+          </div>
+        </div>
+
+        <div class="rule-card" id="regel-17">
+          <span class="n">17</span>
+          <div>
+            <h3>Forklaringstekster på flere språk uten skjemaendring</h3>
+            <p><strong>Regelen.</strong> Tekstfelt som vilkårets standardtekst, hovedhensyn, forkastede utfall og virkningens beskrivelse lagres som en liste med én variant per språk, ikke som faste kolonner. Nye språk er bare nye rader, og hvert språk kan forekomme høyst én gang per tekst.</p>
+            <p class="why"><strong>Hvorfor:</strong> Bokmål, nynorsk, samisk og engelsk må kunne leve side om side uten at databasen må endres.<br><strong>Håndheves:</strong> <code>TekstVariantDtoValidator</code> krever språkkode og verdi og avviser dubletter (uavhengig av store/små bokstaver). Virkningens beskrivelse må ha minst én variant (<code>OpprettVedtaksvirkningDtoValidator</code>). Språkkoden er et fritt felt, ikke en fast liste. Oversettelsen skjer i <code>FlerspraakligTekstMapper</code> (<code>TekstVariantValidatorTests</code>).</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="automatisering">
+        <span class="section-num">Tema 3 · regel 3 og 5</span>
+        <h2>Automatisering og KI</h2>
+        <p class="intro">Hvor automatisk et vedtak var, og hvor sikker en KI-vurdering var, er opplysninger som ikke skal kunne pyntes på av klienten.</p>
+
+        <div class="rule-card" id="regel-3">
+          <span class="n">3</span>
+          <div>
+            <h3>Konfidens er domenevalidert</h3>
+            <p><strong>Regelen.</strong> Konfidens skal ligge mellom 0 og 1 og hører til KI-vurderinger. Terskelen for å eskalere til et menneske er ikke en konstant i koden, men leses fra konfigurasjon per regel.</p>
+            <p class="why"><strong>Hvorfor:</strong> Terskelen er en forvaltningsbeslutning, og må kunne justeres uten kodeendring.<br><strong>Håndheves:</strong> <code>OpprettVurderingDtoValidator</code> avviser konfidens utenfor 0–1, og avviser konfidens på alt annet enn <code>GenerativKI</code> (<code>VurderingValidatorTests</code>). <code>VurderingService</code> setter <code>Eskalert</code> automatisk når en KI-vurdering ligger under terskelen. Terskelen kommer fra <code>KonfidensTerskelOptions</code> (seksjonen «KonfidensTerskler»: en standardverdi på 0,7 og eventuelle overstyringer per regel-ID).</p>
+          </div>
+        </div>
+
+        <div class="rule-card" id="regel-5">
+          <span class="n">5</span>
+          <div>
+            <h3>Automatiseringsgraden beregnes av serveren</h3>
+            <p><strong>Regelen.</strong> Vedtakets automatiseringsgrad skal gjenspeile hvor mange av vurderingene som faktisk var automatiske, og kan ikke settes fritt av klienten.</p>
+            <p class="why"><strong>Hvorfor:</strong> Påstanden «helautomatisert» skal kunne etterprøves mot vurderingene bak.<br><strong>Håndheves:</strong> Opprett-vedtak-forespørselen har ikke noe felt for graden; <code>VedtakService.BeregnAutomatiseringsGrad</code> regner den ut. En vurdering telles som manuell hvis den er skjønn <em>eller</em> eskalert. Ingen manuelle gir «Helautomatisert», alle manuelle (eller ingen vurderinger) gir «Manuell», ellers «DelvisAutomatisert» (<code>VedtakServiceTests</code>).</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="hjemler">
+        <span class="section-num">Tema 4 · regel 7, 8, 9 og 16</span>
+        <h2>Hjemler og referanser</h2>
+        <p class="intro">Hver regel og hver innhenting av opplysninger skal kunne føres tilbake til en rettskilde. Det modellen ikke eier, skal den peke til og ikke kopiere.</p>
+
+        <div class="rule-card" id="regel-7">
+          <span class="n">7</span>
+          <div>
+            <h3>Rettskilde kobles aldri direkte til en sak</h3>
+            <p><strong>Regelen.</strong> Koblingen til rettskilder går via regelen (den generelle hjemmelen, ofte lov, forskrift og rundskriv sammen) og/eller via vurderingen (saksspesifikke kilder, for eksempel en dom saksbehandler siterer).</p>
+            <p class="why"><strong>Hvorfor:</strong> En sak har ikke «en hjemmel»; hver enkelt vurdering har sin.<br><strong>Håndheves:</strong> Sak-entiteten har ingen rettskildekobling. <code>OpprettRegelDtoValidator</code> krever minst én rettskilde på regelen, og vurderinger kan ha egne via <code>RettskildeIder</code> (<code>RettskildeValidatorTests</code>).</p>
+          </div>
+        </div>
+
+        <div class="rule-card" id="regel-8">
+          <span class="n">8</span>
+          <div>
+            <h3>Innhenting av faktum krever hjemmel</h3>
+            <p><strong>Regelen.</strong> En kilde må ha minst én rettskilde før den kan brukes til å registrere faktum. Et faktum kan i tillegg ha en egen tilleggshjemmel, men det er valgfritt.</p>
+            <p class="why"><strong>Hvorfor:</strong> Å hente inn opplysninger om en person er i seg selv et inngrep som trenger hjemmel.<br><strong>Håndheves:</strong> <code>OpprettKildeDtoValidator</code> avviser <code>POST /api/kilder</code> uten rettskilde (<code>RettskildeValidatorTests</code>). Sjekken skjer altså når kilden registreres, ikke når faktum opprettes; <code>FaktumService</code> krever bare at kilden finnes.</p>
+          </div>
+        </div>
+
+        <div class="rule-card" id="regel-9">
+          <span class="n">9</span>
+          <div>
+            <h3>CPSV-AP-NO og CCCEV er valgfrie, eksterne referanser</h3>
+            <p><strong>Regelen.</strong> Referansene til tjeneste, regel og kilde i Felles datakatalog er valgfrie IRI-er. De valideres ikke mot noen lokal tabell, og en vurdering eller et vedtak er fullt forklart uten dem.</p>
+            <p class="why"><strong>Hvorfor:</strong> De er sporbarhet mot andres kataloger, ikke en del av forklaringsplikten.<br><strong>Håndheves:</strong> Feltene (<code>Sak.CpsvTjenesteReferanse</code>, <code>Regel.CpsvRegelReferanse</code>, <code>Kilde.CccevReferanse</code>) er valgfrie tekstfelt, og ingen validator eller fremmednøkkel ser på dem.</p>
+          </div>
+        </div>
+
+        <div class="rule-card" id="regel-16">
+          <span class="n">16</span>
+          <div>
+            <h3>Regeldefinisjonen er en peker, ikke en kopi</h3>
+            <p><strong>Regelen.</strong> Selve regelartefaktet (for eksempel DMN-XML) lagres ikke i modellen. Feltet peker bare til hvor det ligger, og sammen med regel 4 gir det sporbarhet til nøyaktig hvilken regelversjon som ble kjørt.</p>
+            <p class="why"><strong>Hvorfor:</strong> Regelmotoren eier regelens innhold; modellen skal ikke duplisere det.<br><strong>Håndheves:</strong> <code>Regel.RegeldefinisjonReferanse</code> er et valgfritt tekstfelt som lagres som det er. Koden sjekker ikke at adressen peker på noe.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="saker">
+        <span class="section-num">Tema 5 · regel 6, 11 og 13</span>
+        <h2>Saker og kryss-sak</h2>
+        <p class="intro">En sak er levende, og saker kan bygge på hverandre. Modellen skal da kunne vise hva som ble brukt fra hvilken sak, uten selv å bli en prosessmotor.</p>
+
+        <div class="rule-card" id="regel-6">
+          <span class="n">6</span>
+          <div>
+            <h3>Saken kan endres, og kan få flere vedtak</h3>
+            <p><strong>Regelen.</strong> Selve saken låses ikke av et vedtak. Det må være mulig å opprette flere vedtak per sak over tid, for eksempel ved klage eller omgjøring, hvert med sin egen forklaringslogg.</p>
+            <p class="why"><strong>Hvorfor:</strong> Frysingen gjelder det som forklarer et vedtak, ikke saksmappen.<br><strong>Håndheves:</strong> <code>PUT /api/saker/{id}</code> (<code>SakService.OppdaterAsync</code>) endrer tittel og status også etter at vedtak finnes. <code>POST /api/saker/{sakId}/vedtak</code> kan kalles flere ganger, og databasen har ingen unik begrensning på <code>Vedtak.SakId</code>.</p>
+          </div>
+        </div>
+
+        <div class="rule-card" id="regel-11">
+          <span class="n">11</span>
+          <div>
+            <h3>Ingen saksflyt, og kryss-sak-referanser er skrivebeskyttede</h3>
+            <p><strong>Regelen.</strong> Modellen er ikke en prosessmotor eller tilstandsmaskin. Utløsende hendelse og sakrelasjoner er rene referanser til at én sak oppsto fra eller følger opp en annen. En vurdering kan lese fra en annen sak, men bare fra rader som allerede er frosset der, og kan aldri endre den.</p>
+            <p class="why"><strong>Hvorfor:</strong> Man kan sitere en avsluttet sak uten at sitatet flytter seg.<br><strong>Håndheves:</strong> <code>utlosendeHendelse</code> er obligatorisk (<code>OpprettSakDtoValidator</code>). <code>SakRelasjonService</code> lager en referanse uten å røre den relaterte saken. I <code>VurderingService</code> avvises faktum fra en annen sak og referanser i <code>RefererteVurderingIder</code> med 409 hvis raden ikke er del av en frosset forklaringslogg. Koden har ingen overgangsregler for saksstatus.</p>
+          </div>
+        </div>
+
+        <div class="rule-card" id="regel-13">
+          <span class="n">13</span>
+          <div>
+            <h3>Avledede virkninger peker bare til frosne virkninger</h3>
+            <p><strong>Regelen.</strong> En virkning som er avledet fra en annen (for eksempel en justert sats), kan bare peke til en virkning som allerede er del av et frosset vedtak, i samme eller en annen sak. Samme prinsipp som regel 11, men på virkningsnivå.</p>
+            <p class="why"><strong>Hvorfor:</strong> Endringskjeden skal alltid peke bakover til noe som ligger fast.<br><strong>Håndheves:</strong> <code>VedtakService</code> slår opp <code>AvledetFraVirkningId</code> og gir 404 hvis virkningen ikke finnes. Siden virkninger bare opprettes sammen med sitt vedtak, regnes eksistens som bevis på at den er frosset.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="struktur">
+        <span class="section-num">Tema 6 · regel 15 og 18</span>
+        <h2>Struktur og vilkår</h2>
+        <p class="intro">Modellen gjengir hvordan et vilkår ble brutt ned. Den bestemmer ikke hvordan det burde vært gjort.</p>
+
+        <div class="rule-card" id="regel-15">
+          <span class="n">15</span>
+          <div>
+            <h3>Vilkårets grunnlagstype skal ikke blandes</h3>
+            <p><strong>Regelen.</strong> Et vilkår er enten rettslig, basert på intern praksis eller en teknisk datakvalitetskontroll. Bare det rettslige må ha minst én rettskilde. Kode og kodeverk er valgfrie, men bør fylles ut når vilkåret stammer fra et kildesystem med eget kodeverk.</p>
+            <p class="why"><strong>Hvorfor:</strong> Praksis og datakvalitet skal ikke fremstå som lovhjemlet.<br><strong>Håndheves:</strong> <code>OpprettVilkarDtoValidator</code> krever <code>Grunnlagstype</code>, og rettskilde når den er «Rettslig» (<code>VilkarValidatorTests</code>). «InternPraksis» og «Datakvalitet» krever ingen. Kode og kodeverk valideres ikke.</p>
+          </div>
+        </div>
+
+        <div class="rule-card" id="regel-18">
+          <span class="n">18</span>
+          <div>
+            <h3>Delvurderinger innen en sak, uten fast mal</h3>
+            <p><strong>Regelen.</strong> En vurdering kan merkes med hvilket katalogvilkår den gjelder, og kan være delvurdering av en annen vurdering i samme sak. Forelderen må tilhøre samme sak, men trenger ikke være frosset. Dette er noe annet enn kryss-sak-referansen i regel 11. Hvordan et vilkår ble brutt ned, er det kallende systemets valg; modellen foreskriver og validerer ingen fasit.</p>
+            <p class="why"><strong>Hvorfor:</strong> Modellen skal gjengi hva som skjedde, ikke hva som burde skjedd.<br><strong>Håndheves:</strong> <code>VurderingService</code> gir 404 hvis <code>VilkarId</code> er ukjent eller hvis <code>ForelderVurderingId</code> peker til en vurdering i en annen sak. Selvreferansen ligger i <code>VurderingConfiguration</code>. Treet vises som <code>DelvurderingIder</code> (<code>VurderingHierarkiTests</code>; brukt i piperehabiliterings-scenarioet). Strukturen i treet kontrolleres ikke.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="lese">
+        <span class="section-num">Veiledning</span>
+        <h2>Slik leser du reglene</h2>
+        <div class="callout">
+          <h3>Tre ting å vite før du bruker dem</h3>
+          <p><strong>Regel mot spesifikasjon.</strong> Spesifikasjonen sier flere steder «bør». Der koden er strengere eller løsere enn teksten, står det under regelen. Spesifikasjonen er kilden; koden er prototypens tolkning av den.</p>
+          <p><strong>Vern i flere lag.</strong> Noen regler sjekkes når data kommer inn (validatorer), noen i servicene, og noen følger av at et endepunkt ikke finnes. Alle tre telles som håndheving, men de gir forskjellige feilkoder.</p>
+          <p><strong>Utkast, ikke fasit.</strong> Reglene er ikke fasitsjekket av jurister. Meld gjerne fra via «Gi tilbakemelding» hvis en formulering ikke stemmer med din lesning av § 25.</p>
+        </div>
+
+        <h3 style="margin:var(--ds-size-6) 0 var(--ds-size-2); font-size:var(--ds-body-lg-font-size);">Hva du får tilbake når en regel brytes</h3>
+        <div class="table-scroll">
+          <table class="ds-table">
+            <thead>
+              <tr><th scope="col">HTTP-kode</th><th scope="col">Når</th><th scope="col">Eksempel</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>400</td><td>Valideringsfeil i forespørselen</td><td>Skjønn uten hovedhensyn (regel 2)</td></tr>
+              <tr><td>404</td><td>Det refererte finnes ikke</td><td>Forelder-vurdering i en annen sak (regel 18)</td></tr>
+              <tr><td>405</td><td>Verbet er ikke tilgjengelig for ressursen</td><td>PUT mot et vedtak (regel 1)</td></tr>
+              <tr><td>409</td><td>Brudd på append-only</td><td>Referanse til en vurdering som ikke er frosset (regel 11)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="link-row">
+          <a class="ds-button" data-variant="secondary" data-color="accent" href="../modell/">Se entitetene reglene gjelder →</a>
+          <a class="ds-button" data-variant="secondary" data-color="accent" href="../eksempel/">Se reglene i et eksempel →</a>
+          <a class="ds-button" data-variant="tertiary" data-color="accent" href="https://github.com/FinnurO/forklaringsmodell-api/blob/master/docs/api-spesifikasjon-forklaringsmodell.md" target="_blank" rel="noopener">Hele spesifikasjonen på GitHub</a>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <h3>Om nettstedet</h3>
+      <p style="font-size:var(--ds-body-sm-font-size); color:var(--ds-color-text-subtle); max-width:32ch; margin:0;">
+        Dokumentasjon for <a href="https://github.com/FinnurO/forklaringsmodell-api" target="_blank" rel="noopener">forklaringsmodell-api</a>:
+        en prototype for en felles informasjonsmodell som forklarer vedtak. Bygget med
+        <a href="https://designsystemet.no/" target="_blank" rel="noopener">designsystemet.no</a>.
+      </p>
+    </div>
+    <div>
+      <h3>Dokumentasjon</h3>
+      <ul>
+        <li><a href="../modell/">Modell</a></li>
+        <li><a href="./">Forretningsregler</a></li>
+        <li><a href="../eksempel/">Eksempel: piperehabilitering</a></li>
+        <li><a href="../api/">API</a></li>
+        <li><a href="../versjoner/">Versjoner</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Relatert</h3>
+      <ul>
+        <li><a href="https://github.com/FinnurO/digital-rettsstat" target="_blank" rel="noopener">Rammeverk for digital rettsstat</a></li>
+        <li><a href="https://github.com/FinnurO/regel-ide" target="_blank" rel="noopener">Regel-IDE</a></li>
+        <li><a href="https://lovdata.no/lov/1967-02-10" target="_blank" rel="noopener">Forvaltningsloven (Lovdata)</a></li>
+        <li><a href="https://data.norge.no/" target="_blank" rel="noopener">Felles datakatalog</a></li>
+        <li><a href="https://sjekkliste-bygg.ft.dibk.no/" target="_blank" rel="noopener">DiBKs sjekkliste for bygg</a></li>
+      </ul>
+    </div>
+    <p class="fine">
+      Prototype og proof of concept — ikke en offisiell nettside for Digitaliseringsdirektoratet (Digdir), og ikke en produksjonsklar tjeneste. Eksemplene bruker fiktive adresser og saker, og er utledet fra offentlig tilgjengelig informasjon.
+      Kildekode på <a href="https://github.com/FinnurO/forklaringsmodell-api" target="_blank" rel="noopener">GitHub</a>.
+    </p>
+    <p class="fine">
+      <strong>Utviklet sammen med Claude Code</strong> (Anthropic) — kode, tester og dokumentasjon. Innholdet er ikke fasitsjekket av jurister; behandle det som et utkast og meld gjerne fra via «Gi tilbakemelding».
+    </p>
+  </div>
+</footer>
+
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>

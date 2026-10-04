@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="nb" data-color-scheme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eksempel: automatisk piperehabilitering – Forklaringsmodell</title>
+<meta name="description" content="To saker mot forklaringsmodellen: en piperehabilitering som godkjennes automatisk, og en som rutes til manuell behandling. Hele beslutningstreet, med fakta, kilder og hjemler, fra en ekte kjøring av API-et.">
+<link rel="canonical" href="https://finnuro.github.io/forklaringsmodell-api/eksempel/">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/vendor/designsystemet.css">
+<link rel="stylesheet" href="../assets/css/vendor/designsystemet-theme.css">
+<link rel="stylesheet" href="../assets/css/site.css">
+<meta property="og:title" content="Eksempel: automatisk piperehabilitering">
+<meta property="og:description" content="Beslutningstreet bak en automatisk byggetillatelse og bak en sak som ble rutet til manuell behandling, dokumentert med forklaringsmodellen.">
+<meta property="og:type" content="website">
+<style>
+  /* Sidespesifikke tillegg. Kun ds-tokens. */
+  .lang-list{ list-style:none; margin:0 0 var(--ds-size-4); padding:0; display:flex; flex-direction:column; gap:var(--ds-size-2); }
+  .lang-list li{ display:grid; grid-template-columns:auto 1fr; gap:var(--ds-size-3); align-items:start; }
+  .lang-list .ds-tag{ margin-top:.15em; }
+  .kv{ display:grid; grid-template-columns:max-content 1fr; gap:var(--ds-size-1) var(--ds-size-4); margin:0 0 var(--ds-size-4); font-size:var(--ds-body-sm-font-size); }
+  .kv dt{ color:var(--ds-color-text-subtle); }
+  .kv dd{ margin:0; min-width:0; overflow-wrap:anywhere; }
+  .case-banner{ border:1px solid var(--ds-color-border-subtle); border-radius:var(--ds-border-radius-lg); padding:var(--ds-size-4) var(--ds-size-5); margin:0 0 var(--ds-size-4); background:var(--ds-color-background-default); }
+  .case-banner h3{ margin:0 0 var(--ds-size-1); font-size:var(--ds-body-lg-font-size); }
+  .case-banner p{ margin:0 0 var(--ds-size-2); font-size:var(--ds-body-sm-font-size); color:var(--ds-color-text-subtle); }
+  .case-banner > :last-child{ margin-bottom:0; }
+  .case-banner.is-ok{ border-left:4px solid var(--ds-color-success-border-default, var(--ds-color-success-base-default)); }
+  .case-banner.is-warn{ border-left:4px solid var(--ds-color-warning-border-default, var(--ds-color-warning-base-default)); }
+  .virkning-box{ border:1px dashed var(--ds-color-border-default); border-radius:var(--ds-border-radius-lg); padding:var(--ds-size-4) var(--ds-size-5); margin:var(--ds-size-5) 0; }
+  .virkning-box h3{ margin:0 0 var(--ds-size-2); font-size:var(--ds-body-md-font-size); }
+  .virkning-box > :last-child{ margin-bottom:0; }
+  .dnode__lbl{ font-size:var(--ds-body-xs-font-size); font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--ds-color-text-subtle); }
+  .sak-id{ font-family:var(--site-font-mono); font-size:var(--ds-body-xs-font-size); color:var(--ds-color-text-subtle); overflow-wrap:anywhere; }
+  .guide-article .dtree{ margin-bottom:var(--ds-size-5); }
+  .guide-article .rule-card .n{ font-size:var(--ds-body-sm-font-size); }
+  .guide-article ul.plain-list{ margin:0 0 var(--ds-size-4); }
+  .guide-layout > *{ min-width:0; }
+  @media (max-width: 860px){ .guide-layout{ grid-template-columns:minmax(0,1fr); } .guide-nav{ position:static; flex-direction:row; flex-wrap:wrap; } .guide-nav a{ border-left:none; } }
+  @media (max-width: 560px){ .dchildren{ margin-left:var(--ds-size-2); padding-left:var(--ds-size-3); } .dnode{ padding:var(--ds-size-3) var(--ds-size-4); } }
+</style>
+</head>
+<body>
+
+<a class="ds-link skip-to-content" href="#main">Hopp til innhold</a>
+
+<div class="disclaimer-bar">
+  <div class="wrap">
+    <span>📎 <strong>Prototype / proof of concept</strong> — ikke en produksjonstjeneste og ikke en offisiell Digdir-tjeneste. <strong>Utviklet sammen med Claude Code.</strong></span>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand plain" href="../">
+      <span class="brand__mark" aria-hidden="true">FM</span>
+      <span class="brand__text">
+        <span class="brand__title">Forklaringsmodell</span>
+        <span class="brand__subtitle">API for forklarbare vedtak</span>
+      </span>
+    </a>
+    <nav class="main-nav" aria-label="Hovedmeny">
+      <a href="../">Forside</a>
+      <a href="../modell/">Modell</a>
+      <a href="../regler/">Regler</a>
+      <a href="../eksempel/" aria-current="page">Eksempel</a>
+      <a href="../api/">API</a>
+      <a href="../versjoner/">Versjoner</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+    <div class="page-head">
+      <span class="kicker" style="font-size:var(--ds-body-xs-font-size);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ds-color-accent-text-subtle);">Eksempel</span>
+      <h1>Automatisk piperehabilitering</h1>
+      <p class="lead">Stavanger kommune gir byggetillatelse til rehabilitering av piper helt automatisk. Vi har lagt to søknader inn i forklaringsmodellen — én som ble godkjent, én som ble rutet til en saksbehandler — og viser hele beslutningstreet bak begge.</p>
+    </div>
+
+    <div class="guide-layout">
+      <nav class="guide-nav" aria-label="På denne siden">
+        <a href="#bakgrunn" data-anchor="bakgrunn">Bakgrunn</a>
+        <a href="#regler" data-anchor="regler">Reglene vi utledet</a>
+        <a href="#vilkaret" data-anchor="vilkaret">Vilkåret</a>
+        <a href="#sak-a" data-anchor="sak-a">Sak A: godkjent</a>
+        <a href="#sak-b" data-anchor="sak-b">Sak B: manuell</a>
+        <a href="#lese-treet" data-anchor="lese-treet">Slik leser du treet</a>
+        <a href="#kjor-selv" data-anchor="kjor-selv">Kjør det selv</a>
+      </nav>
+
+      <div class="guide-article">
+
+        <section id="bakgrunn">
+          <span class="section-num">1 · Bakgrunn</span>
+          <h2>Hva som skjer i Stavanger</h2>
+          <p class="intro">Piperehabilitering er et av de første byggesak-områdene i Norge der kommunen fatter vedtak uten at en saksbehandler er inne i saken.</p>
+          <p>Ifølge <a href="https://www.dibk.no/nyhetsarkiv/forste-steg-for-automatisk-byggesaksbehandling" target="_blank" rel="noopener">DiBK</a> og <a href="https://byggmesteren.as/2026/09/29/norges-forste-automatiske-byggetillatelse/" target="_blank" rel="noopener">Byggmesteren</a> er Stavanger kommune den første kommunen med automatiske vedtak i byggesak, og først ut er piperehabilitering — over hundre søknader i året. Søknaden leveres av et sertifisert foretak (ansvarlig søker) på vegne av huseier, via en digital portal med egenerklæring. DiBKs nasjonale sjekklister gjør regelverket entydig nok til at et vedtak kan fattes automatisk; det første vedtaket tok 50 sekunder. Det er en deterministisk regelsjekk, ikke generativ KI, og ved avvik rutes saken til vanlig manuell saksbehandling.</p>
+          <p>Rettslig er utgangspunktet plan- og bygningsloven § 20-1 bokstav f: rehabilitering eller endring av skorstein, for eksempel ny innvendig fôring, er søknadspliktig, mens ren reparasjon til tidligere funksjon er unntatt. Departementets <a href="https://www.regjeringen.no/no/dokumenter/-20-bokstav-f---departementet-besvarer-henvendelse-om-rehabilitering-av-skorstein-piper/id2670833/" target="_blank" rel="noopener">tolkningsuttalelse</a> gjelder nettopp dette.</p>
+          <h3 style="margin:var(--ds-size-6) 0 var(--ds-size-2);font-size:var(--ds-body-lg-font-size);">Hvorfor er dette en god test?</h3>
+          <ul>
+            <li><strong>Selve vedtaket er automatisk.</strong> Ingen saksbehandler noterer begrunnelsen underveis, så forklaringen må ligge i dataene for å kunne gis i ettertid (forvaltningsloven § 25).</li>
+            <li><strong>Vilkårene er delt i delvilkår.</strong> Det gir et ekte tre av vurderinger, ikke bare ett ja eller nei.</li>
+            <li><strong>Avvik er en normal utgang.</strong> Modellen må kunne forklare både «godkjent» og «sendt videre til et menneske, og hvorfor».</li>
+          </ul>
+          <div class="callout">
+            <h3>Dette er vår modellering, ikke Stavangers</h3>
+            <p>Reglene, de tre delvilkårene, faktaene og vilkårskoden på denne siden er <strong>vår egen utledning fra offentlig tilgjengelig informasjon</strong>. De er ikke Stavanger kommunes eller DiBKs faktiske regelsett, og vi har ikke hatt innsyn i deres løsning. Kildene sier ikke mer enn det som står ovenfor. Adressene og sakene er fiktive. Dataene under er en ekte kjøring av vårt API, men innholdet i dem er et eksempel.</p>
+          </div>
+        </section>
+
+        <section id="regler">
+          <span class="section-num">2 · Reglene vi utledet</span>
+          <h2>Tre vilkår som til sammen gir automatisk godkjenning</h2>
+          <p class="intro">Vår utledning av hva en automatisk behandling må kontrollere. Alle tre må være oppfylt.</p>
+          <div class="rule-card">
+            <span class="n">1</span>
+            <div>
+              <h3>Søknadsplikt</h3>
+              <p>Er tiltaket søknadspliktig etter pbl § 20-1 bokstav f? Ny innvendig fôring er rehabilitering/endring og dermed søknadspliktig. Ren reparasjon til tidligere funksjon er unntatt. I vår modell er dette tiltaksvurderingen: bare innvendig fôring, uten utvendig dimensjonsendring.</p>
+              <p class="why"><span class="pill info">Utledet av oss</span> Etter KDDs tolkningsuttalelse og lovteksten.</p>
+            </div>
+          </div>
+          <div class="rule-card">
+            <span class="n">2</span>
+            <div>
+              <h3>Ansvarsrett</h3>
+              <p>Ansvarlig foretak må ha sentral godkjenning for ansvarsrett i riktig tiltaksklasse og kategori: pbl § 23-3 (ansvarlig søker) jf. § 22-1. Faktum hentes fra et autoritativt register, ikke fra søknaden.</p>
+              <p class="why"><span class="pill info">Utledet av oss</span> Kategorien «brannsikkerhet/skorstein» er vårt valg til eksempelet.</p>
+            </div>
+          </div>
+          <div class="rule-card">
+            <span class="n">3</span>
+            <div>
+              <h3>Automatiseringsgrunnlag</h3>
+              <p>DiBKs nasjonale sjekklister gjør regelverket entydig nok til automatisk vedtak. Avdekkes et avvik, rutes saken til vanlig manuell saksbehandling i stedet for å avslås automatisk. I vårt eksempel er tredje delvilkår at bygningen ikke er registrert som fredet eller verneverdig.</p>
+              <p class="why"><span class="pill info">Utledet av oss</span> Hvilke punkter sjekklisten faktisk har, vet vi ikke. Fredet/verneverdig er vår antakelse.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="vilkaret">
+          <span class="section-num">3 · Vilkåret</span>
+          <h2>Én oppføring i vilkårskatalogen</h2>
+          <p class="intro">Begge sakene vurderes mot samme <code>Vilkar</code>. Det er en gjenbrukbar katalogoppføring, ikke noe som hører til én sak.</p>
+          <div class="ds-card" style="margin-bottom:var(--ds-size-4);">
+            <div id="vilkar-box"></div>
+          </div>
+          <div id="regel-box"></div>
+        </section>
+
+        <section id="sak-a">
+          <span class="section-num">4 · Sak A</span>
+          <h2>Godkjent automatisk</h2>
+          <p class="intro" id="a-intro"></p>
+          <div id="a-root"></div>
+        </section>
+
+        <section id="sak-b">
+          <span class="section-num">5 · Sak B</span>
+          <h2>Rutet til manuell behandling</h2>
+          <p class="intro" id="b-intro"></p>
+          <div id="b-root"></div>
+        </section>
+
+        <section id="lese-treet">
+          <span class="section-num">6 · Slik leser du treet</span>
+          <h2>Tre felt som bærer strukturen</h2>
+          <p class="intro">Treet er ikke noe eget objekt. Det er vanlige <code>Vurdering</code>-rader som peker på hverandre.</p>
+          <ul>
+            <li><code>ForelderVurderingId</code> peker oppover. Er den tom, er vurderingen roten, altså den samlede vurderingen av vilkåret. Delvurderingene peker på roten. Det omvendte oppslaget, <code>delvurderingIder</code>, er det treet over er bygget fra.</li>
+            <li><code>VilkarId</code> sier hvilket katalogvilkår raden gjelder. Alle vurderingene i begge sakene har samme verdi.</li>
+            <li><code>Utfall</code> er resultatet for akkurat denne raden: <span class="pill ok">Oppfylt</span> <span class="pill bad">IkkeOppfylt</span> eller <span class="pill warn">Uavklart</span> (modellen har også <code>Uaktuelt</code> og <code>IkkeVurdert</code>). Roten har sitt eget utfall og beregningsspor. Det er ikke utledet av barna.</li>
+          </ul>
+          <p>Modellen gjengir bare hvordan kallende system faktisk delte opp vurderingen. Den foreskriver ingen mal og validerer ikke at oppdelingen er «riktig». Se <a href="../modell/">modellsiden</a> for <code>Vurdering</code> og resten av entitetene.</p>
+        </section>
+
+        <section id="kjor-selv">
+          <span class="section-num">7 · Kjør det selv</span>
+          <h2>Scenarioene er integrasjonstester</h2>
+          <p class="intro">Dataene på siden kommer fra en kjøring av testen <a href="https://github.com/FinnurO/forklaringsmodell-api/blob/master/tests/Forklaringsmodell.Tests/Integration/PiperehabiliteringScenarioTests.cs" target="_blank" rel="noopener"><code>PiperehabiliteringScenarioTests</code></a>, som kaller API-et ende til ende og kontrollerer treet. Merk at testen i repoet bruker en forenklet variant med to delvilkår (ansvarsrett og omfang); dataene på denne siden kommer fra en utvidet kjøring med tre delvilkår. Flyten og modellbruken er den samme.</p>
+          <span class="code-label">Kjør bare piperehabilitering-scenarioene</span>
+          <pre class="code"><code>git clone https://github.com/FinnurO/forklaringsmodell-api
+cd forklaringsmodell-api
+dotnet test --filter "FullyQualifiedName~Piperehabilitering"</code></pre>
+          <span class="code-label">Alle tester, og start API-et lokalt</span>
+          <pre class="code"><code>dotnet test
+dotnet run --project src/Forklaringsmodell.Api</code></pre>
+          <p class="footnote">Krever .NET SDK.</p>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <h3>Om nettstedet</h3>
+      <p style="font-size:var(--ds-body-sm-font-size); color:var(--ds-color-text-subtle); max-width:32ch; margin:0;">
+        Dokumentasjon for <a href="https://github.com/FinnurO/forklaringsmodell-api" target="_blank" rel="noopener">forklaringsmodell-api</a>:
+        en prototype for en felles informasjonsmodell som forklarer vedtak. Bygget med
+        <a href="https://designsystemet.no/" target="_blank" rel="noopener">designsystemet.no</a>.
+      </p>
+    </div>
+    <div>
+      <h3>Dokumentasjon</h3>
+      <ul>
+        <li><a href="../modell/">Modell</a></li>
+        <li><a href="../regler/">Forretningsregler</a></li>
+        <li><a href="../eksempel/">Eksempel: piperehabilitering</a></li>
+        <li><a href="../api/">API</a></li>
+        <li><a href="../versjoner/">Versjoner</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Relatert</h3>
+      <ul>
+        <li><a href="https://github.com/FinnurO/digital-rettsstat" target="_blank" rel="noopener">Rammeverk for digital rettsstat</a></li>
+        <li><a href="https://github.com/FinnurO/regel-ide" target="_blank" rel="noopener">Regel-IDE</a></li>
+        <li><a href="https://lovdata.no/lov/1967-02-10" target="_blank" rel="noopener">Forvaltningsloven (Lovdata)</a></li>
+        <li><a href="https://data.norge.no/" target="_blank" rel="noopener">Felles datakatalog</a></li>
+        <li><a href="https://sjekkliste-bygg.ft.dibk.no/" target="_blank" rel="noopener">DiBKs sjekkliste for bygg</a></li>
+      </ul>
+    </div>
+    <p class="fine">
+      Prototype og proof of concept — ikke en offisiell nettside for Digitaliseringsdirektoratet (Digdir), og ikke en produksjonsklar tjeneste. Eksemplene bruker fiktive adresser og saker, og er utledet fra offentlig tilgjengelig informasjon.
+      Kildekode på <a href="https://github.com/FinnurO/forklaringsmodell-api" target="_blank" rel="noopener">GitHub</a>.
+    </p>
+    <p class="fine">
+      <strong>Utviklet sammen med Claude Code</strong> (Anthropic) — kode, tester og dokumentasjon. Innholdet er ikke fasitsjekket av jurister; behandle det som et utkast og meld gjerne fra via «Gi tilbakemelding».
+    </p>
+  </div>
+</footer>
+
+<script id="scenario-data" type="application/json">{"rettskilder":[{"rettskildeId":"91616ac2-4ec7-4655-b058-4b0a7ae09e33","type":"Lov","henvisning":"plan- og bygningsloven § 20-1 bokstav f (rehabilitering/endring av skorstein er et søknadspliktig tiltak)","versjonDato":"2026-01-01T00:00:00+00:00","eliReferanse":"https://lovdata.no/lov/2008-06-27-71"},{"rettskildeId":"f31048ad-743f-42e9-86fb-3d7bad04ba2e","type":"Lov","henvisning":"plan- og bygningsloven § 23-3 (ansvarlig søker) jf. § 22-1 (sentral godkjenning for ansvarsrett)","versjonDato":"2026-01-01T00:00:00+00:00","eliReferanse":"https://lovdata.no/lov/2008-06-27-71"}],"kilder":[{"kildeId":"44ec8b8f-8b1d-49e4-9cda-4c331166dbea","navn":"eByggesøk Proff (søknadsportal)","type":"Soknad","autoritativ":false,"rettskildeIder":["91616ac2-4ec7-4655-b058-4b0a7ae09e33"],"cccevReferanse":null,"erLaast":false},{"kildeId":"958d33ce-9547-45c6-8afc-8612f0843c8c","navn":"Sentral godkjenning for ansvarsrett (DiBK-registeret)","type":"AutoritativtRegister","autoritativ":true,"rettskildeIder":["f31048ad-743f-42e9-86fb-3d7bad04ba2e"],"cccevReferanse":"https://www.dibk.no/sentral-godkjenning","erLaast":false}],"regel":{"regelId":"3bdca139-c2b5-4e0d-9580-3d4bb850edba","rettskildeIder":["91616ac2-4ec7-4655-b058-4b0a7ae09e33"],"teknologi":"DiBK nasjonal sjekkliste (DMN-aktig regelsett i Elements eByggesak)","type":"Deterministisk","cpsvRegelReferanse":null,"regeldefinisjonReferanse":"https://sjekkliste-bygg-api.ft.dibk.no/api/sjekkliste","erLaast":false},"vilkar":{"vilkarId":"9b789b94-1d5d-4c5d-979f-f6aa7c2a4396","navn":"Automatisk godkjenning av piperehabilitering","kode":"PIPEREHAB_AUTOMATISK","kodeverk":"DIBK_SJEKKLISTE_BYGG","type":"Tillatelse","grunnlagstype":"Rettslig","fastsettelsesmate":"Parametrisert","standardTekst":[{"spraakKode":"nb","verdi":"Søknad om rehabilitering av skorstein kan godkjennes automatisk når ansvarlig foretak har sentral godkjenning for ansvarsrett, tiltaket kun gjelder innvendig fôring uten utvendig dimensjonsendring, og bygningen ikke er fredet eller verneverdig."},{"spraakKode":"nn","verdi":"Søknad om rehabilitering av skorstein kan godkjennast automatisk når ansvarleg foretak har sentral godkjenning for ansvarsrett, tiltaket berre gjeld innvendig fôring utan utvendig dimensjonsendring, og bygningen ikkje er freda eller verneverdig."}],"rettskildeIder":["91616ac2-4ec7-4655-b058-4b0a7ae09e33"],"regelId":"3bdca139-c2b5-4e0d-9580-3d4bb850edba","cpsvTjenesteReferanse":null,"erLaast":false},"case_a":{"sak":{"sakId":"31c04986-6485-4f86-9b94-70ee3c5c0888","tittel":"Søknad om rehabilitering av skorstein – Eiganesveien 12, Stavanger","status":"UnderBehandling","opprettet":"2026-10-02T01:10:18.6467535+00:00","sistEndret":"2026-10-02T01:10:18.6467535+00:00","cpsvTjenesteReferanse":null,"utlosendeHendelse":"Soknad"},"vedtak":{"vedtakId":"26ffea0c-9e54-4d42-8564-67ddb23a1f48","sakId":"31c04986-6485-4f86-9b94-70ee3c5c0888","tidspunkt":"2026-10-02T01:10:19.4978306+00:00","utfall":"Tillatelse til rehabilitering av skorstein innvilget","automatiseringsGrad":"Helautomatisert"},"forklaring":{"vedtak":{"vedtakId":"26ffea0c-9e54-4d42-8564-67ddb23a1f48","sakId":"31c04986-6485-4f86-9b94-70ee3c5c0888","tidspunkt":"2026-10-02T01:10:19.4978306+00:00","utfall":"Tillatelse til rehabilitering av skorstein innvilget","automatiseringsGrad":"Helautomatisert"},"forklaringslogg":{"loggId":"f87f05ed-d4e3-4fca-90cc-efbacc8dc4c5","vedtakId":"26ffea0c-9e54-4d42-8564-67ddb23a1f48","oppforinger":[{"oppforingId":"02b80ca7-cd81-4203-9ee8-58a98bad1f3c","type":"Vurdering","referanseId":"94fbd9e6-d846-4340-a672-14b89e4443fb"},{"oppforingId":"35707b1d-0b36-4e85-a8a0-92da31c00246","type":"Vurdering","referanseId":"f8826e00-c6fb-465e-9e80-2861d8f77e42"},{"oppforingId":"3e75b23a-fa90-4dbd-a24c-834e9b97b3a3","type":"Faktum","referanseId":"730d8fc2-5f3b-4990-ac41-3149b0ecbd0f"},{"oppforingId":"6140b1c7-96e4-4e82-ac02-01da1e2fe16e","type":"Vurdering","referanseId":"7c2f537f-244f-4d0b-80e1-c6a7d7120bbe"},{"oppforingId":"b404ecc7-57b1-4e0d-af43-e17159274bb2","type":"Faktum","referanseId":"82eaaf5f-ca3f-4308-8e2d-d033d7912dc8"},{"oppforingId":"c1c16376-cead-4793-8e77-940461ba031b","type":"Vurdering","referanseId":"db036c04-78b4-47e7-89ea-5b69172f80f9"},{"oppforingId":"cb42e3e6-20b0-48e1-b36f-43d24f9952e2","type":"Faktum","referanseId":"95484248-f801-49fb-990d-e749c75df001"}]},"faktum":[{"faktumId":"730d8fc2-5f3b-4990-ac41-3149b0ecbd0f","sakId":"31c04986-6485-4f86-9b94-70ee3c5c0888","kildeId":"44ec8b8f-8b1d-49e4-9cda-4c331166dbea","type":"Raatt","struktur":"Strukturert","verdi":"Tiltaket er innvendig fôring (nytt skorsteinsrør) av eksisterende skorstein. Ingen endring av utvendige dimensjoner eller plassering.","avledetFraFaktumId":null,"innhentetTidspunkt":"2026-10-02T01:10:18.7539499+00:00","rettskildeIder":[],"erLaast":true},{"faktumId":"82eaaf5f-ca3f-4308-8e2d-d033d7912dc8","sakId":"31c04986-6485-4f86-9b94-70ee3c5c0888","kildeId":"958d33ce-9547-45c6-8afc-8612f0843c8c","type":"Raatt","struktur":"Strukturert","verdi":"Ansvarlig foretak har gyldig sentral godkjenning for ansvarsrett, tiltaksklasse 1, for brannsikkerhet/ildsted og skorstein.","avledetFraFaktumId":null,"innhentetTidspunkt":"2026-10-02T01:10:18.8347879+00:00","rettskildeIder":[],"erLaast":true},{"faktumId":"95484248-f801-49fb-990d-e749c75df001","sakId":"31c04986-6485-4f86-9b94-70ee3c5c0888","kildeId":"44ec8b8f-8b1d-49e4-9cda-4c331166dbea","type":"Raatt","struktur":"Strukturert","verdi":"Bygningen er ikke registrert som fredet eller verneverdig i kommunens kulturminneregister.","avledetFraFaktumId":null,"innhentetTidspunkt":"2026-10-02T01:10:18.8477252+00:00","rettskildeIder":[],"erLaast":true}],"vurderinger":[{"vurderingId":"7c2f537f-244f-4d0b-80e1-c6a7d7120bbe","sakId":"31c04986-6485-4f86-9b94-70ee3c5c0888","regelId":"3bdca139-c2b5-4e0d-9580-3d4bb850edba","type":"Deterministisk","utfall":"Oppfylt","beregningsspor":"Bygningen er ikke registrert som fredet eller verneverdig => ingen tilleggsvilkår utløses","konfidens":null,"eskalert":false,"hovedhensyn":[],"forkastedeUtfall":[],"vilkarId":"9b789b94-1d5d-4c5d-979f-f6aa7c2a4396","forelderVurderingId":"94fbd9e6-d846-4340-a672-14b89e4443fb","erLaast":true,"faktumIder":["95484248-f801-49fb-990d-e749c75df001"],"rettskildeIder":[],"refererteVurderingIder":[],"delvurderingIder":[]},{"vurderingId":"94fbd9e6-d846-4340-a672-14b89e4443fb","sakId":"31c04986-6485-4f86-9b94-70ee3c5c0888","regelId":"3bdca139-c2b5-4e0d-9580-3d4bb850edba","type":"Deterministisk","utfall":"Oppfylt","beregningsspor":"Alle tre delvilkår i DiBKs sjekkliste for piperehabilitering er oppfylt => automatisk godkjent","konfidens":null,"eskalert":false,"hovedhensyn":[],"forkastedeUtfall":[],"vilkarId":"9b789b94-1d5d-4c5d-979f-f6aa7c2a4396","forelderVurderingId":null,"erLaast":true,"faktumIder":[],"rettskildeIder":["91616ac2-4ec7-4655-b058-4b0a7ae09e33"],"refererteVurderingIder":[],"delvurderingIder":["7c2f537f-244f-4d0b-80e1-c6a7d7120bbe","f8826e00-c6fb-465e-9e80-2861d8f77e42","db036c04-78b4-47e7-89ea-5b69172f80f9"]},{"vurderingId":"db036c04-78b4-47e7-89ea-5b69172f80f9","sakId":"31c04986-6485-4f86-9b94-70ee3c5c0888","regelId":"3bdca139-c2b5-4e0d-9580-3d4bb850edba","type":"Deterministisk","utfall":"Oppfylt","beregningsspor":"Tiltaket er begrenset til innvendig fôring, ingen utvendig dimensjonsendring => regnes som rehabilitering/reparasjon, ikke en ny installasjon, jf. § 20-1 bokstav f","konfidens":null,"eskalert":false,"hovedhensyn":[],"forkastedeUtfall":[],"vilkarId":"9b789b94-1d5d-4c5d-979f-f6aa7c2a4396","forelderVurderingId":"94fbd9e6-d846-4340-a672-14b89e4443fb","erLaast":true,"faktumIder":["730d8fc2-5f3b-4990-ac41-3149b0ecbd0f"],"rettskildeIder":[],"refererteVurderingIder":[],"delvurderingIder":[]},{"vurderingId":"f8826e00-c6fb-465e-9e80-2861d8f77e42","sakId":"31c04986-6485-4f86-9b94-70ee3c5c0888","regelId":"3bdca139-c2b5-4e0d-9580-3d4bb850edba","type":"Deterministisk","utfall":"Oppfylt","beregningsspor":"Ansvarlig foretak har gyldig sentral godkjenning for ansvarsrett, tiltaksklasse 1, brannsikkerhet => vilkår oppfylt","konfidens":null,"eskalert":false,"hovedhensyn":[],"forkastedeUtfall":[],"vilkarId":"9b789b94-1d5d-4c5d-979f-f6aa7c2a4396","forelderVurderingId":"94fbd9e6-d846-4340-a672-14b89e4443fb","erLaast":true,"faktumIder":["82eaaf5f-ca3f-4308-8e2d-d033d7912dc8"],"rettskildeIder":["f31048ad-743f-42e9-86fb-3d7bad04ba2e"],"refererteVurderingIder":[],"delvurderingIder":[]}],"partsmedvirkninger":[],"virkninger":[{"virkningId":"8b6d0fda-0803-40d5-b004-7c49c30f833f","vedtakId":"26ffea0c-9e54-4d42-8564-67ddb23a1f48","vilkarId":"9b789b94-1d5d-4c5d-979f-f6aa7c2a4396","type":"Tillatelse","fastsettelsesmate":"Parametrisert","beskrivelse":[{"spraakKode":"nb","verdi":"Tillatelse til rehabilitering av skorstein (innvendig fôring)"},{"spraakKode":"nn","verdi":"Løyve til rehabilitering av skorstein (innvendig fôring)"}],"varighet":"Varig","gyldigFra":null,"gyldigTil":null,"belop":null,"lopendeVilkar":[],"rapporteringsFrekvens":null,"avledetFraVirkningId":null,"vurderingIder":["94fbd9e6-d846-4340-a672-14b89e4443fb"],"faktumIder":["730d8fc2-5f3b-4990-ac41-3149b0ecbd0f"]}]}},"case_b":{"sak":{"sakId":"01711a4e-e39a-4be7-811f-2654ab9f2125","tittel":"Søknad om rehabilitering av skorstein – Hinna Park 4, Stavanger","status":"UnderBehandling","opprettet":"2026-10-02T01:10:19.8372638+00:00","sistEndret":"2026-10-02T01:10:19.8372638+00:00","cpsvTjenesteReferanse":null,"utlosendeHendelse":"Soknad"},"vurderinger":[{"vurderingId":"172c485a-2bfe-4394-ac19-67c87019eea6","sakId":"01711a4e-e39a-4be7-811f-2654ab9f2125","regelId":"3bdca139-c2b5-4e0d-9580-3d4bb850edba","type":"Deterministisk","utfall":"Oppfylt","beregningsspor":"Tiltaket er begrenset til innvendig fôring, ingen utvendig dimensjonsendring => regnes som rehabilitering/reparasjon","konfidens":null,"eskalert":false,"hovedhensyn":[],"forkastedeUtfall":[],"vilkarId":"9b789b94-1d5d-4c5d-979f-f6aa7c2a4396","forelderVurderingId":"a9586a38-162e-4c09-aa70-a7f76ddc108c","erLaast":false,"faktumIder":["d5f78e77-a58d-4fd2-a402-e7967d882c09"],"rettskildeIder":[],"refererteVurderingIder":[],"delvurderingIder":[]},{"vurderingId":"6c0a7a62-51a1-4437-b99e-b2a921a2a48a","sakId":"01711a4e-e39a-4be7-811f-2654ab9f2125","regelId":"3bdca139-c2b5-4e0d-9580-3d4bb850edba","type":"Deterministisk","utfall":"IkkeOppfylt","beregningsspor":"Foretakets sentrale godkjenning dekker ikke tiltaksklassen/kategorien dette tiltaket krever => kan ikke automatisk bekreftes","konfidens":null,"eskalert":true,"hovedhensyn":[],"forkastedeUtfall":[],"vilkarId":"9b789b94-1d5d-4c5d-979f-f6aa7c2a4396","forelderVurderingId":"a9586a38-162e-4c09-aa70-a7f76ddc108c","erLaast":false,"faktumIder":["f3a8261e-2f20-40bc-a151-e29b2c88795b"],"rettskildeIder":["f31048ad-743f-42e9-86fb-3d7bad04ba2e"],"refererteVurderingIder":[],"delvurderingIder":[]},{"vurderingId":"a9586a38-162e-4c09-aa70-a7f76ddc108c","sakId":"01711a4e-e39a-4be7-811f-2654ab9f2125","regelId":"3bdca139-c2b5-4e0d-9580-3d4bb850edba","type":"Deterministisk","utfall":"Uavklart","beregningsspor":"Ett av tre delvilkår i DiBKs sjekkliste (ansvarsrett) kunne ikke bekreftes automatisk => saken rutes til ordinær manuell saksbehandling","konfidens":null,"eskalert":true,"hovedhensyn":[],"forkastedeUtfall":[],"vilkarId":"9b789b94-1d5d-4c5d-979f-f6aa7c2a4396","forelderVurderingId":null,"erLaast":false,"faktumIder":[],"rettskildeIder":["91616ac2-4ec7-4655-b058-4b0a7ae09e33"],"refererteVurderingIder":[],"delvurderingIder":["172c485a-2bfe-4394-ac19-67c87019eea6","6c0a7a62-51a1-4437-b99e-b2a921a2a48a"]}],"faktum":[{"faktumId":"d5f78e77-a58d-4fd2-a402-e7967d882c09","sakId":"01711a4e-e39a-4be7-811f-2654ab9f2125","kildeId":"44ec8b8f-8b1d-49e4-9cda-4c331166dbea","type":"Raatt","struktur":"Strukturert","verdi":"Tiltaket er innvendig fôring av eksisterende skorstein. Ingen endring av utvendige dimensjoner.","avledetFraFaktumId":null,"innhentetTidspunkt":"2026-10-02T01:10:19.8499769+00:00","rettskildeIder":[],"erLaast":false},{"faktumId":"f3a8261e-2f20-40bc-a151-e29b2c88795b","sakId":"01711a4e-e39a-4be7-811f-2654ab9f2125","kildeId":"958d33ce-9547-45c6-8afc-8612f0843c8c","type":"Raatt","struktur":"Strukturert","verdi":"Ansvarlig foretak har sentral godkjenning kun for tiltaksklasse 1 ildsted – ikke registrert for kategorien brannsikkerhet/skorstein som dette tiltaket krever.","avledetFraFaktumId":null,"innhentetTidspunkt":"2026-10-02T01:10:19.8618392+00:00","rettskildeIder":[],"erLaast":false}]}}</script>
+<script>
+(function () {
+  'use strict';
+  var data = JSON.parse(document.getElementById('scenario-data').textContent);
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function byId(list, key) { var m = {}; list.forEach(function (x) { m[x[key]] = x; }); return m; }
+  var rkById = byId(data.rettskilder, 'rettskildeId');
+  var kildeById = byId(data.kilder, 'kildeId');
+
+  function pillClass(u) {
+    if (u === 'Oppfylt') return 'ok';
+    if (u === 'IkkeOppfylt') return 'bad';
+    return 'warn';
+  }
+  function safeUrl(u) { return /^https:\/\//.test(u || '') ? esc(u) : ''; }
+  function langList(arr) {
+    if (!arr || !arr.length) return '';
+    return '<ul class="lang-list">' + arr.map(function (v) {
+      return '<li><span class="ds-tag" data-color="neutral" lang="' + esc(v.spraakKode) + '">' + esc(v.spraakKode) + '</span><span lang="' + esc(v.spraakKode) + '">' + esc(v.verdi) + '</span></li>';
+    }).join('') + '</ul>';
+  }
+  function rkLink(rk) {
+    var u = safeUrl(rk.eliReferanse);
+    return esc(rk.henvisning) + (u ? ' <a class="ds-link" href="' + u + '" target="_blank" rel="noopener">Lovdata</a>' : '');
+  }
+
+  // ----- Vilkår og regel -----
+  var v = data.vilkar, r = data.regel;
+  var rkV = (v.rettskildeIder || []).map(function (id) { return rkById[id]; }).filter(Boolean);
+  document.getElementById('vilkar-box').innerHTML =
+    '<h3 style="margin:0 0 var(--ds-size-2);font-size:var(--ds-body-lg-font-size);">' + esc(v.navn) + '</h3>' +
+    '<div class="tag-row" style="display:flex;flex-wrap:wrap;gap:var(--ds-size-2);margin-bottom:var(--ds-size-4);">' +
+      '<span class="ds-tag" data-color="accent">' + esc(v.type) + '</span>' +
+      '<span class="ds-tag" data-color="accent">' + esc(v.grunnlagstype) + '</span>' +
+      '<span class="ds-tag" data-color="accent">' + esc(v.fastsettelsesmate) + '</span></div>' +
+    '<span class="code-label">Standardtekst (flerspråklig)</span>' + langList(v.standardTekst) +
+    '<dl class="kv">' +
+      '<dt>Kode</dt><dd><code>' + esc(v.kode) + '</code></dd>' +
+      '<dt>Kodeverk</dt><dd><code>' + esc(v.kodeverk) + '</code></dd>' +
+      '<dt>Hjemmel</dt><dd>' + (rkV.map(rkLink).join('<br>') || '–') + '</dd>' +
+      '<dt>Regel</dt><dd>' + esc(r.type) + ' · ' + esc(r.teknologi) + '</dd>' +
+      '<dt>regeldefinisjonReferanse</dt><dd>' + (safeUrl(r.regeldefinisjonReferanse) ? '<a class="ds-link" href="' + safeUrl(r.regeldefinisjonReferanse) + '" target="_blank" rel="noopener">' + esc(r.regeldefinisjonReferanse) + '</a>' : esc(r.regeldefinisjonReferanse)) + '</dd>' +
+    '</dl>' +
+    (v.erLaast ? '<span class="pill">låst</span>' : '<span class="pill">katalogoppføring, ikke låst</span>');
+  document.getElementById('regel-box').innerHTML =
+    '<p class="footnote">Regelen er lagret som en egen rad med peker til selve regelartefaktet. Vi har ikke lest sjekklistene bak lenken og påstår ikke at oppføringen speiler dem. Innholdet i vilkåret er vår utledning.</p>';
+
+  // ----- Tre -----
+  function addrOf(tittel) { var p = String(tittel).split('–'); return (p[1] || tittel).trim(); }
+
+  function faktumRefs(ids, faktumList) {
+    return (ids || []).map(function (id) {
+      var f = faktumList.filter(function (x) { return x.faktumId === id; })[0];
+      if (!f) return '';
+      var k = kildeById[f.kildeId];
+      return '<div><b>Faktum</b>' + esc(f.verdi) +
+        (k ? ' <em>(kilde: ' + esc(k.navn) + (k.autoritativ ? ', autoritativ' : ', ikke autoritativ') + ')</em>' : '') +
+        (f.erLaast ? ' <span class="pill" style="font-size:.85em;">låst</span>' : '') + '</div>';
+    }).join('');
+  }
+  function rkRefs(ids) {
+    return (ids || []).map(function (id) {
+      var rk = rkById[id];
+      return rk ? '<div><b>Hjemmel</b>' + esc(rk.henvisning) + '</div>' : '';
+    }).join('');
+  }
+  function node(vu, all, faktumList, depth) {
+    var kids = (vu.delvurderingIder || []).map(function (id) { return all.filter(function (x) { return x.vurderingId === id; })[0]; }).filter(Boolean);
+    var isRoot = !vu.forelderVurderingId;
+    var html = '<div class="dnode' + (isRoot ? ' is-root' : '') + '">' +
+      '<div class="dnode__head">' +
+        '<span class="dnode__lbl">' + (isRoot ? 'Samlet vurdering' : 'Delvurdering') + '</span>' +
+        '<span class="pill ' + pillClass(vu.utfall) + '">' + esc(vu.utfall) + '</span>' +
+        '<span class="pill">' + esc(vu.type) + '</span>' +
+        (vu.eskalert ? '<span class="pill warn">eskalert</span>' : '') +
+        (vu.erLaast ? '<span class="pill" title="Frosset sammen med vedtaket">låst</span>' : '') +
+      '</div>' +
+      '<p class="dnode__spor">' + esc(vu.beregningsspor) + '</p>' +
+      '<div class="dnode__refs">' + faktumRefs(vu.faktumIder, faktumList) + rkRefs(vu.rettskildeIder) + '</div>' +
+    '</div>';
+    if (kids.length) {
+      html += '<div class="dchildren">' + kids.map(function (c) { return node(c, all, faktumList, depth + 1); }).join('') + '</div>';
+    }
+    return html;
+  }
+  function tree(list, faktumList) {
+    var roots = list.filter(function (x) { return !x.forelderVurderingId; });
+    return '<div class="dtree">' + roots.map(function (x) { return node(x, list, faktumList, 0); }).join('') + '</div>';
+  }
+
+  // ----- Sak A -----
+  var A = data.case_a, AF = A.forklaring;
+  var vir = AF.virkninger[0];
+  var lockedA = AF.vurderinger.filter(function (x) { return x.erLaast; }).length;
+  document.getElementById('a-intro').innerHTML = esc(addrOf(A.sak.tittel)) + ' <span class="sak-id">· sak ' + esc(A.sak.sakId) + '</span>';
+  document.getElementById('a-root').innerHTML =
+    '<div class="case-banner is-ok"><h3><span class="pill ok">Vedtak fattet</span> ' + esc(A.vedtak.utfall) + '</h3>' +
+      '<p>Vedtaket ble fattet uten at en saksbehandler grep inn, og forklaringsloggen ble frosset i samme øyeblikk.</p></div>' +
+    '<div class="fact-row">' +
+      '<div class="fact"><span class="big">' + esc(A.vedtak.automatiseringsGrad) + '</span><span class="lbl">AutomatiseringsGrad</span></div>' +
+      '<div class="fact"><span class="big">' + AF.vurderinger.length + '</span><span class="lbl">vurderinger i treet (1 rot + ' + (AF.vurderinger.length - 1) + ' delvurderinger)</span></div>' +
+      '<div class="fact"><span class="big">' + AF.faktum.length + '</span><span class="lbl">faktum, alle med kilde</span></div>' +
+    '</div>' +
+    tree(AF.vurderinger, AF.faktum) +
+    (vir ? '<div class="virkning-box"><h3>Vedtaksvirkning <span class="pill info">' + esc(vir.type) + '</span> <span class="pill">' + esc(vir.varighet) + '</span></h3>' + langList(vir.beskrivelse) +
+      '<p class="footnote">Virkningen peker på rotvurderingen og faktum om tiltaket, så den kan spores tilbake.</p></div>' : '') +
+    '<div class="callout"><h3>Låst</h3><p>' + lockedA + ' av ' + AF.vurderinger.length + ' vurderinger og alle ' + AF.faktum.filter(function (f) { return f.erLaast; }).length + ' faktum har <code>erLaast = true</code>. Når vedtaket ble fattet, ble alt forklaringsloggen peker på skrivebeskyttet (' + AF.forklaringslogg.oppforinger.length + ' oppføringer i loggen). Rettelser blir nye rader.</p></div>';
+
+  // ----- Sak B -----
+  var B = data.case_b;
+  var esk = B.vurderinger.filter(function (x) { return x.eskalert; }).length;
+  document.getElementById('b-intro').innerHTML = esc(addrOf(B.sak.tittel)) + ' <span class="sak-id">· sak ' + esc(B.sak.sakId) + '</span>';
+  document.getElementById('b-root').innerHTML =
+    '<div class="case-banner is-warn"><h3><span class="pill warn">Ingen vedtak ennå</span> Rutet til manuell saksbehandling</h3>' +
+      '<p>Sakens status er <code>' + esc(B.sak.status) + '</code>. Det finnes ingen <code>Vedtak</code>, og dermed er heller ingenting frosset.</p></div>' +
+    '<div class="fact-row">' +
+      '<div class="fact"><span class="big">' + esc(B.sak.status) + '</span><span class="lbl">Sak.Status</span></div>' +
+      '<div class="fact"><span class="big">' + B.vurderinger.length + '</span><span class="lbl">vurderinger i treet</span></div>' +
+      '<div class="fact"><span class="big">' + esk + '</span><span class="lbl">eskalerte vurderinger</span></div>' +
+    '</div>' +
+    tree(B.vurderinger, B.faktum) +
+    '<div class="callout"><h3>Forklaringen finnes før vedtaket</h3>' +
+      '<p>Vurderingene ble lagret mens saken fortsatt er åpen (<code>erLaast = false</code>). Saksbehandleren får altså ikke bare «avvik», men en strukturert forklaring av hva som ble sjekket, hva som holdt og hvorfor ett delvilkår ikke kunne bekreftes automatisk, med faktum og hjemmel. Roten er <em>Uavklart</em> og ikke <em>IkkeOppfylt</em>: systemet avslår ikke, det gir videre til et menneske.</p>' +
+      '<p>Treet har her bare to delvurderinger, selv om rotens beregningsspor omtaler tre delvilkår. Hva som skjedde med det tredje, sier ikke dataene: det finnes ingen egen rad for det i denne kjøringen. Modellen krever ikke at kallende system oppretter en.</p></div>';
+})();
+</script>
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>
