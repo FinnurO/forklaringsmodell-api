@@ -37,6 +37,14 @@
   .guide-article .rule-card .n{ font-size:var(--ds-body-sm-font-size); }
   .guide-article ul.plain-list{ margin:0 0 var(--ds-size-4); }
   .guide-layout > *{ min-width:0; }
+  .seg{ display:flex; flex-wrap:wrap; gap:var(--ds-size-2); margin:0 0 var(--ds-size-5); }
+  .sf h3{ margin:var(--ds-size-8) 0 var(--ds-size-2); font-size:var(--ds-body-lg-font-size); }
+  .sf h3:first-child{ margin-top:0; }
+  .sf p.hint{ margin:0 0 var(--ds-size-4); font-size:var(--ds-body-sm-font-size); color:var(--ds-color-text-subtle); }
+  .sf h4{ margin:var(--ds-size-4) 0 var(--ds-size-1); font-size:var(--ds-body-sm-font-size); }
+  .sf ul.plain-list{ padding-left:1.1em; font-size:var(--ds-body-sm-font-size); display:flex; flex-direction:column; gap:var(--ds-size-1); }
+  .refcols{ display:grid; grid-template-columns:repeat(auto-fit, minmax(16rem,1fr)); gap:var(--ds-size-5); }
+  .sf table td:first-child{ white-space:nowrap; }
   @media (max-width: 560px){ .dchildren{ margin-left:var(--ds-size-2); padding-left:var(--ds-size-3); } .dnode{ padding:var(--ds-size-3) var(--ds-size-4); } }
 </style>
 </head>
@@ -85,6 +93,7 @@
         <a href="#vilkaret" data-anchor="vilkaret">Vilkåret</a>
         <a href="#sak-a" data-anchor="sak-a">Sak A: godkjent</a>
         <a href="#sak-b" data-anchor="sak-b">Sak B: manuell</a>
+        <a href="#hele-saken" data-anchor="hele-saken">Hele saken i ett kall</a>
         <a href="#lese-treet" data-anchor="lese-treet">Slik leser du treet</a>
         <a href="#json-filer" data-anchor="json-filer">De faktiske JSON-filene</a>
         <a href="#kjor-selv" data-anchor="kjor-selv">Kjør det selv</a>
@@ -164,8 +173,20 @@
           <div id="b-root"></div>
         </section>
 
+        <section id="hele-saken">
+          <span class="section-num">6 · Hele saken i ett kall</span>
+          <h2>Sak-forklaringen</h2>
+          <p class="intro">Seksjonene over viser sakene stykkevis. Med <code>GET /api/saker/{sakId}/forklaring</code> får en visning alt i ett svar, også når saken ikke har noe vedtak. Under er svaret slik API-et leverte det. Alt som vises er tegnet av akkurat den ene filen, uten andre oppslag.</p>
+          <div class="seg" role="group" aria-label="Velg sak" id="sf-tabs">
+            <button type="button" class="ds-button" data-sak="a" data-color="accent" aria-pressed="true">Sak A: med vedtak</button>
+            <button type="button" class="ds-button" data-sak="b" data-color="accent" data-variant="secondary" aria-pressed="false">Sak B: uten vedtak</button>
+          </div>
+          <div class="sf" id="sf-panel" aria-live="polite"><p class="footnote">Laster svaret …</p></div>
+          <noscript><p>Uten JavaScript: se svarene som <a href="data/17-sak-a-sak-forklaring.json">Sak A</a> og <a href="data/26-sak-b-sak-forklaring.json">Sak B</a>.</p></noscript>
+        </section>
+
         <section id="lese-treet">
-          <span class="section-num">6 · Slik leser du treet</span>
+          <span class="section-num">7 · Slik leser du treet</span>
           <h2>Tre felt som bærer strukturen</h2>
           <p class="intro">Treet er ikke noe eget objekt. Det er vanlige <code>Vurdering</code>-rader som peker på hverandre.</p>
           <ul>
@@ -177,7 +198,7 @@
         </section>
 
         <section id="json-filer">
-          <span class="section-num">7 · De faktiske JSON-filene</span>
+          <span class="section-num">8 · De faktiske JSON-filene</span>
           <h2>Hvert kall, slik det gikk over streken</h2>
           <p class="intro">Dataene over kommer fra 26 virkelige kall mot API-et, i rekkefølgen de ble gjort, og hvert kall er lagret som en egen fil. Filen har metode, sti (med plassholdere for id-er), statuskode, forespørselen som ble sendt og svaret som kom tilbake. Forespørsel og svar er uendret, bare pent formatert. Åpne en fil for å lese den, last den ned, eller bruk den som mal for en egen integrasjon.</p>
           <div class="callout">
@@ -193,7 +214,7 @@
         </section>
 
         <section id="kjor-selv">
-          <span class="section-num">8 · Kjør det selv</span>
+          <span class="section-num">9 · Kjør det selv</span>
           <h2>Scenarioene er integrasjonstester</h2>
           <p class="intro">Sak A kjøres fra start til slutt av testen <a href="https://github.com/FinnurO/forklaringsmodell-api/blob/master/tests/Forklaringsmodell.Tests/Integration/PiperehabiliteringScenarioTests.cs" target="_blank" rel="noopener"><code>PiperehabiliteringScenarioTests</code></a>, med de samme tre delvilkårene, og testen kontrollerer treet. Sak B-testen er en forenklet variant med ett delvilkår. JSON-filene og dataene på siden kommer fra en egen kjøring mot API-et med samme flyt, og er ikke testens egen utskrift.</p>
           <span class="code-label">Kjør bare piperehabilitering-scenarioene</span>
@@ -473,6 +494,154 @@ dotnet run --project src/Forklaringsmodell.Api</code></pre>
     .catch(function () {
       host.innerHTML = '<p class="footnote">Kunne ikke laste filoversikten. <a href="data/index.json">Åpne den direkte</a>.</p>';
     });
+})();
+</script>
+<script>
+(function () {
+  var panel = document.getElementById('sf-panel');
+  var tabs = document.getElementById('sf-tabs');
+  if (!panel || !tabs) return;
+
+  function esc(v) { return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function by(list, key) { var m = {}; (list || []).forEach(function (x) { m[x[key]] = x; }); return m; }
+  function dato(iso) { var d = new Date(iso); return isNaN(d) ? iso : d.toLocaleString('nb-NO', { dateStyle: 'medium', timeStyle: 'short' }); }
+  function antallNoder(noder) { return (noder || []).reduce(function (n, x) { return n + 1 + antallNoder(x.delvurderinger); }, 0); }
+  function pillUtfall(u) { return u === 'Oppfylt' ? 'ok' : u === 'IkkeOppfylt' ? 'bad' : 'warn'; }
+  function laast(rader) { return rader.filter(function (r) { return r.erLaast; }).length; }
+
+  function node(n, ctx, erRot) {
+    var h = '<div class="dnode' + (erRot ? ' is-root' : '') + '"><div class="dnode__head">' +
+      '<span class="pill ' + pillUtfall(n.utfall) + '">' + esc(n.utfall) + '</span>' +
+      (n.eskalert ? '<span class="pill warn">eskalert</span>' : '') +
+      '<span class="pill ' + (n.erLaast ? 'info' : '') + '">' + (n.erLaast ? 'låst' : 'levende') + '</span></div>' +
+      '<p class="dnode__spor">' + esc(n.beregningsspor) + '</p>';
+    var refs = '';
+    (n.faktumIder || []).forEach(function (id) {
+      var f = ctx.faktum[id]; if (!f) return;
+      var k = ctx.kilder[f.kildeId];
+      refs += '<div><b>faktum</b>' + esc(f.verdi) + (k ? ' <em>(' + esc(k.navn) + ')</em>' : '') + '</div>';
+    });
+    (n.rettskildeIder || []).forEach(function (id) {
+      var r = ctx.rett[id]; if (r) refs += '<div><b>hjemmel</b>' + esc(r.henvisning) + '</div>';
+    });
+    if (refs) h += '<div class="dnode__refs">' + refs + '</div>';
+    h += '</div>';
+    if (n.delvurderinger && n.delvurderinger.length) {
+      h += '<div class="dchildren">' + n.delvurderinger.map(function (c) { return node(c, ctx, false); }).join('') + '</div>';
+    }
+    return h;
+  }
+
+  function oppbygning(r) {
+    var rader = [
+      ['sak', 'Selve saken', esc(r.sak.tittel) + ' (' + esc(r.sak.status) + ')'],
+      ['oppsummering', 'Tellinger til en oversikt', 'harVedtak ' + r.oppsummering.harVedtak + ', ' + r.oppsummering.antallVurderinger + ' vurderinger, ' + r.oppsummering.antallEskalerteVurderinger + ' eskalerte'],
+      ['relasjoner', 'Koblinger til andre saker', r.relasjoner.length],
+      ['faktum', 'Alle faktum i saken', r.faktum.length + ' (' + laast(r.faktum) + ' låst)'],
+      ['vurderinger', 'Alle vurderinger, flat liste', r.vurderinger.length + ' (' + laast(r.vurderinger) + ' låst)'],
+      ['vurderingstre', 'Samme vurderinger, ferdig nøstet', r.vurderingstre.length + ' rot, ' + antallNoder(r.vurderingstre) + ' noder'],
+      ['partsmedvirkninger', 'Partenes medvirkning', r.partsmedvirkninger.length],
+      ['vedtak', 'Vedtak med forklaringslogg og virkninger', r.vedtak.length],
+      ['refererteVurderinger', 'Vurderinger i andre saker (ett nivå)', r.refererteVurderinger.length],
+      ['andreFaktum', 'Faktum som tilhører andre saker', r.andreFaktum.length],
+      ['referansedata', 'Kilder · rettskilder · regler · vilkår', [r.referansedata.kilder, r.referansedata.rettskilder, r.referansedata.regler, r.referansedata.vilkar].map(function (l) { return l.length; }).join(' · ')]
+    ];
+    return '<div class="table-scroll"><table class="ds-table"><thead><tr><th scope="col">Felt</th><th scope="col">Hva det er</th><th scope="col">I dette svaret</th></tr></thead><tbody>' +
+      rader.map(function (x) { return '<tr><td><code>' + x[0] + '</code></td><td>' + x[1] + '</td><td>' + x[2] + '</td></tr>'; }).join('') +
+      '</tbody></table></div>';
+  }
+
+  function vedtakHtml(r) {
+    if (!r.vedtak.length) {
+      return '<div class="callout"><h3>Ingen vedtak ennå</h3><p>Derfor er ingenting frosset: alle rader har <code>erLaast = false</code>. Likevel er forklaringen på hvorfor saken ble sendt til en saksbehandler fullt ut med i svaret.</p></div>';
+    }
+    return r.vedtak.map(function (v) {
+      var opp = v.forklaringslogg.oppforinger || [];
+      var tell = function (t) { return opp.filter(function (o) { return o.type === t; }).length; };
+      var virk = v.virkninger.map(function (x) {
+        var tekst = (x.beskrivelse || []).map(function (b) { return '<span class="ds-tag" data-color="accent">' + esc(b.spraakKode) + '</span> ' + esc(b.verdi); }).join(' &nbsp; ');
+        return '<div><b>virkning</b>' + esc(x.type) + ', ' + esc(x.varighet) + ': ' + tekst + '</div>';
+      }).join('');
+      return '<div class="dnode is-root"><div class="dnode__head"><span class="pill ok">' + esc(v.vedtak.automatiseringsGrad) + '</span><span class="pill">' + esc(dato(v.vedtak.tidspunkt)) + '</span></div>' +
+        '<p class="dnode__spor"><strong>' + esc(v.vedtak.utfall) + '</strong></p>' +
+        '<div class="dnode__refs"><div><b>logg</b>' + opp.length + ' oppføringer frosset: ' + tell('Faktum') + ' faktum, ' + tell('Vurdering') + ' vurderinger, ' + tell('Partsmedvirkning') + ' partsmedvirkning</div>' + virk + '</div></div>';
+    }).join('');
+  }
+
+  function liste(tittel, items) {
+    if (!items.length) return '';
+    return '<div><h4>' + tittel + ' (' + items.length + ')</h4><ul class="plain-list">' + items.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></div>';
+  }
+
+  function render(entry, r) {
+    var ctx = { faktum: by(r.faktum.concat(r.andreFaktum), 'faktumId'), kilder: by(r.referansedata.kilder, 'kildeId'), rett: by(r.referansedata.rettskilder, 'rettskildeId') };
+    var rd = r.referansedata;
+    var nF = r.faktum.length, nV = r.vurderinger.length;
+    var h = '<div class="case-banner ' + (r.oppsummering.harVedtak ? 'is-ok' : 'is-warn') + '">' +
+      '<h3><span class="pill info">GET</span> /api/saker/{sakId}/forklaring <span class="pill ok">200</span></h3>' +
+      '<p>' + esc(r.sak.tittel) + '</p><p class="sak-id">sakId ' + esc(r.sak.sakId) + ' · <a href="data/' + encodeURI(entry.file) + '" target="_blank" rel="noopener">Åpne råfilen</a> (data/' + esc(entry.file) + ', ' + (entry.bytes / 1024).toFixed(1).replace('.', ',') + ' kB)</p></div>';
+
+    h += '<h3>Svarets oppbygning</h3><p class="hint">Alt på toppnivå, og hva det inneholder her.</p>' + oppbygning(r);
+
+    h += '<h3>Oppsummering</h3><div class="fact-row">' +
+      '<div class="fact"><span class="big">' + r.oppsummering.antallVedtak + '</span><span class="lbl">vedtak</span></div>' +
+      '<div class="fact"><span class="big">' + r.oppsummering.antallFaktum + '</span><span class="lbl">faktum, ' + laast(r.faktum) + ' låst</span></div>' +
+      '<div class="fact"><span class="big">' + r.oppsummering.antallVurderinger + '</span><span class="lbl">vurderinger, ' + laast(r.vurderinger) + ' låst</span></div>' +
+      '<div class="fact"><span class="big">' + r.oppsummering.antallEskalerteVurderinger + '</span><span class="lbl">eskalerte vurderinger</span></div></div>';
+
+    h += '<h3>Vurderingstreet, ferdig nøstet</h3><p class="hint">Dette er <code>vurderingstre</code> slik API-et leverer det. Siden slår ikke opp <code>delvurderingIder</code> selv. Fakta og hjemler er slått opp i <code>faktum</code> og <code>referansedata</code> i samme svar.</p>' +
+      '<div class="dtree">' + r.vurderingstre.map(function (n) { return node(n, ctx, true); }).join('') + '</div>';
+
+    h += '<h3>Vedtak</h3>' + vedtakHtml(r);
+
+    h += '<h3>Referansedata, ferdig oppløst</h3><p class="hint">Kilder, hjemler, regler og vilkår som saken peker på. Klienten slipper egne oppslag.</p><div class="refcols">' +
+      liste('Kilder', rd.kilder.map(function (k) { return esc(k.navn) + ' <em>(' + (k.autoritativ ? 'autoritativ' : 'ikke autoritativ') + ')</em>'; })) +
+      liste('Rettskilder', rd.rettskilder.map(function (x) { return esc(x.henvisning); })) +
+      liste('Regler', rd.regler.map(function (x) { return esc(x.teknologi) + ' <em>(' + esc(x.type) + ')</em>'; })) +
+      liste('Vilkår', rd.vilkar.map(function (x) { return esc(x.navn) + ' <code>' + esc(x.kode) + '</code>'; })) +
+      '</div>';
+
+    h += '<h3>Andre saker</h3><p class="hint"><code>refererteVurderinger</code> og <code>andreFaktum</code> er tomme her (' + r.refererteVurderinger.length + ' og ' + r.andreFaktum.length + '), fordi ingen vurdering i saken bygger på en annen sak. Gjør den det, kommer de siterte radene med, ett nivå ut, så en kryss-sak-referanse kan vises uten flere oppslag.</p>';
+
+    panel.innerHTML = h;
+  }
+
+  var files = {}, cache = {}, aktiv = 'a';
+
+  function velg(k) {
+    aktiv = k;
+    Array.prototype.forEach.call(tabs.querySelectorAll('button'), function (b) {
+      var på = b.getAttribute('data-sak') === k;
+      b.setAttribute('aria-pressed', på ? 'true' : 'false');
+      if (på) { b.removeAttribute('data-variant'); } else { b.setAttribute('data-variant', 'secondary'); }
+    });
+    var entry = files[k];
+    if (!entry) { panel.innerHTML = '<p class="footnote">Fant ikke filen i oversikten.</p>'; return; }
+    if (cache[k]) { render(entry, cache[k]); return; }
+    panel.innerHTML = '<p class="footnote">Laster svaret …</p>';
+    fetch('data/' + encodeURI(entry.file))
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (doc) { cache[k] = doc.response; if (aktiv === k) render(entry, doc.response); })
+      .catch(function () { panel.innerHTML = '<p class="footnote">Kunne ikke laste filen. Åpnes siden som en lokal fil? Start da en liten webserver, for eksempel: python -m http.server --directory site</p>'; });
+  }
+
+  tabs.addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-sak]');
+    if (b) velg(b.getAttribute('data-sak'));
+  });
+
+  fetch('data/index.json')
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (liste) {
+      liste.forEach(function (e) {
+        if (e.method === 'GET' && e.path === '/api/saker/{sakId}/forklaring') {
+          if (/^Sak A/.test(e.group)) files.a = e;
+          if (/^Sak B/.test(e.group)) files.b = e;
+        }
+      });
+      velg('a');
+    })
+    .catch(function () { panel.innerHTML = '<p class="footnote">Kunne ikke laste filoversikten.</p>'; });
 })();
 </script>
 <script src="../assets/js/site.js" defer></script>
