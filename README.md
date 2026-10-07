@@ -82,6 +82,11 @@ src/
   Forklaringsmodell.Api             Kontrollere, Swagger, Program.cs
 tests/
   Forklaringsmodell.Tests           Enhets- og integrasjonstester (xUnit)
+visning/
+  cli.mjs                           Lesevisning fra kommandolinjen
+  test/                             Tester for lesevisningen (node:test)
+site/assets/js/
+  forklaring-visning.mjs            Lesevisningen: parser og formater (ren ES-modul)
 ```
 
 EF Core mot SQLite lokalt (`Data Source=forklaringsmodell.db`) — PostgreSQL/SQL Server for reell drift.
@@ -130,6 +135,17 @@ Forklaringen kan leses på to måter: `GET /api/vedtak/{id}/forklaring` gir det 
 
 Se spesifikasjonen for fullstendige request/response-skjemaer og valideringsregler.
 
+## Lesevisning (parser)
+
+En generisk parser gjør svaret fra `GET /api/saker/{sakId}/forklaring` (og `GET /api/vedtak/{id}/forklaring`) om til en standard, lesbar visning: Markdown, ren tekst eller HTML. Lesbarheten kommer fra dataene, ikke fra håndskrevne setninger per sak. Modulen [`site/assets/js/forklaring-visning.mjs`](site/assets/js/forklaring-visning.mjs) er en ren ES-modul uten avhengigheter og uten DOM, og den kjører likt i nettleser og Node. Eksempelsiden på nettstedet tegnes av den. Se [`visning/README.md`](visning/README.md) for bruk, visningsmodellen og de automatiske merknadene.
+
+```bash
+node visning/cli.mjs --url http://localhost:5013/api/saker/<sakId>/forklaring
+curl -s http://localhost:5013/api/saker/<sakId>/forklaring | node visning/cli.mjs - -f html -o sak.html
+```
+
+Testene (`node:test`, Node 20 eller nyere) kjøres med `npm test` i `visning/`.
+
 ## Nettsted (GitHub Pages)
 
 Dokumentasjonsnettstedet ligger i [`site/`](site/) som ren statisk HTML/CSS/JS — ingen bygg-steg, ingen avhengigheter, og ingen kjøretidsavhengighet til eksterne CDN-er (designsystemet.no sitt CSS og fontene Inter og Source Serif 4 er selv-hostet i `site/assets/`, se [`site/THIRD_PARTY_NOTICES.md`](site/THIRD_PARTY_NOTICES.md)). Stilen følger [tjenestedesign-no](https://github.com/FinnurO/tjenestedesign-no).
@@ -140,10 +156,11 @@ site/
   modell/             Entiteter, relasjoner, beslutningstreet, flerspråklige tekster
   regler/             De 18 forretningsreglene
   eksempel/           Stavangers automatiske piperehabilitering, fylt ut i modellen
-  eksempel/data/      De 26 faktiske API-kallene (forespørsel og svar) som JSON-filer
+  eksempel/data/      De 28 faktiske API-kallene (forespørsel og svar) som JSON-filer
   api/                Kom i gang, endepunkter, typisk flyt
   versjoner/          Versjonshistorikk
   assets/             CSS (designsystemet + site.css), fonter, site.js (tilbakemeldingsknapp)
+  assets/js/          forklaring-visning.mjs (lesevisning, brukes av eksempelsiden)
 ```
 
 Kjør lokalt — server mappen med hva som helst statisk:

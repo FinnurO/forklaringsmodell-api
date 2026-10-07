@@ -3,24 +3,24 @@
   "path": "/api/saker/{sakId}/vurderinger",
   "status": 201,
   "request": {
-    "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+    "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
     "type": "Deterministisk",
     "utfall": "Oppfylt",
     "beregningsspor": "Ansvarlig foretak har gyldig sentral godkjenning for ansvarsrett, tiltaksklasse 1, brannsikkerhet => vilkår oppfylt",
     "eskalert": false,
-    "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
-    "forelderVurderingId": "eaa03ca4-dd00-4d34-8166-e8001908f53a",
+    "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
+    "forelderVurderingId": "dce2863b-9bd8-4b81-be29-0a9fbb30f9f6",
     "faktumIder": [
-      "abd9a9ac-e011-4cae-bcad-15609cc773fe"
+      "7de15c8a-912c-4a5f-998e-3524f0434e25"
     ],
     "rettskildeIder": [
-      "2c741e06-f023-44c3-85e8-6532b217881b"
+      "b0374806-2edc-491f-a812-3ec94340ff55"
     ]
   },
   "response": {
-    "vurderingId": "e8118f56-6772-4248-b79b-f5951e886cbf",
-    "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
-    "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+    "vurderingId": "7cb05304-2293-476d-84e8-e7128d95c624",
+    "sakId": "c019f847-2622-47b1-8a76-9aa03ba47442",
+    "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
     "type": "Deterministisk",
     "utfall": "Oppfylt",
     "beregningsspor": "Ansvarlig foretak har gyldig sentral godkjenning for ansvarsrett, tiltaksklasse 1, brannsikkerhet => vilkår oppfylt",
@@ -28,14 +28,14 @@
     "eskalert": false,
     "hovedhensyn": [],
     "forkastedeUtfall": [],
-    "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
-    "forelderVurderingId": "eaa03ca4-dd00-4d34-8166-e8001908f53a",
+    "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
+    "forelderVurderingId": "dce2863b-9bd8-4b81-be29-0a9fbb30f9f6",
     "erLaast": false,
     "faktumIder": [
-      "abd9a9ac-e011-4cae-bcad-15609cc773fe"
+      "7de15c8a-912c-4a5f-998e-3524f0434e25"
     ],
     "rettskildeIder": [
-      "2c741e06-f023-44c3-85e8-6532b217881b"
+      "b0374806-2edc-491f-a812-3ec94340ff55"
     ],
     "refererteVurderingIder": [],
     "delvurderingIder": []

@@ -4,16 +4,16 @@
   "status": 201,
   "request": {
     "rettskildeIder": [
-      "a10fc9c6-a378-4250-9639-da9b1677ccf4"
+      "6431ec7e-3c61-41f3-ad36-4bdec4dff1e0"
     ],
     "teknologi": "DiBK nasjonal sjekkliste (DMN-aktig regelsett i Elements eByggesak)",
     "type": "Deterministisk",
     "regeldefinisjonReferanse": "https://sjekkliste-bygg-api.ft.dibk.no/api/sjekkliste"
   },
   "response": {
-    "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+    "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
     "rettskildeIder": [
-      "a10fc9c6-a378-4250-9639-da9b1677ccf4"
+      "6431ec7e-3c61-41f3-ad36-4bdec4dff1e0"
     ],
     "teknologi": "DiBK nasjonal sjekkliste (DMN-aktig regelsett i Elements eByggesak)",
     "type": "Deterministisk",

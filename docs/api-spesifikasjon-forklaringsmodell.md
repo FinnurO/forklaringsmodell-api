@@ -335,6 +335,10 @@ For å vise en sak komplett, tolket og på én gang, finnes to GET-kall med ulik
 
 Begge er rene lesekall uten ny forretningsregel; frysing og append-only (punkt 3.1–3.4) er uendret. Avveininger: svaret kan bli stort for store saker, og vurderingene finnes både flatt og nøstet (samme rader, enklere for klienten, men dobbel nyttelast).
 
+**Lesevisning**
+
+Svaret fra begge endepunktene kan gjøres om til en standard, lesbar visning med en generisk parser, `site/assets/js/forklaring-visning.mjs`. Den er en ren ES-modul uten avhengigheter og uten DOM, og den kjører likt i nettleser og Node. Parseren har tre steg: `normaliser` (samme form uansett endepunkt), `byggVisning` (en visningsmodell med blant annet vurderingene som tre, vedtak, faktum og merknader) og formater til Markdown, ren tekst eller HTML. Lesbarheten kommer fra svaret: all tekst som vises er hentet fra dataene, og modulen skriver selv bare etiketter for modellens enumer og merknader som regnes ut av strukturen (for eksempel at ingenting er frosset uten vedtak, eskalerte vurderinger, skjønn uten hovedhensyn og sitert kryss-sak). Det er ingen endring i API-et og ingen ny forretningsregel. Bruk, visningsmodellens felter og kommandolinjeverktøyet er beskrevet i [`visning/README.md`](../visning/README.md).
+
 ## 6. Eksempeldata (fra dagpenger-eksempelet)
 
 ```json

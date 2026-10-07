@@ -1,0 +1,13 @@
+{
+  "name": "forklaring-visning",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Standard lesevisning av forklaringsmodellen: JSON fra forklaring-endepunktene til HTML, Markdown og tekst.",
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

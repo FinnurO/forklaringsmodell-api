@@ -2,6 +2,30 @@
 
 Alle vesentlige endringer i dette prosjektet dokumenteres i denne filen.
 
+## [1.8.0] — Standard lesevisning (parser)
+
+### Lagt til
+
+- **`site/assets/js/forklaring-visning.mjs`**: ren ES-modul uten avhengigheter og uten DOM, som kjører likt i nettleser og Node. Den gjør svaret fra `GET /api/saker/{sakId}/forklaring` (og `GET /api/vedtak/{id}/forklaring`) om til en standard, lesbar visning. Tre steg: `normaliser(json)` (samme form uansett endepunkt, godtar også pakket `{ method, path, response }`), `byggVisning(json, { sprak })` (visningsmodell med tittel, sak, tall, vedtak, vurderinger som tre, faktum, partsmedvirkninger, relasjoner, kryss-sak, referanser og merknader) og formater: `tilMarkdown`, `tilTekst`, `tilHtml` (fragment med klasser `fv-*`), `visningCss`, `tilHtmlDokument` og `vis(json, format)`.
+- **Lesbarhet fra data, ikke fra håndskrevne setninger**: all tekst kommer fra svaret. Modulen skriver bare etiketter for modellens egne enumer og merknader som regnes ut av strukturen: ingen vedtak (ingenting er frosset), N eskalerte, vurderinger uten konklusjon, skjønn uten hovedhensyn (regel 3.2), sitert kryss-sak (regel 3.11) og manglende oppslag i svaret. HTML-utdata escapes.
+- **Flerspråklige tekster**: velger ønsket språk med reserve og viser øvrige varianter (kan slås av).
+- **`visning/cli.mjs`**: `node visning/cli.mjs <fil|-> [--url <adresse>] [-f md|txt|html|dokument|json] [--sprak nb|nn] [--en-sprak] [-o fil]`. Leser fra fil, standard inn eller direkte fra et kjørende API.
+- **`visning/README.md`**: bruk i nettleser, Node og kommandolinje, visningsmodellens felter, merknadene og hvordan man utvider med nye formater.
+- **`.github/workflows/visning-test.yml`**: kjører testene på push og pull request når `visning/**`, `site/assets/js/**` eller `site/eksempel/data/**` endres.
+
+### Endret
+
+- **Eksempeldataene er spilt inn på nytt** (28 innspilte kall). Sak B har nå tre delvurderinger. Tidligere hadde den to, mens rotens beregningsspor sa «ett av tre delvilkår».
+- **Eksempelsiden tegnes nå av parseren** i stedet for av håndskrevet rendering.
+
+### Migrasjon
+
+- Ingen endring i API-et og ingen databasemigrasjon. Ingen ny forretningsregel (antallet er fortsatt 18).
+
+### Tester
+
+- `visning/test/visning.test.mjs` og `visning/package.json`: 15 tester med `node:test`, kjørt med `npm test` i `visning/` (eller `node --test test/*.test.mjs`). De går mot de innspilte, ekte svarene i `site/eksempel/data`.
+
 ## [1.7.0] — Samlet forklaring av en sak
 
 ### Lagt til

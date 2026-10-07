@@ -1,0 +1,44 @@
+{
+  "method": "GET",
+  "path": "/api/saker/{sakId}/faktum",
+  "status": 200,
+  "request": null,
+  "response": [
+    {
+      "faktumId": "37b29d8c-9329-42c8-9578-20d5c087bd41",
+      "sakId": "79805baa-3a6d-42fa-b3ae-639e5a9f0acb",
+      "kildeId": "55f939a6-249c-4b66-858e-2b2f32f4edcc",
+      "type": "Raatt",
+      "struktur": "Strukturert",
+      "verdi": "Tiltaket er innvendig fôring av eksisterende skorstein. Ingen endring av utvendige dimensjoner.",
+      "avledetFraFaktumId": null,
+      "innhentetTidspunkt": "2026-10-07T07:48:13.997708+00:00",
+      "rettskildeIder": [],
+      "erLaast": false
+    },
+    {
+      "faktumId": "e99fa292-485c-451b-875d-3996837ed4ac",
+      "sakId": "79805baa-3a6d-42fa-b3ae-639e5a9f0acb",
+      "kildeId": "5be21dd2-15cd-45b6-a97b-8108a128613c",
+      "type": "Raatt",
+      "struktur": "Strukturert",
+      "verdi": "Ansvarlig foretak har sentral godkjenning kun for tiltaksklasse 1 ildsted – ikke registrert for kategorien brannsikkerhet/skorstein som dette tiltaket krever.",
+      "avledetFraFaktumId": null,
+      "innhentetTidspunkt": "2026-10-07T07:48:14.0069918+00:00",
+      "rettskildeIder": [],
+      "erLaast": false
+    },
+    {
+      "faktumId": "f3744581-34e6-48d6-b31b-82a791004efd",
+      "sakId": "79805baa-3a6d-42fa-b3ae-639e5a9f0acb",
+      "kildeId": "55f939a6-249c-4b66-858e-2b2f32f4edcc",
+      "type": "Raatt",
+      "struktur": "Strukturert",
+      "verdi": "Bygningen er ikke registrert som fredet eller verneverdig i kommunens kulturminneregister.",
+      "avledetFraFaktumId": null,
+      "innhentetTidspunkt": "2026-10-07T07:48:14.0167633+00:00",
+      "rettskildeIder": [],
+      "erLaast": false
+    }
+  ]
+}

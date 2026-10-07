@@ -1,0 +1,36 @@
+name: Test lesevisning
+
+# Kjører testene for lesevisningen (visning/) når parseren, kommandolinjen eller
+# de innspilte eksempeldataene endres. Ingen avhengigheter å installere.
+on:
+  push:
+    paths:
+      - 'visning/**'
+      - 'site/assets/js/**'
+      - 'site/eksempel/data/**'
+      - '.github/workflows/visning-test.yml'
+  pull_request:
+    paths:
+      - 'visning/**'
+      - 'site/assets/js/**'
+      - 'site/eksempel/data/**'
+      - '.github/workflows/visning-test.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # node --test test/*.test.mjs (se visning/package.json)
+      - name: Kjør testene
+        working-directory: visning
+        run: npm test

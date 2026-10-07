@@ -3,20 +3,20 @@
   "path": "/api/saker/{sakId}/vurderinger",
   "status": 201,
   "request": {
-    "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+    "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
     "type": "Deterministisk",
     "utfall": "Uavklart",
     "beregningsspor": "Ett av tre delvilkår i DiBKs sjekkliste (ansvarsrett) kunne ikke bekreftes automatisk => saken rutes til ordinær manuell saksbehandling",
     "eskalert": true,
-    "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+    "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
     "rettskildeIder": [
-      "a10fc9c6-a378-4250-9639-da9b1677ccf4"
+      "6431ec7e-3c61-41f3-ad36-4bdec4dff1e0"
     ]
   },
   "response": {
-    "vurderingId": "bf44f609-39b1-49b8-bba2-ca02e7051f6c",
-    "sakId": "452b23ad-2073-45c4-abda-f7dc13e25d11",
-    "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+    "vurderingId": "8cb1269a-5960-4317-974b-93849a3aebc4",
+    "sakId": "79805baa-3a6d-42fa-b3ae-639e5a9f0acb",
+    "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
     "type": "Deterministisk",
     "utfall": "Uavklart",
     "beregningsspor": "Ett av tre delvilkår i DiBKs sjekkliste (ansvarsrett) kunne ikke bekreftes automatisk => saken rutes til ordinær manuell saksbehandling",
@@ -24,12 +24,12 @@
     "eskalert": true,
     "hovedhensyn": [],
     "forkastedeUtfall": [],
-    "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+    "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
     "forelderVurderingId": null,
     "erLaast": false,
     "faktumIder": [],
     "rettskildeIder": [
-      "a10fc9c6-a378-4250-9639-da9b1677ccf4"
+      "6431ec7e-3c61-41f3-ad36-4bdec4dff1e0"
     ],
     "refererteVurderingIder": [],
     "delvurderingIder": []
