@@ -6,17 +6,17 @@
     "kildeId": "55f939a6-249c-4b66-858e-2b2f32f4edcc",
     "type": "Raatt",
     "struktur": "Strukturert",
-    "verdi": "Tiltaket er innvendig fôring av eksisterende skorstein. Ingen endring av utvendige dimensjoner."
+    "verdi": "Bygningen er ikke registrert som fredet eller verneverdig i kommunens kulturminneregister."
   },
   "response": {
-    "faktumId": "37b29d8c-9329-42c8-9578-20d5c087bd41",
+    "faktumId": "f3744581-34e6-48d6-b31b-82a791004efd",
     "sakId": "79805baa-3a6d-42fa-b3ae-639e5a9f0acb",
     "kildeId": "55f939a6-249c-4b66-858e-2b2f32f4edcc",
     "type": "Raatt",
     "struktur": "Strukturert",
-    "verdi": "Tiltaket er innvendig fôring av eksisterende skorstein. Ingen endring av utvendige dimensjoner.",
+    "verdi": "Bygningen er ikke registrert som fredet eller verneverdig i kommunens kulturminneregister.",
     "avledetFraFaktumId": null,
-    "innhentetTidspunkt": "2026-10-07T07:48:13.997708+00:00",
+    "innhentetTidspunkt": "2026-10-07T07:48:14.0167633+00:00",
     "rettskildeIder": [],
     "erLaast": false
   }

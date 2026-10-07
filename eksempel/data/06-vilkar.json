@@ -10,9 +10,9 @@
     "grunnlagstype": "Rettslig",
     "fastsettelsesmate": "Parametrisert",
     "rettskildeIder": [
-      "a10fc9c6-a378-4250-9639-da9b1677ccf4"
+      "6431ec7e-3c61-41f3-ad36-4bdec4dff1e0"
     ],
-    "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+    "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
     "standardTekst": [
       {
         "spraakKode": "nb",
@@ -25,7 +25,7 @@
     ]
   },
   "response": {
-    "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+    "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
     "navn": "Automatisk godkjenning av piperehabilitering",
     "kode": "PIPEREHAB_AUTOMATISK",
     "kodeverk": "DIBK_SJEKKLISTE_BYGG",
@@ -43,9 +43,9 @@
       }
     ],
     "rettskildeIder": [
-      "a10fc9c6-a378-4250-9639-da9b1677ccf4"
+      "6431ec7e-3c61-41f3-ad36-4bdec4dff1e0"
     ],
-    "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+    "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
     "cpsvTjenesteReferanse": null,
     "erLaast": false
   }

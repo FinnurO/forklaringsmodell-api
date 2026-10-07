@@ -5,11 +5,11 @@
   "request": null,
   "response": {
     "sak": {
-      "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
+      "sakId": "c019f847-2622-47b1-8a76-9aa03ba47442",
       "tittel": "Søknad om rehabilitering av skorstein – Eiganesveien 12, Stavanger",
       "status": "UnderBehandling",
-      "opprettet": "2026-10-04T19:55:42.1174818+00:00",
-      "sistEndret": "2026-10-04T19:55:42.1174818+00:00",
+      "opprettet": "2026-10-07T07:48:11.643558+00:00",
+      "sistEndret": "2026-10-07T07:48:11.643558+00:00",
       "cpsvTjenesteReferanse": null,
       "utlosendeHendelse": "Soknad"
     },
@@ -23,89 +23,47 @@
     "relasjoner": [],
     "faktum": [
       {
-        "faktumId": "36dbd527-f14a-4882-850a-2c8be6adb25d",
-        "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
-        "kildeId": "c7e89dda-0e51-46a8-a557-d49b467887ea",
+        "faktumId": "b329b05e-01a3-4795-9ff8-251b286658ff",
+        "sakId": "c019f847-2622-47b1-8a76-9aa03ba47442",
+        "kildeId": "55f939a6-249c-4b66-858e-2b2f32f4edcc",
         "type": "Raatt",
         "struktur": "Strukturert",
         "verdi": "Tiltaket er innvendig fôring (nytt skorsteinsrør) av eksisterende skorstein. Ingen endring av utvendige dimensjoner eller plassering.",
         "avledetFraFaktumId": null,
-        "innhentetTidspunkt": "2026-10-04T19:55:42.1979461+00:00",
+        "innhentetTidspunkt": "2026-10-07T07:48:11.8196968+00:00",
         "rettskildeIder": [],
         "erLaast": true
       },
       {
-        "faktumId": "abd9a9ac-e011-4cae-bcad-15609cc773fe",
-        "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
-        "kildeId": "392f8932-5654-4c37-bd8c-342d4075e6ba",
+        "faktumId": "7de15c8a-912c-4a5f-998e-3524f0434e25",
+        "sakId": "c019f847-2622-47b1-8a76-9aa03ba47442",
+        "kildeId": "5be21dd2-15cd-45b6-a97b-8108a128613c",
         "type": "Raatt",
         "struktur": "Strukturert",
         "verdi": "Ansvarlig foretak har gyldig sentral godkjenning for ansvarsrett, tiltaksklasse 1, for brannsikkerhet/ildsted og skorstein.",
         "avledetFraFaktumId": null,
-        "innhentetTidspunkt": "2026-10-04T19:55:42.2421491+00:00",
+        "innhentetTidspunkt": "2026-10-07T07:48:11.868502+00:00",
         "rettskildeIder": [],
         "erLaast": true
       },
       {
-        "faktumId": "60691f1b-9672-4103-8587-90b1a25e3bad",
-        "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
-        "kildeId": "c7e89dda-0e51-46a8-a557-d49b467887ea",
+        "faktumId": "35b89834-4054-4823-b3b2-04fb53dcdbcf",
+        "sakId": "c019f847-2622-47b1-8a76-9aa03ba47442",
+        "kildeId": "55f939a6-249c-4b66-858e-2b2f32f4edcc",
         "type": "Raatt",
         "struktur": "Strukturert",
         "verdi": "Bygningen er ikke registrert som fredet eller verneverdig i kommunens kulturminneregister.",
         "avledetFraFaktumId": null,
-        "innhentetTidspunkt": "2026-10-04T19:55:42.2575419+00:00",
+        "innhentetTidspunkt": "2026-10-07T07:48:11.8860954+00:00",
         "rettskildeIder": [],
         "erLaast": true
       }
     ],
     "vurderinger": [
       {
-        "vurderingId": "2a95bac0-0058-4acb-96a1-7c58bb854eb1",
-        "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
-        "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
-        "type": "Deterministisk",
-        "utfall": "Oppfylt",
-        "beregningsspor": "Bygningen er ikke registrert som fredet eller verneverdig => ingen tilleggsvilkår utløses",
-        "konfidens": null,
-        "eskalert": false,
-        "hovedhensyn": [],
-        "forkastedeUtfall": [],
-        "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
-        "forelderVurderingId": "eaa03ca4-dd00-4d34-8166-e8001908f53a",
-        "erLaast": true,
-        "faktumIder": [
-          "60691f1b-9672-4103-8587-90b1a25e3bad"
-        ],
-        "rettskildeIder": [],
-        "refererteVurderingIder": [],
-        "delvurderingIder": []
-      },
-      {
-        "vurderingId": "e1b24ffc-ea74-4985-80cf-b5a87c4ecda4",
-        "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
-        "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
-        "type": "Deterministisk",
-        "utfall": "Oppfylt",
-        "beregningsspor": "Tiltaket er begrenset til innvendig fôring, ingen utvendig dimensjonsendring => regnes som rehabilitering/reparasjon, ikke en ny installasjon, jf. § 20-1 bokstav f",
-        "konfidens": null,
-        "eskalert": false,
-        "hovedhensyn": [],
-        "forkastedeUtfall": [],
-        "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
-        "forelderVurderingId": "eaa03ca4-dd00-4d34-8166-e8001908f53a",
-        "erLaast": true,
-        "faktumIder": [
-          "36dbd527-f14a-4882-850a-2c8be6adb25d"
-        ],
-        "rettskildeIder": [],
-        "refererteVurderingIder": [],
-        "delvurderingIder": []
-      },
-      {
-        "vurderingId": "e8118f56-6772-4248-b79b-f5951e886cbf",
-        "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
-        "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+        "vurderingId": "7cb05304-2293-476d-84e8-e7128d95c624",
+        "sakId": "c019f847-2622-47b1-8a76-9aa03ba47442",
+        "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
         "type": "Deterministisk",
         "utfall": "Oppfylt",
         "beregningsspor": "Ansvarlig foretak har gyldig sentral godkjenning for ansvarsrett, tiltaksklasse 1, brannsikkerhet => vilkår oppfylt",
@@ -113,22 +71,43 @@
         "eskalert": false,
         "hovedhensyn": [],
         "forkastedeUtfall": [],
-        "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
-        "forelderVurderingId": "eaa03ca4-dd00-4d34-8166-e8001908f53a",
+        "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
+        "forelderVurderingId": "dce2863b-9bd8-4b81-be29-0a9fbb30f9f6",
         "erLaast": true,
         "faktumIder": [
-          "abd9a9ac-e011-4cae-bcad-15609cc773fe"
+          "7de15c8a-912c-4a5f-998e-3524f0434e25"
         ],
         "rettskildeIder": [
-          "2c741e06-f023-44c3-85e8-6532b217881b"
+          "b0374806-2edc-491f-a812-3ec94340ff55"
         ],
         "refererteVurderingIder": [],
         "delvurderingIder": []
       },
       {
-        "vurderingId": "eaa03ca4-dd00-4d34-8166-e8001908f53a",
-        "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
-        "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+        "vurderingId": "982f29b8-eb41-4af0-b62d-2ae1d9b3bc4c",
+        "sakId": "c019f847-2622-47b1-8a76-9aa03ba47442",
+        "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
+        "type": "Deterministisk",
+        "utfall": "Oppfylt",
+        "beregningsspor": "Bygningen er ikke registrert som fredet eller verneverdig => ingen tilleggsvilkår utløses",
+        "konfidens": null,
+        "eskalert": false,
+        "hovedhensyn": [],
+        "forkastedeUtfall": [],
+        "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
+        "forelderVurderingId": "dce2863b-9bd8-4b81-be29-0a9fbb30f9f6",
+        "erLaast": true,
+        "faktumIder": [
+          "35b89834-4054-4823-b3b2-04fb53dcdbcf"
+        ],
+        "rettskildeIder": [],
+        "refererteVurderingIder": [],
+        "delvurderingIder": []
+      },
+      {
+        "vurderingId": "dce2863b-9bd8-4b81-be29-0a9fbb30f9f6",
+        "sakId": "c019f847-2622-47b1-8a76-9aa03ba47442",
+        "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
         "type": "Deterministisk",
         "utfall": "Oppfylt",
         "beregningsspor": "Alle tre delvilkår i DiBKs sjekkliste for piperehabilitering er oppfylt => automatisk godkjent",
@@ -136,19 +115,40 @@
         "eskalert": false,
         "hovedhensyn": [],
         "forkastedeUtfall": [],
-        "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+        "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
         "forelderVurderingId": null,
         "erLaast": true,
         "faktumIder": [],
         "rettskildeIder": [
-          "a10fc9c6-a378-4250-9639-da9b1677ccf4"
+          "6431ec7e-3c61-41f3-ad36-4bdec4dff1e0"
         ],
         "refererteVurderingIder": [],
         "delvurderingIder": [
-          "2a95bac0-0058-4acb-96a1-7c58bb854eb1",
-          "e1b24ffc-ea74-4985-80cf-b5a87c4ecda4",
-          "e8118f56-6772-4248-b79b-f5951e886cbf"
+          "7cb05304-2293-476d-84e8-e7128d95c624",
+          "982f29b8-eb41-4af0-b62d-2ae1d9b3bc4c",
+          "df666e2a-42a3-45cf-a7f6-32765e511986"
         ]
+      },
+      {
+        "vurderingId": "df666e2a-42a3-45cf-a7f6-32765e511986",
+        "sakId": "c019f847-2622-47b1-8a76-9aa03ba47442",
+        "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
+        "type": "Deterministisk",
+        "utfall": "Oppfylt",
+        "beregningsspor": "Tiltaket er begrenset til innvendig fôring, ingen utvendig dimensjonsendring => regnes som rehabilitering/reparasjon, ikke en ny installasjon, jf. § 20-1 bokstav f",
+        "konfidens": null,
+        "eskalert": false,
+        "hovedhensyn": [],
+        "forkastedeUtfall": [],
+        "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
+        "forelderVurderingId": "dce2863b-9bd8-4b81-be29-0a9fbb30f9f6",
+        "erLaast": true,
+        "faktumIder": [
+          "b329b05e-01a3-4795-9ff8-251b286658ff"
+        ],
+        "rettskildeIder": [],
+        "refererteVurderingIder": [],
+        "delvurderingIder": []
       }
     ],
     "vurderingstre": [
@@ -156,53 +156,9 @@
         "delvurderinger": [
           {
             "delvurderinger": [],
-            "vurderingId": "2a95bac0-0058-4acb-96a1-7c58bb854eb1",
-            "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
-            "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
-            "type": "Deterministisk",
-            "utfall": "Oppfylt",
-            "beregningsspor": "Bygningen er ikke registrert som fredet eller verneverdig => ingen tilleggsvilkår utløses",
-            "konfidens": null,
-            "eskalert": false,
-            "hovedhensyn": [],
-            "forkastedeUtfall": [],
-            "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
-            "forelderVurderingId": "eaa03ca4-dd00-4d34-8166-e8001908f53a",
-            "erLaast": true,
-            "faktumIder": [
-              "60691f1b-9672-4103-8587-90b1a25e3bad"
-            ],
-            "rettskildeIder": [],
-            "refererteVurderingIder": [],
-            "delvurderingIder": []
-          },
-          {
-            "delvurderinger": [],
-            "vurderingId": "e1b24ffc-ea74-4985-80cf-b5a87c4ecda4",
-            "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
-            "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
-            "type": "Deterministisk",
-            "utfall": "Oppfylt",
-            "beregningsspor": "Tiltaket er begrenset til innvendig fôring, ingen utvendig dimensjonsendring => regnes som rehabilitering/reparasjon, ikke en ny installasjon, jf. § 20-1 bokstav f",
-            "konfidens": null,
-            "eskalert": false,
-            "hovedhensyn": [],
-            "forkastedeUtfall": [],
-            "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
-            "forelderVurderingId": "eaa03ca4-dd00-4d34-8166-e8001908f53a",
-            "erLaast": true,
-            "faktumIder": [
-              "36dbd527-f14a-4882-850a-2c8be6adb25d"
-            ],
-            "rettskildeIder": [],
-            "refererteVurderingIder": [],
-            "delvurderingIder": []
-          },
-          {
-            "delvurderinger": [],
-            "vurderingId": "e8118f56-6772-4248-b79b-f5951e886cbf",
-            "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
-            "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+            "vurderingId": "7cb05304-2293-476d-84e8-e7128d95c624",
+            "sakId": "c019f847-2622-47b1-8a76-9aa03ba47442",
+            "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
             "type": "Deterministisk",
             "utfall": "Oppfylt",
             "beregningsspor": "Ansvarlig foretak har gyldig sentral godkjenning for ansvarsrett, tiltaksklasse 1, brannsikkerhet => vilkår oppfylt",
@@ -210,22 +166,66 @@
             "eskalert": false,
             "hovedhensyn": [],
             "forkastedeUtfall": [],
-            "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
-            "forelderVurderingId": "eaa03ca4-dd00-4d34-8166-e8001908f53a",
+            "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
+            "forelderVurderingId": "dce2863b-9bd8-4b81-be29-0a9fbb30f9f6",
             "erLaast": true,
             "faktumIder": [
-              "abd9a9ac-e011-4cae-bcad-15609cc773fe"
+              "7de15c8a-912c-4a5f-998e-3524f0434e25"
             ],
             "rettskildeIder": [
-              "2c741e06-f023-44c3-85e8-6532b217881b"
+              "b0374806-2edc-491f-a812-3ec94340ff55"
             ],
+            "refererteVurderingIder": [],
+            "delvurderingIder": []
+          },
+          {
+            "delvurderinger": [],
+            "vurderingId": "982f29b8-eb41-4af0-b62d-2ae1d9b3bc4c",
+            "sakId": "c019f847-2622-47b1-8a76-9aa03ba47442",
+            "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
+            "type": "Deterministisk",
+            "utfall": "Oppfylt",
+            "beregningsspor": "Bygningen er ikke registrert som fredet eller verneverdig => ingen tilleggsvilkår utløses",
+            "konfidens": null,
+            "eskalert": false,
+            "hovedhensyn": [],
+            "forkastedeUtfall": [],
+            "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
+            "forelderVurderingId": "dce2863b-9bd8-4b81-be29-0a9fbb30f9f6",
+            "erLaast": true,
+            "faktumIder": [
+              "35b89834-4054-4823-b3b2-04fb53dcdbcf"
+            ],
+            "rettskildeIder": [],
+            "refererteVurderingIder": [],
+            "delvurderingIder": []
+          },
+          {
+            "delvurderinger": [],
+            "vurderingId": "df666e2a-42a3-45cf-a7f6-32765e511986",
+            "sakId": "c019f847-2622-47b1-8a76-9aa03ba47442",
+            "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
+            "type": "Deterministisk",
+            "utfall": "Oppfylt",
+            "beregningsspor": "Tiltaket er begrenset til innvendig fôring, ingen utvendig dimensjonsendring => regnes som rehabilitering/reparasjon, ikke en ny installasjon, jf. § 20-1 bokstav f",
+            "konfidens": null,
+            "eskalert": false,
+            "hovedhensyn": [],
+            "forkastedeUtfall": [],
+            "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
+            "forelderVurderingId": "dce2863b-9bd8-4b81-be29-0a9fbb30f9f6",
+            "erLaast": true,
+            "faktumIder": [
+              "b329b05e-01a3-4795-9ff8-251b286658ff"
+            ],
+            "rettskildeIder": [],
             "refererteVurderingIder": [],
             "delvurderingIder": []
           }
         ],
-        "vurderingId": "eaa03ca4-dd00-4d34-8166-e8001908f53a",
-        "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
-        "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+        "vurderingId": "dce2863b-9bd8-4b81-be29-0a9fbb30f9f6",
+        "sakId": "c019f847-2622-47b1-8a76-9aa03ba47442",
+        "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
         "type": "Deterministisk",
         "utfall": "Oppfylt",
         "beregningsspor": "Alle tre delvilkår i DiBKs sjekkliste for piperehabilitering er oppfylt => automatisk godkjent",
@@ -233,18 +233,18 @@
         "eskalert": false,
         "hovedhensyn": [],
         "forkastedeUtfall": [],
-        "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+        "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
         "forelderVurderingId": null,
         "erLaast": true,
         "faktumIder": [],
         "rettskildeIder": [
-          "a10fc9c6-a378-4250-9639-da9b1677ccf4"
+          "6431ec7e-3c61-41f3-ad36-4bdec4dff1e0"
         ],
         "refererteVurderingIder": [],
         "delvurderingIder": [
-          "2a95bac0-0058-4acb-96a1-7c58bb854eb1",
-          "e1b24ffc-ea74-4985-80cf-b5a87c4ecda4",
-          "e8118f56-6772-4248-b79b-f5951e886cbf"
+          "7cb05304-2293-476d-84e8-e7128d95c624",
+          "982f29b8-eb41-4af0-b62d-2ae1d9b3bc4c",
+          "df666e2a-42a3-45cf-a7f6-32765e511986"
         ]
       }
     ],
@@ -252,58 +252,58 @@
     "vedtak": [
       {
         "vedtak": {
-          "vedtakId": "d2ca99fa-2518-48b8-b8ae-b733071b87b9",
-          "sakId": "fd836526-5387-463d-9d46-ce45c79c441b",
-          "tidspunkt": "2026-10-04T19:55:43.0417664+00:00",
+          "vedtakId": "fed93d5a-974d-4fa4-b7d0-f54dfaf6f010",
+          "sakId": "c019f847-2622-47b1-8a76-9aa03ba47442",
+          "tidspunkt": "2026-10-07T07:48:13.0558346+00:00",
           "utfall": "Tillatelse til rehabilitering av skorstein innvilget",
           "automatiseringsGrad": "Helautomatisert"
         },
         "forklaringslogg": {
-          "loggId": "63f6aa2f-6210-4949-ab66-204954f6abce",
-          "vedtakId": "d2ca99fa-2518-48b8-b8ae-b733071b87b9",
+          "loggId": "7809f091-0231-49d1-8a62-d1ce79046dde",
+          "vedtakId": "fed93d5a-974d-4fa4-b7d0-f54dfaf6f010",
           "oppforinger": [
             {
-              "oppforingId": "4be74287-7977-4729-96d0-66695cfc9282",
+              "oppforingId": "01556e62-0a1f-40cb-973b-6f34d16c0925",
+              "type": "Vurdering",
+              "referanseId": "982f29b8-eb41-4af0-b62d-2ae1d9b3bc4c"
+            },
+            {
+              "oppforingId": "1cd47105-bf83-435b-ad24-027bfbc9e6aa",
               "type": "Faktum",
-              "referanseId": "60691f1b-9672-4103-8587-90b1a25e3bad"
+              "referanseId": "b329b05e-01a3-4795-9ff8-251b286658ff"
             },
             {
-              "oppforingId": "8a733db7-f718-422b-bb5f-d5888ede780f",
-              "type": "Vurdering",
-              "referanseId": "e1b24ffc-ea74-4985-80cf-b5a87c4ecda4"
-            },
-            {
-              "oppforingId": "98560a0a-f5a4-4199-b83f-1463c1a30fc7",
-              "type": "Vurdering",
-              "referanseId": "2a95bac0-0058-4acb-96a1-7c58bb854eb1"
-            },
-            {
-              "oppforingId": "a009bf19-467f-4ee0-ab90-383ac4b24016",
-              "type": "Vurdering",
-              "referanseId": "eaa03ca4-dd00-4d34-8166-e8001908f53a"
-            },
-            {
-              "oppforingId": "ad638255-b4c5-462d-b0af-e5f305883e29",
+              "oppforingId": "2ec611fd-8e54-4618-8010-225b75a46f49",
               "type": "Faktum",
-              "referanseId": "abd9a9ac-e011-4cae-bcad-15609cc773fe"
+              "referanseId": "7de15c8a-912c-4a5f-998e-3524f0434e25"
             },
             {
-              "oppforingId": "bb40f124-97ac-4c07-9f6b-2f35160559f9",
+              "oppforingId": "33b59cc8-ba94-4e97-895a-63451ec6ff7f",
               "type": "Faktum",
-              "referanseId": "36dbd527-f14a-4882-850a-2c8be6adb25d"
+              "referanseId": "35b89834-4054-4823-b3b2-04fb53dcdbcf"
             },
             {
-              "oppforingId": "df060273-5ea3-44af-8a9e-3a36f7c59e37",
+              "oppforingId": "bdaef1d6-86c4-4e8d-9183-ee2dc551fb85",
               "type": "Vurdering",
-              "referanseId": "e8118f56-6772-4248-b79b-f5951e886cbf"
+              "referanseId": "dce2863b-9bd8-4b81-be29-0a9fbb30f9f6"
+            },
+            {
+              "oppforingId": "ebb3b1c3-660c-49a0-9799-1faf8dc93a4c",
+              "type": "Vurdering",
+              "referanseId": "7cb05304-2293-476d-84e8-e7128d95c624"
+            },
+            {
+              "oppforingId": "f5a9f74f-915d-4bdc-a3dd-bf547ba85413",
+              "type": "Vurdering",
+              "referanseId": "df666e2a-42a3-45cf-a7f6-32765e511986"
             }
           ]
         },
         "virkninger": [
           {
-            "virkningId": "217a2551-bea1-444a-959e-df26d4ac8c0f",
-            "vedtakId": "d2ca99fa-2518-48b8-b8ae-b733071b87b9",
-            "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+            "virkningId": "5495e137-8396-41ab-939a-416b1624ba3e",
+            "vedtakId": "fed93d5a-974d-4fa4-b7d0-f54dfaf6f010",
+            "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
             "type": "Tillatelse",
             "fastsettelsesmate": "Parametrisert",
             "beskrivelse": [
@@ -324,10 +324,10 @@
             "rapporteringsFrekvens": null,
             "avledetFraVirkningId": null,
             "vurderingIder": [
-              "eaa03ca4-dd00-4d34-8166-e8001908f53a"
+              "dce2863b-9bd8-4b81-be29-0a9fbb30f9f6"
             ],
             "faktumIder": [
-              "36dbd527-f14a-4882-850a-2c8be6adb25d"
+              "b329b05e-01a3-4795-9ff8-251b286658ff"
             ]
           }
         ]
@@ -338,23 +338,23 @@
     "referansedata": {
       "kilder": [
         {
-          "kildeId": "c7e89dda-0e51-46a8-a557-d49b467887ea",
+          "kildeId": "55f939a6-249c-4b66-858e-2b2f32f4edcc",
           "navn": "eByggesøk Proff (søknadsportal)",
           "type": "Soknad",
           "autoritativ": false,
           "rettskildeIder": [
-            "a10fc9c6-a378-4250-9639-da9b1677ccf4"
+            "6431ec7e-3c61-41f3-ad36-4bdec4dff1e0"
           ],
           "cccevReferanse": null,
           "erLaast": true
         },
         {
-          "kildeId": "392f8932-5654-4c37-bd8c-342d4075e6ba",
+          "kildeId": "5be21dd2-15cd-45b6-a97b-8108a128613c",
           "navn": "Sentral godkjenning for ansvarsrett (DiBK-registeret)",
           "type": "AutoritativtRegister",
           "autoritativ": true,
           "rettskildeIder": [
-            "2c741e06-f023-44c3-85e8-6532b217881b"
+            "b0374806-2edc-491f-a812-3ec94340ff55"
           ],
           "cccevReferanse": "https://www.dibk.no/sentral-godkjenning",
           "erLaast": true
@@ -362,14 +362,14 @@
       ],
       "rettskilder": [
         {
-          "rettskildeId": "a10fc9c6-a378-4250-9639-da9b1677ccf4",
+          "rettskildeId": "6431ec7e-3c61-41f3-ad36-4bdec4dff1e0",
           "type": "Lov",
           "henvisning": "plan- og bygningsloven § 20-1 bokstav f (rehabilitering/endring av skorstein er et søknadspliktig tiltak)",
           "versjonDato": "2026-01-01T00:00:00+00:00",
           "eliReferanse": "https://lovdata.no/lov/2008-06-27-71"
         },
         {
-          "rettskildeId": "2c741e06-f023-44c3-85e8-6532b217881b",
+          "rettskildeId": "b0374806-2edc-491f-a812-3ec94340ff55",
           "type": "Lov",
           "henvisning": "plan- og bygningsloven § 23-3 (ansvarlig søker) jf. § 22-1 (sentral godkjenning for ansvarsrett)",
           "versjonDato": "2026-01-01T00:00:00+00:00",
@@ -378,9 +378,9 @@
       ],
       "regler": [
         {
-          "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+          "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
           "rettskildeIder": [
-            "a10fc9c6-a378-4250-9639-da9b1677ccf4"
+            "6431ec7e-3c61-41f3-ad36-4bdec4dff1e0"
           ],
           "teknologi": "DiBK nasjonal sjekkliste (DMN-aktig regelsett i Elements eByggesak)",
           "type": "Deterministisk",
@@ -391,7 +391,7 @@
       ],
       "vilkar": [
         {
-          "vilkarId": "c809f0e4-9d89-44f4-ba07-bc5fc2c45f21",
+          "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
           "navn": "Automatisk godkjenning av piperehabilitering",
           "kode": "PIPEREHAB_AUTOMATISK",
           "kodeverk": "DIBK_SJEKKLISTE_BYGG",
@@ -409,9 +409,9 @@
             }
           ],
           "rettskildeIder": [
-            "a10fc9c6-a378-4250-9639-da9b1677ccf4"
+            "6431ec7e-3c61-41f3-ad36-4bdec4dff1e0"
           ],
-          "regelId": "0db36b04-3b17-4f8f-9e41-ea06f751f1d0",
+          "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
           "cpsvTjenesteReferanse": null,
           "erLaast": true
         }

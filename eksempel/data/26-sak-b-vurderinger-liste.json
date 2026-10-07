@@ -1,0 +1,98 @@
+{
+  "method": "GET",
+  "path": "/api/saker/{sakId}/vurderinger",
+  "status": 200,
+  "request": null,
+  "response": [
+    {
+      "vurderingId": "219b8c3b-1b83-4272-842e-2e1a47fa5982",
+      "sakId": "79805baa-3a6d-42fa-b3ae-639e5a9f0acb",
+      "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
+      "type": "Deterministisk",
+      "utfall": "IkkeOppfylt",
+      "beregningsspor": "Foretakets sentrale godkjenning dekker ikke tiltaksklassen/kategorien dette tiltaket krever => kan ikke automatisk bekreftes",
+      "konfidens": null,
+      "eskalert": true,
+      "hovedhensyn": [],
+      "forkastedeUtfall": [],
+      "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
+      "forelderVurderingId": "8cb1269a-5960-4317-974b-93849a3aebc4",
+      "erLaast": false,
+      "faktumIder": [
+        "e99fa292-485c-451b-875d-3996837ed4ac"
+      ],
+      "rettskildeIder": [
+        "b0374806-2edc-491f-a812-3ec94340ff55"
+      ],
+      "refererteVurderingIder": [],
+      "delvurderingIder": []
+    },
+    {
+      "vurderingId": "43a38b06-59e3-45ea-88f3-3b1640651e20",
+      "sakId": "79805baa-3a6d-42fa-b3ae-639e5a9f0acb",
+      "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
+      "type": "Deterministisk",
+      "utfall": "Oppfylt",
+      "beregningsspor": "Bygningen er ikke registrert som fredet eller verneverdig => ingen tilleggsvilkår utløses",
+      "konfidens": null,
+      "eskalert": false,
+      "hovedhensyn": [],
+      "forkastedeUtfall": [],
+      "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
+      "forelderVurderingId": "8cb1269a-5960-4317-974b-93849a3aebc4",
+      "erLaast": false,
+      "faktumIder": [
+        "f3744581-34e6-48d6-b31b-82a791004efd"
+      ],
+      "rettskildeIder": [],
+      "refererteVurderingIder": [],
+      "delvurderingIder": []
+    },
+    {
+      "vurderingId": "8cb1269a-5960-4317-974b-93849a3aebc4",
+      "sakId": "79805baa-3a6d-42fa-b3ae-639e5a9f0acb",
+      "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
+      "type": "Deterministisk",
+      "utfall": "Uavklart",
+      "beregningsspor": "Ett av tre delvilkår i DiBKs sjekkliste (ansvarsrett) kunne ikke bekreftes automatisk => saken rutes til ordinær manuell saksbehandling",
+      "konfidens": null,
+      "eskalert": true,
+      "hovedhensyn": [],
+      "forkastedeUtfall": [],
+      "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
+      "forelderVurderingId": null,
+      "erLaast": false,
+      "faktumIder": [],
+      "rettskildeIder": [
+        "6431ec7e-3c61-41f3-ad36-4bdec4dff1e0"
+      ],
+      "refererteVurderingIder": [],
+      "delvurderingIder": [
+        "219b8c3b-1b83-4272-842e-2e1a47fa5982",
+        "43a38b06-59e3-45ea-88f3-3b1640651e20",
+        "ea48bbbd-0a29-4332-af76-9d11ecf10927"
+      ]
+    },
+    {
+      "vurderingId": "ea48bbbd-0a29-4332-af76-9d11ecf10927",
+      "sakId": "79805baa-3a6d-42fa-b3ae-639e5a9f0acb",
+      "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
+      "type": "Deterministisk",
+      "utfall": "Oppfylt",
+      "beregningsspor": "Tiltaket er begrenset til innvendig fôring, ingen utvendig dimensjonsendring => regnes som rehabilitering/reparasjon",
+      "konfidens": null,
+      "eskalert": false,
+      "hovedhensyn": [],
+      "forkastedeUtfall": [],
+      "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
+      "forelderVurderingId": "8cb1269a-5960-4317-974b-93849a3aebc4",
+      "erLaast": false,
+      "faktumIder": [
+        "37b29d8c-9329-42c8-9578-20d5c087bd41"
+      ],
+      "rettskildeIder": [],
+      "refererteVurderingIder": [],
+      "delvurderingIder": []
+    }
+  ]
+}

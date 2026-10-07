@@ -60,7 +60,7 @@
     "method": "POST",
     "path": "/api/saker",
     "status": 201,
-    "bytes": 610
+    "bytes": 608
   },
   {
     "file": "08-sak-a-faktum-omfang.json",
@@ -78,7 +78,7 @@
     "method": "POST",
     "path": "/api/saker/{sakId}/faktum",
     "status": 201,
-    "bytes": 864
+    "bytes": 863
   },
   {
     "file": "10-sak-a-faktum-fredning.json",
@@ -141,7 +141,7 @@
     "method": "GET",
     "path": "/api/vedtak/{vedtakId}/forklaring",
     "status": 200,
-    "bytes": 15691
+    "bytes": 15690
   },
   {
     "file": "17-sak-a-sak-forklaring.json",
@@ -150,7 +150,7 @@
     "method": "GET",
     "path": "/api/saker/{sakId}/forklaring",
     "status": 200,
-    "bytes": 16624
+    "bytes": 16621
   },
   {
     "file": "18-sak-b-opprett.json",
@@ -168,7 +168,7 @@
     "method": "POST",
     "path": "/api/saker/{sakId}/faktum",
     "status": 201,
-    "bytes": 810
+    "bytes": 809
   },
   {
     "file": "20-sak-b-faktum-ansvarsrett.json",
@@ -177,10 +177,19 @@
     "method": "POST",
     "path": "/api/saker/{sakId}/faktum",
     "status": 201,
-    "bytes": 937
+    "bytes": 938
   },
   {
-    "file": "21-sak-b-vurdering-rot.json",
+    "file": "21-sak-b-faktum-fredning.json",
+    "group": "Sak B – rutet til manuell behandling",
+    "desc": "Faktum: fredningsstatus",
+    "method": "POST",
+    "path": "/api/saker/{sakId}/faktum",
+    "status": 201,
+    "bytes": 798
+  },
+  {
+    "file": "22-sak-b-vurdering-rot.json",
     "group": "Sak B – rutet til manuell behandling",
     "desc": "Vurdering: rot, Uavklart og eskalert",
     "method": "POST",
@@ -189,7 +198,7 @@
     "bytes": 1304
   },
   {
-    "file": "22-sak-b-delvurdering-ansvarsrett.json",
+    "file": "23-sak-b-delvurdering-ansvarsrett.json",
     "group": "Sak B – rutet til manuell behandling",
     "desc": "Delvurdering: ansvarsrett, IkkeOppfylt og eskalert",
     "method": "POST",
@@ -198,7 +207,7 @@
     "bytes": 1507
   },
   {
-    "file": "23-sak-b-delvurdering-omfang.json",
+    "file": "24-sak-b-delvurdering-omfang.json",
     "group": "Sak B – rutet til manuell behandling",
     "desc": "Delvurdering: tiltakets omfang",
     "method": "POST",
@@ -207,30 +216,39 @@
     "bytes": 1361
   },
   {
-    "file": "24-sak-b-vurderinger-liste.json",
+    "file": "25-sak-b-delvurdering-fredning.json",
+    "group": "Sak B – rutet til manuell behandling",
+    "desc": "Delvurdering: fredning",
+    "method": "POST",
+    "path": "/api/saker/{sakId}/vurderinger",
+    "status": 201,
+    "bytes": 1309
+  },
+  {
+    "file": "26-sak-b-vurderinger-liste.json",
     "group": "Sak B – rutet til manuell behandling",
     "desc": "List vurderingene i saken (ingen vedtak finnes ennå)",
     "method": "GET",
     "path": "/api/saker/{sakId}/vurderinger",
     "status": 200,
-    "bytes": 2725
+    "bytes": 3564
   },
   {
-    "file": "25-sak-b-faktum-liste.json",
+    "file": "27-sak-b-faktum-liste.json",
     "group": "Sak B – rutet til manuell behandling",
     "desc": "List faktum i saken",
     "method": "GET",
     "path": "/api/saker/{sakId}/faktum",
     "status": 200,
-    "bytes": 1188
+    "bytes": 1686
   },
   {
-    "file": "26-sak-b-sak-forklaring.json",
+    "file": "28-sak-b-sak-forklaring.json",
     "group": "Sak B – rutet til manuell behandling",
     "desc": "Hent hele saken samlet: ingen vedtak ennå, men alt er med",
     "method": "GET",
     "path": "/api/saker/{sakId}/forklaring",
     "status": 200,
-    "bytes": 11149
+    "bytes": 13555
   }
 ]

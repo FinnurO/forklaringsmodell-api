@@ -8,16 +8,16 @@
     "autoritativ": true,
     "cccevReferanse": "https://www.dibk.no/sentral-godkjenning",
     "rettskildeIder": [
-      "2c741e06-f023-44c3-85e8-6532b217881b"
+      "b0374806-2edc-491f-a812-3ec94340ff55"
     ]
   },
   "response": {
-    "kildeId": "392f8932-5654-4c37-bd8c-342d4075e6ba",
+    "kildeId": "5be21dd2-15cd-45b6-a97b-8108a128613c",
     "navn": "Sentral godkjenning for ansvarsrett (DiBK-registeret)",
     "type": "AutoritativtRegister",
     "autoritativ": true,
     "rettskildeIder": [
-      "2c741e06-f023-44c3-85e8-6532b217881b"
+      "b0374806-2edc-491f-a812-3ec94340ff55"
     ],
     "cccevReferanse": "https://www.dibk.no/sentral-godkjenning",
     "erLaast": false

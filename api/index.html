@@ -64,6 +64,7 @@
       <a href="#endepunkter" data-anchor="endepunkter">Endepunkter</a>
       <a href="#flyt" data-anchor="flyt">Typisk flyt</a>
       <a href="#samlet-forklaring" data-anchor="samlet-forklaring">Samlet forklaring</a>
+      <a href="#lesevisning" data-anchor="lesevisning">Lesevisning</a>
       <a href="#konfigurasjon" data-anchor="konfigurasjon">Konfigurasjon</a>
       <a href="#kodeorganisering" data-anchor="kodeorganisering">Kodeorganisering</a>
     </nav>
@@ -451,7 +452,7 @@ dotnet run --project src/Forklaringsmodell.Api</code></pre>
         <span class="section-num">5</span>
         <h2>Samlet forklaring: ett kall</h2>
         <p class="intro">For å vise en sak komplett trenger du ikke sette den sammen av mange kall. To endepunkter gir alt i ett svar, og de svarer på to ulike spørsmål.</p>
-        <p>Se ekte svar: <a href="../eksempel/data/17-sak-a-sak-forklaring.json" target="_blank" rel="noopener">hele Sak A</a> og <a href="../eksempel/data/26-sak-b-sak-forklaring.json" target="_blank" rel="noopener">hele Sak B (uten vedtak)</a> fra <code>GET /api/saker/{sakId}/forklaring</code>, og <a href="../eksempel/data/16-sak-a-forklaring.json" target="_blank" rel="noopener">vedtak-forklaringen for Sak A</a>. Alle tre kan også leses og lastes ned på <a href="../eksempel/#json-filer">eksempelsiden</a>.</p>
+        <p>Se ekte svar: <a href="../eksempel/data/17-sak-a-sak-forklaring.json" target="_blank" rel="noopener">hele Sak A</a> og <a href="../eksempel/data/28-sak-b-sak-forklaring.json" target="_blank" rel="noopener">hele Sak B (uten vedtak)</a> fra <code>GET /api/saker/{sakId}/forklaring</code>, og <a href="../eksempel/data/16-sak-a-forklaring.json" target="_blank" rel="noopener">vedtak-forklaringen for Sak A</a>. Alle tre kan også leses og lastes ned på <a href="../eksempel/#json-filer">eksempelsiden</a>.</p>
 
         <h3>Hvilket endepunkt skal jeg bruke?</h3>
         <div class="table-scroll">
@@ -517,9 +518,53 @@ dotnet run --project src/Forklaringsmodell.Api</code></pre>
         </div>
       </section>
 
-      <!-- ===================== 6. KONFIGURASJON ===================== -->
-      <section id="konfigurasjon">
+      <!-- ===================== 6. LESEVISNING ===================== -->
+      <section id="lesevisning">
         <span class="section-num">6</span>
+        <h2>Lesevisning: fra JSON til lesbar modell</h2>
+        <p class="intro">Den samlede forklaringen er laget for å leses av maskiner. En liten parser gjør den om til en standard, lesbar visning, uten at du skriver tekst per sak.</p>
+
+        <h3>Hva det er</h3>
+        <p><code>forklaring-visning.mjs</code> er en ren ES-modul uten avhengigheter og uten DOM, og den kjører likt i nettleser og Node. Den tar svaret fra <code>GET /api/saker/{sakId}/forklaring</code> eller <code>GET /api/vedtak/{id}/forklaring</code> og gjør det i tre steg:</p>
+        <ul>
+          <li><strong><code>normaliser</code></strong> gir samme form uansett endepunkt.</li>
+          <li><strong><code>byggVisning</code></strong> bygger en visningsmodell: tittel, tall, vedtak, vurderingene som tre, faktum, partsmedvirkning, kryss-sak, referanser og merknader.</li>
+          <li><strong><code>tilMarkdown</code>, <code>tilTekst</code>, <code>tilHtml</code> og <code>tilHtmlDokument</code></strong> formaterer visningsmodellen.</li>
+        </ul>
+        <p>All tekst som vises kommer fra svaret. Modulen skriver selv bare etiketter for modellens enumer og merknader som regnes ut av strukturen, for eksempel at saken ikke har noe vedtak, at vurderinger er eskalert eller at en skjønnsvurdering mangler hovedhensyn. HTML-utdata escapes.</p>
+
+        <h3>Bruk i nettleser</h3>
+        <span class="code-label">Hent svaret, bygg visningen og sett den inn på siden</span>
+        <pre class="code"><code>import { byggVisning, tilHtml, visningCss } from '../assets/js/forklaring-visning.mjs';
+
+const stil = document.createElement('style');
+stil.textContent = visningCss;
+document.head.append(stil);
+
+const svar = await fetch('/api/saker/&lt;sakId&gt;/forklaring').then((r) =&gt; r.json());
+document.querySelector('#visning').innerHTML = tilHtml(byggVisning(svar));</code></pre>
+        <p><code>tilHtml</code> gir et fragment med klasser som starter på <code>fv-</code>, og <code>visningCss</code> gir stilarket. Det bruker designsystemets tokens når de finnes og nøytrale verdier ellers.</p>
+
+        <h3>Bruk fra kommandolinjen</h3>
+        <span class="code-label">Fra rotmappen i repoet, med Node 20 eller nyere</span>
+        <pre class="code"><code># Rett fra et kjørende API
+node visning/cli.mjs --url http://localhost:5013/api/saker/&lt;sakId&gt;/forklaring
+
+# Pipe fra curl, og skriv en frittstående HTML-fil
+curl -s http://localhost:5013/api/saker/&lt;sakId&gt;/forklaring | node visning/cli.mjs - -f dokument -o sak.html</code></pre>
+        <p>Formatene er <code>md</code> (standard), <code>txt</code>, <code>html</code>, <code>dokument</code> og <code>json</code> (visningsmodellen). Språk velges med <code>--sprak nb|nn</code>, og <code>--en-sprak</code> utelater de øvrige språkvariantene.</p>
+
+        <h3>Les mer</h3>
+        <ul>
+          <li><a href="https://github.com/FinnurO/forklaringsmodell-api/blob/master/site/assets/js/forklaring-visning.mjs" target="_blank" rel="noopener">Modulen på GitHub</a></li>
+          <li><a href="https://github.com/FinnurO/forklaringsmodell-api/blob/master/visning/README.md" target="_blank" rel="noopener">visning/README.md</a>: bruk, visningsmodellens felter, merknadene og hvordan du utvider med nye formater</li>
+          <li><a href="../eksempel/#parseren">Eksempelsiden</a>, som tegnes av parseren</li>
+        </ul>
+      </section>
+
+      <!-- ===================== 7. KONFIGURASJON ===================== -->
+      <section id="konfigurasjon">
+        <span class="section-num">7</span>
         <h2>Konfigurasjon</h2>
         <p class="intro">Terskelen for når en KI-vurdering skal eskaleres er konfigurasjon, ikke en hardkodet konstant. I tillegg styrer en connection string hvilken database som brukes.</p>
 
@@ -580,9 +625,9 @@ dotnet run --project src/Forklaringsmodell.Api</code></pre>
         <p>Mangler verdien, brukes den samme SQLite-adressen som reserve. Leverandøren er satt til SQLite i <code>Program.cs</code>. For en annen database må du bytte EF Core-leverandør og lage nye migrasjoner.</p>
       </section>
 
-      <!-- ===================== 7. KODEORGANISERING ===================== -->
+      <!-- ===================== 8. KODEORGANISERING ===================== -->
       <section id="kodeorganisering">
-        <span class="section-num">7</span>
+        <span class="section-num">8</span>
         <h2>Kodeorganisering</h2>
         <p class="intro">Fire lag i <code>src/</code> og et testprosjekt i <code>tests/</code>. Avhengighetene peker innover: Api og Infrastructure bruker Application, og Application bruker Domain.</p>
         <div class="table-scroll">

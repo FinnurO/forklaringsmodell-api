@@ -9,14 +9,14 @@
     "beregningsspor": "Bygningen er ikke registrert som fredet eller verneverdig => ingen tilleggsvilkår utløses",
     "eskalert": false,
     "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
-    "forelderVurderingId": "dce2863b-9bd8-4b81-be29-0a9fbb30f9f6",
+    "forelderVurderingId": "8cb1269a-5960-4317-974b-93849a3aebc4",
     "faktumIder": [
-      "35b89834-4054-4823-b3b2-04fb53dcdbcf"
+      "f3744581-34e6-48d6-b31b-82a791004efd"
     ]
   },
   "response": {
-    "vurderingId": "982f29b8-eb41-4af0-b62d-2ae1d9b3bc4c",
-    "sakId": "c019f847-2622-47b1-8a76-9aa03ba47442",
+    "vurderingId": "43a38b06-59e3-45ea-88f3-3b1640651e20",
+    "sakId": "79805baa-3a6d-42fa-b3ae-639e5a9f0acb",
     "regelId": "d28223fb-fad8-4107-bedd-b22e938a4db9",
     "type": "Deterministisk",
     "utfall": "Oppfylt",
@@ -26,10 +26,10 @@
     "hovedhensyn": [],
     "forkastedeUtfall": [],
     "vilkarId": "edd70119-f3dd-498e-9fc7-9ec6f64c55f9",
-    "forelderVurderingId": "dce2863b-9bd8-4b81-be29-0a9fbb30f9f6",
+    "forelderVurderingId": "8cb1269a-5960-4317-974b-93849a3aebc4",
     "erLaast": false,
     "faktumIder": [
-      "35b89834-4054-4823-b3b2-04fb53dcdbcf"
+      "f3744581-34e6-48d6-b31b-82a791004efd"
     ],
     "rettskildeIder": [],
     "refererteVurderingIder": [],

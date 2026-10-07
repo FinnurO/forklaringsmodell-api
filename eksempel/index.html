@@ -28,24 +28,20 @@
   .case-banner > :last-child{ margin-bottom:0; }
   .case-banner.is-ok{ border-left:4px solid var(--ds-color-success-border-default, var(--ds-color-success-base-default)); }
   .case-banner.is-warn{ border-left:4px solid var(--ds-color-warning-border-default, var(--ds-color-warning-base-default)); }
-  .virkning-box{ border:1px dashed var(--ds-color-border-default); border-radius:var(--ds-border-radius-lg); padding:var(--ds-size-4) var(--ds-size-5); margin:var(--ds-size-5) 0; }
-  .virkning-box h3{ margin:0 0 var(--ds-size-2); font-size:var(--ds-body-md-font-size); }
-  .virkning-box > :last-child{ margin-bottom:0; }
-  .dnode__lbl{ font-size:var(--ds-body-xs-font-size); font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--ds-color-text-subtle); }
   .sak-id{ font-family:var(--site-font-mono); font-size:var(--ds-body-xs-font-size); color:var(--ds-color-text-subtle); overflow-wrap:anywhere; }
-  .guide-article .dtree{ margin-bottom:var(--ds-size-5); }
   .guide-article .rule-card .n{ font-size:var(--ds-body-sm-font-size); }
-  .guide-article ul.plain-list{ margin:0 0 var(--ds-size-4); }
   .guide-layout > *{ min-width:0; }
+  .guide-article h2{ overflow-wrap:anywhere; }
   .seg{ display:flex; flex-wrap:wrap; gap:var(--ds-size-2); margin:0 0 var(--ds-size-5); }
   .sf h3{ margin:var(--ds-size-8) 0 var(--ds-size-2); font-size:var(--ds-body-lg-font-size); }
   .sf h3:first-child{ margin-top:0; }
   .sf p.hint{ margin:0 0 var(--ds-size-4); font-size:var(--ds-body-sm-font-size); color:var(--ds-color-text-subtle); }
-  .sf h4{ margin:var(--ds-size-4) 0 var(--ds-size-1); font-size:var(--ds-body-sm-font-size); }
-  .sf ul.plain-list{ padding-left:1.1em; font-size:var(--ds-body-sm-font-size); display:flex; flex-direction:column; gap:var(--ds-size-1); }
-  .refcols{ display:grid; grid-template-columns:repeat(auto-fit, minmax(16rem,1fr)); gap:var(--ds-size-5); }
   .sf table td:first-child{ white-space:nowrap; }
-  @media (max-width: 560px){ .dchildren{ margin-left:var(--ds-size-2); padding-left:var(--ds-size-3); } .dnode{ padding:var(--ds-size-3) var(--ds-size-4); } }
+  .tag-flex{ display:flex; flex-wrap:wrap; gap:var(--ds-size-2); margin-bottom:var(--ds-size-4); }
+  .vilkar__navn{ margin:0 0 var(--ds-size-2); font-size:var(--ds-body-lg-font-size); }
+  /* Saksoverskriften står allerede som seksjonstittel; lesevisningens egen tittel utelates i seksjonene 4 og 5. */
+  #sak-a .fv-topp h2, #sak-b .fv-topp h2{ display:none; }
+  .fv{ max-width:none; }
 </style>
 </head>
 <body>
@@ -91,9 +87,10 @@
         <a href="#bakgrunn" data-anchor="bakgrunn">Bakgrunn</a>
         <a href="#regler" data-anchor="regler">Reglene vi utledet</a>
         <a href="#vilkaret" data-anchor="vilkaret">Vilkåret</a>
-        <a href="#sak-a" data-anchor="sak-a">Sak A: godkjent</a>
-        <a href="#sak-b" data-anchor="sak-b">Sak B: manuell</a>
+        <a href="#sak-a" data-anchor="sak-a">Sak A</a>
+        <a href="#sak-b" data-anchor="sak-b">Sak B</a>
         <a href="#hele-saken" data-anchor="hele-saken">Hele saken i ett kall</a>
+        <a href="#parseren" data-anchor="parseren">Parseren</a>
         <a href="#lese-treet" data-anchor="lese-treet">Slik leser du treet</a>
         <a href="#json-filer" data-anchor="json-filer">De faktiske JSON-filene</a>
         <a href="#kjor-selv" data-anchor="kjor-selv">Kjør det selv</a>
@@ -152,41 +149,68 @@
         <section id="vilkaret">
           <span class="section-num">3 · Vilkåret</span>
           <h2>Én oppføring i vilkårskatalogen</h2>
-          <p class="intro">Begge sakene vurderes mot samme <code>Vilkar</code>. Det er en gjenbrukbar katalogoppføring, ikke noe som hører til én sak.</p>
+          <p class="intro">Begge sakene vurderes mot samme <code>Vilkar</code>. Det er en gjenbrukbar katalogoppføring, ikke noe som hører til én sak. Oppføringen under er lest ut av <code>referansedata</code> i sak-forklaringen.</p>
           <div class="ds-card" style="margin-bottom:var(--ds-size-4);">
-            <div id="vilkar-box"></div>
+            <div id="vilkar-box"><p class="footnote">Laster vilkåret …</p></div>
           </div>
-          <div id="regel-box"></div>
+          <p class="footnote">Regelen er lagret som en egen rad med peker til selve regelartefaktet. Vi har ikke lest sjekklistene bak lenken og påstår ikke at oppføringen speiler dem. Innholdet i vilkåret er vår utledning.</p>
         </section>
 
         <section id="sak-a">
           <span class="section-num">4 · Sak A</span>
-          <h2>Godkjent automatisk</h2>
+          <h2>Sak A</h2>
           <p class="intro" id="a-intro"></p>
-          <div id="a-root"></div>
+          <div id="a-root"><p class="footnote">Laster saken …</p></div>
         </section>
 
         <section id="sak-b">
           <span class="section-num">5 · Sak B</span>
-          <h2>Rutet til manuell behandling</h2>
+          <h2>Sak B</h2>
           <p class="intro" id="b-intro"></p>
-          <div id="b-root"></div>
+          <div id="b-root"><p class="footnote">Laster saken …</p></div>
         </section>
 
         <section id="hele-saken">
           <span class="section-num">6 · Hele saken i ett kall</span>
           <h2>Sak-forklaringen</h2>
-          <p class="intro">Seksjonene over viser sakene stykkevis. Med <code>GET /api/saker/{sakId}/forklaring</code> får en visning alt i ett svar, også når saken ikke har noe vedtak. Under er svaret slik API-et leverte det. Alt som vises er tegnet av akkurat den ene filen, uten andre oppslag.</p>
+          <p class="intro">Sak A og Sak B over er hver tegnet fra ett eneste svar fra <code>GET /api/saker/{sakId}/forklaring</code>: en visning får alt i ett kall, også når saken ikke har noe vedtak, uten andre oppslag. Her ser du svaret fra innsiden, og den samme visningsmodellen i fire utdataformater.</p>
           <div class="seg" role="group" aria-label="Velg sak" id="sf-tabs">
             <button type="button" class="ds-button" data-sak="a" data-color="accent" aria-pressed="true">Sak A: med vedtak</button>
             <button type="button" class="ds-button" data-sak="b" data-color="accent" data-variant="secondary" aria-pressed="false">Sak B: uten vedtak</button>
           </div>
           <div class="sf" id="sf-panel" aria-live="polite"><p class="footnote">Laster svaret …</p></div>
-          <noscript><p>Uten JavaScript: se svarene som <a href="data/17-sak-a-sak-forklaring.json">Sak A</a> og <a href="data/26-sak-b-sak-forklaring.json">Sak B</a>.</p></noscript>
+          <div class="sf">
+            <h3>Samme svar i flere formater</h3>
+            <p class="hint">Alle fire er laget av samme visningsmodell. Markdown og ren tekst kan kopieres eller lastes ned.</p>
+            <div class="seg" role="group" aria-label="Velg format" id="sf-format">
+              <button type="button" class="ds-button" data-format="lese" data-color="accent" aria-pressed="true">Lesevisning</button>
+              <button type="button" class="ds-button" data-format="md" data-color="accent" data-variant="secondary" aria-pressed="false">Markdown</button>
+              <button type="button" class="ds-button" data-format="tekst" data-color="accent" data-variant="secondary" aria-pressed="false">Ren tekst</button>
+              <button type="button" class="ds-button" data-format="json" data-color="accent" data-variant="secondary" aria-pressed="false">Visningsmodell (JSON)</button>
+            </div>
+            <div id="sf-ut" aria-live="polite"></div>
+          </div>
+          <noscript><p>Uten JavaScript: se svarene som <a href="data/17-sak-a-sak-forklaring.json">Sak A</a> og <a href="data/28-sak-b-sak-forklaring.json">Sak B</a>.</p></noscript>
+        </section>
+
+        <section id="parseren">
+          <span class="section-num">7 · Parseren</span>
+          <h2>Lesevisningen er generert, ikke skrevet</h2>
+          <p class="intro">Beskrivelsene av sakene på denne siden er ikke håndskrevne. De lages av en liten modul, <a href="https://github.com/FinnurO/forklaringsmodell-api/blob/master/site/assets/js/forklaring-visning.mjs" target="_blank" rel="noopener"><code>forklaring-visning.mjs</code></a>, direkte fra JSON-svaret.</p>
+          <p>Modulen har tre steg, og hvert steg kan brukes for seg:</p>
+          <ol>
+            <li><strong>Normaliser.</strong> Svaret fra <code>GET /api/saker/{sakId}/forklaring</code> eller <code>GET /api/vedtak/{id}/forklaring</code> gjøres om til én felles form.</li>
+            <li><strong>Visningsmodell.</strong> Den felles formen bygges om til en lesbar struktur uten noe format: treet av vurderinger, faktum med kilder, hjemler, vedtak og referansedata, slått opp og klare til å vises.</li>
+            <li><strong>Format.</strong> Visningsmodellen skrives ut som HTML, Markdown, ren tekst eller JSON, slik du kan prøve i seksjonen over.</li>
+          </ol>
+          <p>All tekst som vises kommer fra svaret. Det modulen skriver selv, er etiketter for modellens egne enumer (for eksempel «Ikke oppfylt») og merknader som regnes ut av strukturen, for eksempel at en sak mangler vedtak eller at en vurdering er eskalert. Modulen har ingen kunnskap om en bestemt sak, ingen DOM og ingen avhengigheter, så den kjører likt i nettleseren og i Node.</p>
+          <p>Kildekoden ligger på GitHub: <a href="https://github.com/FinnurO/forklaringsmodell-api/blob/master/site/assets/js/forklaring-visning.mjs" target="_blank" rel="noopener">forklaring-visning.mjs</a>, med en beskrivelse i <a href="https://github.com/FinnurO/forklaringsmodell-api/blob/master/visning/README.md" target="_blank" rel="noopener">visning/README.md</a>.</p>
+          <span class="code-label">Fra kommandolinjen</span>
+          <pre class="code"><code>node visning/cli.mjs site/eksempel/data/28-sak-b-sak-forklaring.json -f md</code></pre>
         </section>
 
         <section id="lese-treet">
-          <span class="section-num">7 · Slik leser du treet</span>
+          <span class="section-num">8 · Slik leser du treet</span>
           <h2>Tre felt som bærer strukturen</h2>
           <p class="intro">Treet er ikke noe eget objekt. Det er vanlige <code>Vurdering</code>-rader som peker på hverandre.</p>
           <ul>
@@ -198,12 +222,12 @@
         </section>
 
         <section id="json-filer">
-          <span class="section-num">8 · De faktiske JSON-filene</span>
+          <span class="section-num">9 · De faktiske JSON-filene</span>
           <h2>Hvert kall, slik det gikk over streken</h2>
-          <p class="intro">Dataene over kommer fra 26 virkelige kall mot API-et, i rekkefølgen de ble gjort, og hvert kall er lagret som en egen fil. Filen har metode, sti (med plassholdere for id-er), statuskode, forespørselen som ble sendt og svaret som kom tilbake. Forespørsel og svar er uendret, bare pent formatert. Åpne en fil for å lese den, last den ned, eller bruk den som mal for en egen integrasjon.</p>
+          <p class="intro">Dataene over kommer fra 28 virkelige kall mot API-et, i rekkefølgen de ble gjort, og hvert kall er lagret som en egen fil. Filen har metode, sti (med plassholdere for id-er), statuskode, forespørselen som ble sendt og svaret som kom tilbake. Forespørsel og svar er uendret, bare pent formatert. Åpne en fil for å lese den, last den ned, eller bruk den som mal for en egen integrasjon.</p>
           <div class="callout">
-            <h3>Én side, tre lesekall</h3>
-            <p>Siden over er tegnet av bare tre GET-kall: filene <code>16</code> (forklaringen for vedtaket i Sak A, det frosne øyeblikksbildet), <code>17</code> og <code>26</code> (hele Sak A og hele Sak B samlet med <code>GET /api/saker/{sakId}/forklaring</code>). Ingen enkeltoppslag av kilder, regler, vilkår eller rettskilder, for de følger med som <code>referansedata</code>. Sak B har ikke noe vedtak, men kan likevel vises fullt ut.</p>
+            <h3>Én side, to parsede filer</h3>
+            <p>Sidens seksjoner tegnes av parseren fra bare to av filene: <code>17</code> og <code>28</code>, hele Sak A og hele Sak B samlet med <code>GET /api/saker/{sakId}/forklaring</code>. Fil <code>16</code> er forklaringen for vedtaket i Sak A, et frosset øyeblikksbilde, og vises bare som rådata her. Ingen enkeltoppslag av kilder, regler, vilkår eller rettskilder, for de følger med som <code>referansedata</code>. Sak B har ikke noe vedtak, men kan likevel vises fullt ut.</p>
           </div>
           <div class="callout">
             <h3>Forespørsel og svar</h3>
@@ -214,7 +238,7 @@
         </section>
 
         <section id="kjor-selv">
-          <span class="section-num">9 · Kjør det selv</span>
+          <span class="section-num">10 · Kjør det selv</span>
           <h2>Scenarioene er integrasjonstester</h2>
           <p class="intro">Sak A kjøres fra start til slutt av testen <a href="https://github.com/FinnurO/forklaringsmodell-api/blob/master/tests/Forklaringsmodell.Tests/Integration/PiperehabiliteringScenarioTests.cs" target="_blank" rel="noopener"><code>PiperehabiliteringScenarioTests</code></a>, med de samme tre delvilkårene, og testen kontrollerer treet. Sak B-testen er en forenklet variant med ett delvilkår. JSON-filene og dataene på siden kommer fra en egen kjøring mot API-et med samme flyt, og er ikke testens egen utskrift.</p>
           <span class="code-label">Kjør bare piperehabilitering-scenarioene</span>
@@ -272,162 +296,276 @@ dotnet run --project src/Forklaringsmodell.Api</code></pre>
   </div>
 </footer>
 
-<script id="scenario-data" type="application/json">{"rettskilder":[{"rettskildeId":"a10fc9c6-a378-4250-9639-da9b1677ccf4","type":"Lov","henvisning":"plan- og bygningsloven § 20-1 bokstav f (rehabilitering/endring av skorstein er et søknadspliktig tiltak)","versjonDato":"2026-01-01T00:00:00+00:00","eliReferanse":"https://lovdata.no/lov/2008-06-27-71"},{"rettskildeId":"2c741e06-f023-44c3-85e8-6532b217881b","type":"Lov","henvisning":"plan- og bygningsloven § 23-3 (ansvarlig søker) jf. § 22-1 (sentral godkjenning for ansvarsrett)","versjonDato":"2026-01-01T00:00:00+00:00","eliReferanse":"https://lovdata.no/lov/2008-06-27-71"}],"kilder":[{"kildeId":"c7e89dda-0e51-46a8-a557-d49b467887ea","navn":"eByggesøk Proff (søknadsportal)","type":"Soknad","autoritativ":false,"rettskildeIder":["a10fc9c6-a378-4250-9639-da9b1677ccf4"],"cccevReferanse":null,"erLaast":true},{"kildeId":"392f8932-5654-4c37-bd8c-342d4075e6ba","navn":"Sentral godkjenning for ansvarsrett (DiBK-registeret)","type":"AutoritativtRegister","autoritativ":true,"rettskildeIder":["2c741e06-f023-44c3-85e8-6532b217881b"],"cccevReferanse":"https://www.dibk.no/sentral-godkjenning","erLaast":true}],"regel":{"regelId":"0db36b04-3b17-4f8f-9e41-ea06f751f1d0","rettskildeIder":["a10fc9c6-a378-4250-9639-da9b1677ccf4"],"teknologi":"DiBK nasjonal sjekkliste (DMN-aktig regelsett i Elements eByggesak)","type":"Deterministisk","cpsvRegelReferanse":null,"regeldefinisjonReferanse":"https://sjekkliste-bygg-api.ft.dibk.no/api/sjekkliste","erLaast":true},"vilkar":{"vilkarId":"c809f0e4-9d89-44f4-ba07-bc5fc2c45f21","navn":"Automatisk godkjenning av piperehabilitering","kode":"PIPEREHAB_AUTOMATISK","kodeverk":"DIBK_SJEKKLISTE_BYGG","type":"Tillatelse","grunnlagstype":"Rettslig","fastsettelsesmate":"Parametrisert","standardTekst":[{"spraakKode":"nb","verdi":"Søknad om rehabilitering av skorstein kan godkjennes automatisk når ansvarlig foretak har sentral godkjenning for ansvarsrett, tiltaket kun gjelder innvendig fôring uten utvendig dimensjonsendring, og bygningen ikke er fredet eller verneverdig."},{"spraakKode":"nn","verdi":"Søknad om rehabilitering av skorstein kan godkjennast automatisk når ansvarleg foretak har sentral godkjenning for ansvarsrett, tiltaket berre gjeld innvendig fôring utan utvendig dimensjonsendring, og bygningen ikkje er freda eller verneverdig."}],"rettskildeIder":["a10fc9c6-a378-4250-9639-da9b1677ccf4"],"regelId":"0db36b04-3b17-4f8f-9e41-ea06f751f1d0","cpsvTjenesteReferanse":null,"erLaast":true},"case_a":{"sak":{"sakId":"fd836526-5387-463d-9d46-ce45c79c441b","tittel":"Søknad om rehabilitering av skorstein – Eiganesveien 12, Stavanger","status":"UnderBehandling","opprettet":"2026-10-04T19:55:42.1174818+00:00","sistEndret":"2026-10-04T19:55:42.1174818+00:00","cpsvTjenesteReferanse":null,"utlosendeHendelse":"Soknad"},"vedtak":{"vedtakId":"d2ca99fa-2518-48b8-b8ae-b733071b87b9","sakId":"fd836526-5387-463d-9d46-ce45c79c441b","tidspunkt":"2026-10-04T19:55:43.0417664+00:00","utfall":"Tillatelse til rehabilitering av skorstein innvilget","automatiseringsGrad":"Helautomatisert"},"forklaring":{"vedtak":{"vedtakId":"d2ca99fa-2518-48b8-b8ae-b733071b87b9","sakId":"fd836526-5387-463d-9d46-ce45c79c441b","tidspunkt":"2026-10-04T19:55:43.0417664+00:00","utfall":"Tillatelse til rehabilitering av skorstein innvilget","automatiseringsGrad":"Helautomatisert"},"forklaringslogg":{"loggId":"63f6aa2f-6210-4949-ab66-204954f6abce","vedtakId":"d2ca99fa-2518-48b8-b8ae-b733071b87b9","oppforinger":[{"oppforingId":"4be74287-7977-4729-96d0-66695cfc9282","type":"Faktum","referanseId":"60691f1b-9672-4103-8587-90b1a25e3bad"},{"oppforingId":"8a733db7-f718-422b-bb5f-d5888ede780f","type":"Vurdering","referanseId":"e1b24ffc-ea74-4985-80cf-b5a87c4ecda4"},{"oppforingId":"98560a0a-f5a4-4199-b83f-1463c1a30fc7","type":"Vurdering","referanseId":"2a95bac0-0058-4acb-96a1-7c58bb854eb1"},{"oppforingId":"a009bf19-467f-4ee0-ab90-383ac4b24016","type":"Vurdering","referanseId":"eaa03ca4-dd00-4d34-8166-e8001908f53a"},{"oppforingId":"ad638255-b4c5-462d-b0af-e5f305883e29","type":"Faktum","referanseId":"abd9a9ac-e011-4cae-bcad-15609cc773fe"},{"oppforingId":"bb40f124-97ac-4c07-9f6b-2f35160559f9","type":"Faktum","referanseId":"36dbd527-f14a-4882-850a-2c8be6adb25d"},{"oppforingId":"df060273-5ea3-44af-8a9e-3a36f7c59e37","type":"Vurdering","referanseId":"e8118f56-6772-4248-b79b-f5951e886cbf"}]},"faktum":[{"faktumId":"36dbd527-f14a-4882-850a-2c8be6adb25d","sakId":"fd836526-5387-463d-9d46-ce45c79c441b","kildeId":"c7e89dda-0e51-46a8-a557-d49b467887ea","type":"Raatt","struktur":"Strukturert","verdi":"Tiltaket er innvendig fôring (nytt skorsteinsrør) av eksisterende skorstein. Ingen endring av utvendige dimensjoner eller plassering.","avledetFraFaktumId":null,"innhentetTidspunkt":"2026-10-04T19:55:42.1979461+00:00","rettskildeIder":[],"erLaast":true},{"faktumId":"60691f1b-9672-4103-8587-90b1a25e3bad","sakId":"fd836526-5387-463d-9d46-ce45c79c441b","kildeId":"c7e89dda-0e51-46a8-a557-d49b467887ea","type":"Raatt","struktur":"Strukturert","verdi":"Bygningen er ikke registrert som fredet eller verneverdig i kommunens kulturminneregister.","avledetFraFaktumId":null,"innhentetTidspunkt":"2026-10-04T19:55:42.2575419+00:00","rettskildeIder":[],"erLaast":true},{"faktumId":"abd9a9ac-e011-4cae-bcad-15609cc773fe","sakId":"fd836526-5387-463d-9d46-ce45c79c441b","kildeId":"392f8932-5654-4c37-bd8c-342d4075e6ba","type":"Raatt","struktur":"Strukturert","verdi":"Ansvarlig foretak har gyldig sentral godkjenning for ansvarsrett, tiltaksklasse 1, for brannsikkerhet/ildsted og skorstein.","avledetFraFaktumId":null,"innhentetTidspunkt":"2026-10-04T19:55:42.2421491+00:00","rettskildeIder":[],"erLaast":true}],"vurderinger":[{"vurderingId":"2a95bac0-0058-4acb-96a1-7c58bb854eb1","sakId":"fd836526-5387-463d-9d46-ce45c79c441b","regelId":"0db36b04-3b17-4f8f-9e41-ea06f751f1d0","type":"Deterministisk","utfall":"Oppfylt","beregningsspor":"Bygningen er ikke registrert som fredet eller verneverdig => ingen tilleggsvilkår utløses","konfidens":null,"eskalert":false,"hovedhensyn":[],"forkastedeUtfall":[],"vilkarId":"c809f0e4-9d89-44f4-ba07-bc5fc2c45f21","forelderVurderingId":"eaa03ca4-dd00-4d34-8166-e8001908f53a","erLaast":true,"faktumIder":["60691f1b-9672-4103-8587-90b1a25e3bad"],"rettskildeIder":[],"refererteVurderingIder":[],"delvurderingIder":[]},{"vurderingId":"e1b24ffc-ea74-4985-80cf-b5a87c4ecda4","sakId":"fd836526-5387-463d-9d46-ce45c79c441b","regelId":"0db36b04-3b17-4f8f-9e41-ea06f751f1d0","type":"Deterministisk","utfall":"Oppfylt","beregningsspor":"Tiltaket er begrenset til innvendig fôring, ingen utvendig dimensjonsendring => regnes som rehabilitering/reparasjon, ikke en ny installasjon, jf. § 20-1 bokstav f","konfidens":null,"eskalert":false,"hovedhensyn":[],"forkastedeUtfall":[],"vilkarId":"c809f0e4-9d89-44f4-ba07-bc5fc2c45f21","forelderVurderingId":"eaa03ca4-dd00-4d34-8166-e8001908f53a","erLaast":true,"faktumIder":["36dbd527-f14a-4882-850a-2c8be6adb25d"],"rettskildeIder":[],"refererteVurderingIder":[],"delvurderingIder":[]},{"vurderingId":"e8118f56-6772-4248-b79b-f5951e886cbf","sakId":"fd836526-5387-463d-9d46-ce45c79c441b","regelId":"0db36b04-3b17-4f8f-9e41-ea06f751f1d0","type":"Deterministisk","utfall":"Oppfylt","beregningsspor":"Ansvarlig foretak har gyldig sentral godkjenning for ansvarsrett, tiltaksklasse 1, brannsikkerhet => vilkår oppfylt","konfidens":null,"eskalert":false,"hovedhensyn":[],"forkastedeUtfall":[],"vilkarId":"c809f0e4-9d89-44f4-ba07-bc5fc2c45f21","forelderVurderingId":"eaa03ca4-dd00-4d34-8166-e8001908f53a","erLaast":true,"faktumIder":["abd9a9ac-e011-4cae-bcad-15609cc773fe"],"rettskildeIder":["2c741e06-f023-44c3-85e8-6532b217881b"],"refererteVurderingIder":[],"delvurderingIder":[]},{"vurderingId":"eaa03ca4-dd00-4d34-8166-e8001908f53a","sakId":"fd836526-5387-463d-9d46-ce45c79c441b","regelId":"0db36b04-3b17-4f8f-9e41-ea06f751f1d0","type":"Deterministisk","utfall":"Oppfylt","beregningsspor":"Alle tre delvilkår i DiBKs sjekkliste for piperehabilitering er oppfylt => automatisk godkjent","konfidens":null,"eskalert":false,"hovedhensyn":[],"forkastedeUtfall":[],"vilkarId":"c809f0e4-9d89-44f4-ba07-bc5fc2c45f21","forelderVurderingId":null,"erLaast":true,"faktumIder":[],"rettskildeIder":["a10fc9c6-a378-4250-9639-da9b1677ccf4"],"refererteVurderingIder":[],"delvurderingIder":["2a95bac0-0058-4acb-96a1-7c58bb854eb1","e1b24ffc-ea74-4985-80cf-b5a87c4ecda4","e8118f56-6772-4248-b79b-f5951e886cbf"]}],"vurderingstre":[{"delvurderinger":[{"delvurderinger":[],"vurderingId":"2a95bac0-0058-4acb-96a1-7c58bb854eb1","sakId":"fd836526-5387-463d-9d46-ce45c79c441b","regelId":"0db36b04-3b17-4f8f-9e41-ea06f751f1d0","type":"Deterministisk","utfall":"Oppfylt","beregningsspor":"Bygningen er ikke registrert som fredet eller verneverdig => ingen tilleggsvilkår utløses","konfidens":null,"eskalert":false,"hovedhensyn":[],"forkastedeUtfall":[],"vilkarId":"c809f0e4-9d89-44f4-ba07-bc5fc2c45f21","forelderVurderingId":"eaa03ca4-dd00-4d34-8166-e8001908f53a","erLaast":true,"faktumIder":["60691f1b-9672-4103-8587-90b1a25e3bad"],"rettskildeIder":[],"refererteVurderingIder":[],"delvurderingIder":[]},{"delvurderinger":[],"vurderingId":"e1b24ffc-ea74-4985-80cf-b5a87c4ecda4","sakId":"fd836526-5387-463d-9d46-ce45c79c441b","regelId":"0db36b04-3b17-4f8f-9e41-ea06f751f1d0","type":"Deterministisk","utfall":"Oppfylt","beregningsspor":"Tiltaket er begrenset til innvendig fôring, ingen utvendig dimensjonsendring => regnes som rehabilitering/reparasjon, ikke en ny installasjon, jf. § 20-1 bokstav f","konfidens":null,"eskalert":false,"hovedhensyn":[],"forkastedeUtfall":[],"vilkarId":"c809f0e4-9d89-44f4-ba07-bc5fc2c45f21","forelderVurderingId":"eaa03ca4-dd00-4d34-8166-e8001908f53a","erLaast":true,"faktumIder":["36dbd527-f14a-4882-850a-2c8be6adb25d"],"rettskildeIder":[],"refererteVurderingIder":[],"delvurderingIder":[]},{"delvurderinger":[],"vurderingId":"e8118f56-6772-4248-b79b-f5951e886cbf","sakId":"fd836526-5387-463d-9d46-ce45c79c441b","regelId":"0db36b04-3b17-4f8f-9e41-ea06f751f1d0","type":"Deterministisk","utfall":"Oppfylt","beregningsspor":"Ansvarlig foretak har gyldig sentral godkjenning for ansvarsrett, tiltaksklasse 1, brannsikkerhet => vilkår oppfylt","konfidens":null,"eskalert":false,"hovedhensyn":[],"forkastedeUtfall":[],"vilkarId":"c809f0e4-9d89-44f4-ba07-bc5fc2c45f21","forelderVurderingId":"eaa03ca4-dd00-4d34-8166-e8001908f53a","erLaast":true,"faktumIder":["abd9a9ac-e011-4cae-bcad-15609cc773fe"],"rettskildeIder":["2c741e06-f023-44c3-85e8-6532b217881b"],"refererteVurderingIder":[],"delvurderingIder":[]}],"vurderingId":"eaa03ca4-dd00-4d34-8166-e8001908f53a","sakId":"fd836526-5387-463d-9d46-ce45c79c441b","regelId":"0db36b04-3b17-4f8f-9e41-ea06f751f1d0","type":"Deterministisk","utfall":"Oppfylt","beregningsspor":"Alle tre delvilkår i DiBKs sjekkliste for piperehabilitering er oppfylt => automatisk godkjent","konfidens":null,"eskalert":false,"hovedhensyn":[],"forkastedeUtfall":[],"vilkarId":"c809f0e4-9d89-44f4-ba07-bc5fc2c45f21","forelderVurderingId":null,"erLaast":true,"faktumIder":[],"rettskildeIder":["a10fc9c6-a378-4250-9639-da9b1677ccf4"],"refererteVurderingIder":[],"delvurderingIder":["2a95bac0-0058-4acb-96a1-7c58bb854eb1","e1b24ffc-ea74-4985-80cf-b5a87c4ecda4","e8118f56-6772-4248-b79b-f5951e886cbf"]}],"partsmedvirkninger":[],"virkninger":[{"virkningId":"217a2551-bea1-444a-959e-df26d4ac8c0f","vedtakId":"d2ca99fa-2518-48b8-b8ae-b733071b87b9","vilkarId":"c809f0e4-9d89-44f4-ba07-bc5fc2c45f21","type":"Tillatelse","fastsettelsesmate":"Parametrisert","beskrivelse":[{"spraakKode":"nb","verdi":"Tillatelse til rehabilitering av skorstein (innvendig fôring)"},{"spraakKode":"nn","verdi":"Løyve til rehabilitering av skorstein (innvendig fôring)"}],"varighet":"Varig","gyldigFra":null,"gyldigTil":null,"belop":null,"lopendeVilkar":[],"rapporteringsFrekvens":null,"avledetFraVirkningId":null,"vurderingIder":["eaa03ca4-dd00-4d34-8166-e8001908f53a"],"faktumIder":["36dbd527-f14a-4882-850a-2c8be6adb25d"]}],"refererteVurderinger":[],"andreFaktum":[],"referansedata":{"kilder":[{"kildeId":"c7e89dda-0e51-46a8-a557-d49b467887ea","navn":"eByggesøk Proff (søknadsportal)","type":"Soknad","autoritativ":false,"rettskildeIder":["a10fc9c6-a378-4250-9639-da9b1677ccf4"],"cccevReferanse":null,"erLaast":true},{"kildeId":"392f8932-5654-4c37-bd8c-342d4075e6ba","navn":"Sentral godkjenning for ansvarsrett (DiBK-registeret)","type":"AutoritativtRegister","autoritativ":true,"rettskildeIder":["2c741e06-f023-44c3-85e8-6532b217881b"],"cccevReferanse":"https://www.dibk.no/sentral-godkjenning","erLaast":true}],"rettskilder":[{"rettskildeId":"a10fc9c6-a378-4250-9639-da9b1677ccf4","type":"Lov","henvisning":"plan- og bygningsloven § 20-1 bokstav f (rehabilitering/endring av skorstein er et søknadspliktig tiltak)","versjonDato":"2026-01-01T00:00:00+00:00","eliReferanse":"https://lovdata.no/lov/2008-06-27-71"},{"rettskildeId":"2c741e06-f023-44c3-85e8-6532b217881b","type":"Lov","henvisning":"plan- og bygningsloven § 23-3 (ansvarlig søker) jf. § 22-1 (sentral godkjenning for ansvarsrett)","versjonDato":"2026-01-01T00:00:00+00:00","eliReferanse":"https://lovdata.no/lov/2008-06-27-71"}],"regler":[{"regelId":"0db36b04-3b17-4f8f-9e41-ea06f751f1d0","rettskildeIder":["a10fc9c6-a378-4250-9639-da9b1677ccf4"],"teknologi":"DiBK nasjonal sjekkliste (DMN-aktig regelsett i Elements eByggesak)","type":"Deterministisk","cpsvRegelReferanse":null,"regeldefinisjonReferanse":"https://sjekkliste-bygg-api.ft.dibk.no/api/sjekkliste","erLaast":true}],"vilkar":[{"vilkarId":"c809f0e4-9d89-44f4-ba07-bc5fc2c45f21","navn":"Automatisk godkjenning av piperehabilitering","kode":"PIPEREHAB_AUTOMATISK","kodeverk":"DIBK_SJEKKLISTE_BYGG","type":"Tillatelse","grunnlagstype":"Rettslig","fastsettelsesmate":"Parametrisert","standardTekst":[{"spraakKode":"nb","verdi":"Søknad om rehabilitering av skorstein kan godkjennes automatisk når ansvarlig foretak har sentral godkjenning for ansvarsrett, tiltaket kun gjelder innvendig fôring uten utvendig dimensjonsendring, og bygningen ikke er fredet eller verneverdig."},{"spraakKode":"nn","verdi":"Søknad om rehabilitering av skorstein kan godkjennast automatisk når ansvarleg foretak har sentral godkjenning for ansvarsrett, tiltaket berre gjeld innvendig fôring utan utvendig dimensjonsendring, og bygningen ikkje er freda eller verneverdig."}],"rettskildeIder":["a10fc9c6-a378-4250-9639-da9b1677ccf4"],"regelId":"0db36b04-3b17-4f8f-9e41-ea06f751f1d0","cpsvTjenesteReferanse":null,"erLaast":true}]}}},"case_b":{"sak":{"sakId":"452b23ad-2073-45c4-abda-f7dc13e25d11","tittel":"Søknad om rehabilitering av skorstein – Hinna Park 4, Stavanger","status":"UnderBehandling","opprettet":"2026-10-04T19:55:43.7649948+00:00","sistEndret":"2026-10-04T19:55:43.7649948+00:00","cpsvTjenesteReferanse":null,"utlosendeHendelse":"Soknad"},"vurderinger":[{"vurderingId":"02e60621-8515-4c1d-b099-9dbb753c99f6","sakId":"452b23ad-2073-45c4-abda-f7dc13e25d11","regelId":"0db36b04-3b17-4f8f-9e41-ea06f751f1d0","type":"Deterministisk","utfall":"IkkeOppfylt","beregningsspor":"Foretakets sentrale godkjenning dekker ikke tiltaksklassen/kategorien dette tiltaket krever => kan ikke automatisk bekreftes","konfidens":null,"eskalert":true,"hovedhensyn":[],"forkastedeUtfall":[],"vilkarId":"c809f0e4-9d89-44f4-ba07-bc5fc2c45f21","forelderVurderingId":"bf44f609-39b1-49b8-bba2-ca02e7051f6c","erLaast":false,"faktumIder":["4a2f0d48-d49e-4774-a759-a3d0b429ef71"],"rettskildeIder":["2c741e06-f023-44c3-85e8-6532b217881b"],"refererteVurderingIder":[],"delvurderingIder":[]},{"vurderingId":"bf44f609-39b1-49b8-bba2-ca02e7051f6c","sakId":"452b23ad-2073-45c4-abda-f7dc13e25d11","regelId":"0db36b04-3b17-4f8f-9e41-ea06f751f1d0","type":"Deterministisk","utfall":"Uavklart","beregningsspor":"Ett av tre delvilkår i DiBKs sjekkliste (ansvarsrett) kunne ikke bekreftes automatisk => saken rutes til ordinær manuell saksbehandling","konfidens":null,"eskalert":true,"hovedhensyn":[],"forkastedeUtfall":[],"vilkarId":"c809f0e4-9d89-44f4-ba07-bc5fc2c45f21","forelderVurderingId":null,"erLaast":false,"faktumIder":[],"rettskildeIder":["a10fc9c6-a378-4250-9639-da9b1677ccf4"],"refererteVurderingIder":[],"delvurderingIder":["02e60621-8515-4c1d-b099-9dbb753c99f6","f352d643-4d86-451e-af7a-40bc532db59c"]},{"vurderingId":"f352d643-4d86-451e-af7a-40bc532db59c","sakId":"452b23ad-2073-45c4-abda-f7dc13e25d11","regelId":"0db36b04-3b17-4f8f-9e41-ea06f751f1d0","type":"Deterministisk","utfall":"Oppfylt","beregningsspor":"Tiltaket er begrenset til innvendig fôring, ingen utvendig dimensjonsendring => regnes som rehabilitering/reparasjon","konfidens":null,"eskalert":false,"hovedhensyn":[],"forkastedeUtfall":[],"vilkarId":"c809f0e4-9d89-44f4-ba07-bc5fc2c45f21","forelderVurderingId":"bf44f609-39b1-49b8-bba2-ca02e7051f6c","erLaast":false,"faktumIder":["87b61083-a6b9-4e65-94e1-6630ecb5b8ec"],"rettskildeIder":[],"refererteVurderingIder":[],"delvurderingIder":[]}],"faktum":[{"faktumId":"87b61083-a6b9-4e65-94e1-6630ecb5b8ec","sakId":"452b23ad-2073-45c4-abda-f7dc13e25d11","kildeId":"c7e89dda-0e51-46a8-a557-d49b467887ea","type":"Raatt","struktur":"Strukturert","verdi":"Tiltaket er innvendig fôring av eksisterende skorstein. Ingen endring av utvendige dimensjoner.","avledetFraFaktumId":null,"innhentetTidspunkt":"2026-10-04T19:55:43.7815782+00:00","rettskildeIder":[],"erLaast":false},{"faktumId":"4a2f0d48-d49e-4774-a759-a3d0b429ef71","sakId":"452b23ad-2073-45c4-abda-f7dc13e25d11","kildeId":"392f8932-5654-4c37-bd8c-342d4075e6ba","type":"Raatt","struktur":"Strukturert","verdi":"Ansvarlig foretak har sentral godkjenning kun for tiltaksklasse 1 ildsted – ikke registrert for kategorien brannsikkerhet/skorstein som dette tiltaket krever.","avledetFraFaktumId":null,"innhentetTidspunkt":"2026-10-04T19:55:43.793489+00:00","rettskildeIder":[],"erLaast":false}]}}</script>
-<script>
-(function () {
-  'use strict';
-  var data = JSON.parse(document.getElementById('scenario-data').textContent);
+<script type="module">
+import { normaliser, byggVisning, tilHtml, tilMarkdown, tilTekst, visningCss } from '../assets/js/forklaring-visning.mjs';
 
-  function esc(s) {
-    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-  }
-  function byId(list, key) { var m = {}; list.forEach(function (x) { m[x[key]] = x; }); return m; }
-  var rkById = byId(data.rettskilder, 'rettskildeId');
-  var kildeById = byId(data.kilder, 'kildeId');
+// Stilark for lesevisningen (klassene fv-*), fra modulen selv.
+const stil = document.createElement('style');
+stil.id = 'fv-css';
+stil.textContent = visningCss;
+document.head.appendChild(stil);
 
-  function pillClass(u) {
-    if (u === 'Oppfylt') return 'ok';
-    if (u === 'IkkeOppfylt') return 'bad';
-    return 'warn';
-  }
-  function safeUrl(u) { return /^https:\/\//.test(u || '') ? esc(u) : ''; }
-  function langList(arr) {
-    if (!arr || !arr.length) return '';
-    return '<ul class="lang-list">' + arr.map(function (v) {
-      return '<li><span class="ds-tag" data-color="neutral" lang="' + esc(v.spraakKode) + '">' + esc(v.spraakKode) + '</span><span lang="' + esc(v.spraakKode) + '">' + esc(v.verdi) + '</span></li>';
-    }).join('') + '</ul>';
-  }
-  function rkLink(rk) {
-    var u = safeUrl(rk.eliReferanse);
-    return esc(rk.henvisning) + (u ? ' <a class="ds-link" href="' + u + '" target="_blank" rel="noopener">Lovdata</a>' : '');
-  }
+const FEIL_LASTING = 'Kunne ikke laste dataene. Åpnes siden som en lokal fil? Start da en liten webserver, for eksempel: python -m http.server --directory site';
 
-  // ----- Vilkår og regel -----
-  var v = data.vilkar, r = data.regel;
-  var rkV = (v.rettskildeIder || []).map(function (id) { return rkById[id]; }).filter(Boolean);
-  document.getElementById('vilkar-box').innerHTML =
-    '<h3 style="margin:0 0 var(--ds-size-2);font-size:var(--ds-body-lg-font-size);">' + esc(v.navn) + '</h3>' +
-    '<div class="tag-row" style="display:flex;flex-wrap:wrap;gap:var(--ds-size-2);margin-bottom:var(--ds-size-4);">' +
-      '<span class="ds-tag" data-color="accent">' + esc(v.type) + '</span>' +
-      '<span class="ds-tag" data-color="accent">' + esc(v.grunnlagstype) + '</span>' +
-      '<span class="ds-tag" data-color="accent">' + esc(v.fastsettelsesmate) + '</span></div>' +
-    '<span class="code-label">Standardtekst (flerspråklig)</span>' + langList(v.standardTekst) +
-    '<dl class="kv">' +
-      '<dt>Kode</dt><dd><code>' + esc(v.kode) + '</code></dd>' +
-      '<dt>Kodeverk</dt><dd><code>' + esc(v.kodeverk) + '</code></dd>' +
-      '<dt>Hjemmel</dt><dd>' + (rkV.map(rkLink).join('<br>') || '–') + '</dd>' +
-      '<dt>Regel</dt><dd>' + esc(r.type) + ' · ' + esc(r.teknologi) + '</dd>' +
-      '<dt>regeldefinisjonReferanse</dt><dd>' + (safeUrl(r.regeldefinisjonReferanse) ? '<a class="ds-link" href="' + safeUrl(r.regeldefinisjonReferanse) + '" target="_blank" rel="noopener">' + esc(r.regeldefinisjonReferanse) + '</a>' : esc(r.regeldefinisjonReferanse)) + '</dd>' +
-    '</dl>' +
-    (v.erLaast ? '<span class="pill">låst</span>' : '<span class="pill">katalogoppføring, ikke låst</span>');
-  document.getElementById('regel-box').innerHTML =
-    '<p class="footnote">Regelen er lagret som en egen rad med peker til selve regelartefaktet. Vi har ikke lest sjekklistene bak lenken og påstår ikke at oppføringen speiler dem. Innholdet i vilkåret er vår utledning.</p>';
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const trygg = (u) => (/^https:\/\//.test(u || '') ? esc(u) : '');
+const kb = (n) => (n < 1024 ? n + ' B' : (n / 1024).toFixed(1).replace('.', ',') + ' kB');
+const feil = (host) => { host.innerHTML = '<p class="footnote">' + esc(FEIL_LASTING) + '</p>'; };
 
-  // ----- Tre -----
-  function addrOf(tittel) { var p = String(tittel).split('–'); return (p[1] || tittel).trim(); }
+const hentJson = (url) => fetch(url).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
+const hentTekst = (url) => fetch(url).then((r) => { if (!r.ok) throw new Error(r.status); return r.text(); });
 
-  function faktumRefs(ids, faktumList) {
-    return (ids || []).map(function (id) {
-      var f = faktumList.filter(function (x) { return x.faktumId === id; })[0];
-      if (!f) return '';
-      var k = kildeById[f.kildeId];
-      return '<div><b>Faktum</b>' + esc(f.verdi) +
-        (k ? ' <em>(kilde: ' + esc(k.navn) + (k.autoritativ ? ', autoritativ' : ', ikke autoritativ') + ')</em>' : '') +
-        (f.erLaast ? ' <span class="pill" style="font-size:.85em;">låst</span>' : '') + '</div>';
-    }).join('');
+function highlight(text) {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(
+    /("(?:\\.|[^"\\])*")(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g,
+    (m, str, kolon, ord) => {
+      if (str) return kolon ? '<span class="json-k">' + str + '</span>' + kolon : '<span class="json-s">' + str + '</span>';
+      if (ord) return '<span class="json-b">' + ord + '</span>';
+      return '<span class="json-n">' + m + '</span>';
+    });
+}
+
+// ---------------------------------------------------------------------------------------------
+// Data: filoversikten og de to sak-forklaringene lastes én gang og deles mellom seksjonene.
+// ---------------------------------------------------------------------------------------------
+const indeks = hentJson('data/index.json');
+const SAK_FORKLARING = '/api/saker/{sakId}/forklaring';
+const GRUPPE = { a: /^Sak A/, b: /^Sak B/ };
+const lastet = {};
+
+function sak(nokkel) {
+  if (!lastet[nokkel]) {
+    lastet[nokkel] = indeks.then((liste) => {
+      const entry = liste.find((e) => e.method === 'GET' && e.path === SAK_FORKLARING && GRUPPE[nokkel].test(e.group));
+      if (!entry) throw new Error('Fant ikke sak-forklaringen i oversikten.');
+      return hentJson('data/' + encodeURI(entry.file)).then((doc) => ({ entry, doc, vm: byggVisning(doc), rad: normaliser(doc) }));
+    });
   }
-  function rkRefs(ids) {
-    return (ids || []).map(function (id) {
-      var rk = rkById[id];
-      return rk ? '<div><b>Hjemmel</b>' + esc(rk.henvisning) + '</div>' : '';
-    }).join('');
-  }
-  function node(vu, all, faktumList, depth) {
-    var kids = (vu.delvurderingIder || []).map(function (id) { return all.filter(function (x) { return x.vurderingId === id; })[0]; }).filter(Boolean);
-    var isRoot = !vu.forelderVurderingId;
-    var html = '<div class="dnode' + (isRoot ? ' is-root' : '') + '">' +
-      '<div class="dnode__head">' +
-        '<span class="dnode__lbl">' + (isRoot ? 'Samlet vurdering' : 'Delvurdering') + '</span>' +
-        '<span class="pill ' + pillClass(vu.utfall) + '">' + esc(vu.utfall) + '</span>' +
-        '<span class="pill">' + esc(vu.type) + '</span>' +
-        (vu.eskalert ? '<span class="pill warn">eskalert</span>' : '') +
-        (vu.erLaast ? '<span class="pill" title="Frosset sammen med vedtaket">låst</span>' : '') +
-      '</div>' +
-      '<p class="dnode__spor">' + esc(vu.beregningsspor) + '</p>' +
-      '<div class="dnode__refs">' + faktumRefs(vu.faktumIder, faktumList) + rkRefs(vu.rettskildeIder) + '</div>' +
+  return lastet[nokkel];
+}
+
+// ---------------------------------------------------------------------------------------------
+// Seksjon 3: vilkåret og regelen, fra visningsmodellens referanser
+// ---------------------------------------------------------------------------------------------
+function tekstliste(t) {
+  if (!t) return '';
+  const alle = [{ sprak: t.sprak, tekst: t.tekst }].concat(t.andre);
+  return '<ul class="lang-list">' + alle.map((v) =>
+    '<li><span class="ds-tag" data-color="neutral" lang="' + esc(v.sprak) + '">' + esc(v.sprak) + '</span><span lang="' + esc(v.sprak) + '">' + esc(v.tekst) + '</span></li>').join('') + '</ul>';
+}
+
+function hjemmelLenke(r) {
+  const u = trygg(r.eli);
+  return esc(r.henvisning) + (u ? ' <a class="ds-link" href="' + u + '" target="_blank" rel="noopener">Lovdata</a>' : '');
+}
+
+sak('a').then(({ vm, rad }) => {
+  const ref = vm.referanser;
+  const rd = rad.referansedata;               // rå referansedata: id-ene og feltene visningsmodellen ikke har
+  const rettskildeIdx = (id) => (rd.rettskilder || []).findIndex((r) => r.rettskildeId === id);
+  const regelIdx = (id) => (rd.regler || []).findIndex((r) => r.regelId === id);
+
+  $('vilkar-box').innerHTML = ref.vilkar.map((v, i) => {
+    const r = (rd.vilkar || [])[i] || {};     // visningsmodellens vilkar står i samme rekkefølge som rå referansedata
+    const merker = [r.type, r.grunnlagstype, r.fastsettelsesmate].filter(Boolean);
+    const hjemler = (r.rettskildeIder || []).map(rettskildeIdx).filter((k) => k >= 0).map((k) => hjemmelLenke(ref.rettskilder[k]));
+    const k = regelIdx(r.regelId);
+    const regel = k >= 0 ? ref.regler[k] : null;
+    const regelUrl = regel && trygg(regel.referanse);
+    return '<div class="vilkar">' +
+      '<h3 class="vilkar__navn">' + esc(v.navn) + '</h3>' +
+      (merker.length ? '<div class="tag-flex">' + merker.map((m) => '<span class="ds-tag" data-color="accent">' + esc(m) + '</span>').join('') + '</div>' : '') +
+      (v.tekst ? '<span class="code-label">Standardtekst (flerspråklig)</span>' + tekstliste(v.tekst) : '') +
+      '<dl class="kv">' +
+        (v.kode ? '<dt>Kode</dt><dd><code>' + esc(v.kode) + '</code></dd>' : '') +
+        (v.kodeverk ? '<dt>Kodeverk</dt><dd><code>' + esc(v.kodeverk) + '</code></dd>' : '') +
+        '<dt>Hjemmel</dt><dd>' + (hjemler.join('<br>') || '–') + '</dd>' +
+        (regel ? '<dt>Regel</dt><dd>' + esc(regel.type) + ' · ' + esc(regel.teknologi) + '</dd>' : '') +
+        (regel && regel.referanse ? '<dt>regeldefinisjonReferanse</dt><dd>' + (regelUrl ? '<a class="ds-link" href="' + regelUrl + '" target="_blank" rel="noopener">' + esc(regel.referanse) + '</a>' : esc(regel.referanse)) + '</dd>' : '') +
+      '</dl>' +
+      '<span class="pill">' + (r.erLaast ? 'låst' : 'katalogoppføring, ikke låst') + '</span>' +
     '</div>';
-    if (kids.length) {
-      html += '<div class="dchildren">' + kids.map(function (c) { return node(c, all, faktumList, depth + 1); }).join('') + '</div>';
-    }
-    return html;
-  }
-  function tree(list, faktumList) {
-    var roots = list.filter(function (x) { return !x.forelderVurderingId; });
-    return '<div class="dtree">' + roots.map(function (x) { return node(x, list, faktumList, 0); }).join('') + '</div>';
-  }
+  }).join('') || '<p class="footnote">Svaret har ingen vilkår i referansedata.</p>';
+}).catch(() => feil($('vilkar-box')));
 
-  // ----- Sak A -----
-  var A = data.case_a, AF = A.forklaring;
-  var vir = AF.virkninger[0];
-  var lockedA = AF.vurderinger.filter(function (x) { return x.erLaast; }).length;
-  document.getElementById('a-intro').innerHTML = esc(addrOf(A.sak.tittel)) + ' <span class="sak-id">· sak ' + esc(A.sak.sakId) + '</span>';
-  document.getElementById('a-root').innerHTML =
-    '<div class="case-banner is-ok"><h3><span class="pill ok">Vedtak fattet</span> ' + esc(A.vedtak.utfall) + '</h3>' +
-      '<p>Vedtaket ble fattet uten at en saksbehandler grep inn, og forklaringsloggen ble frosset i samme øyeblikk.</p></div>' +
-    '<div class="fact-row">' +
-      '<div class="fact"><span class="big">' + esc(A.vedtak.automatiseringsGrad) + '</span><span class="lbl">AutomatiseringsGrad</span></div>' +
-      '<div class="fact"><span class="big">' + AF.vurderinger.length + '</span><span class="lbl">vurderinger i treet (1 rot + ' + (AF.vurderinger.length - 1) + ' delvurderinger)</span></div>' +
-      '<div class="fact"><span class="big">' + AF.faktum.length + '</span><span class="lbl">faktum, alle med kilde</span></div>' +
-    '</div>' +
-    tree(AF.vurderinger, AF.faktum) +
-    (vir ? '<div class="virkning-box"><h3>Vedtaksvirkning <span class="pill info">' + esc(vir.type) + '</span> <span class="pill">' + esc(vir.varighet) + '</span></h3>' + langList(vir.beskrivelse) +
-      '<p class="footnote">Virkningen peker på rotvurderingen og faktum om tiltaket, så den kan spores tilbake.</p></div>' : '') +
-    '<div class="callout"><h3>Låst</h3><p>' + lockedA + ' av ' + AF.vurderinger.length + ' vurderinger og alle ' + AF.faktum.filter(function (f) { return f.erLaast; }).length + ' faktum har <code>erLaast = true</code>. Når vedtaket ble fattet, ble alt forklaringsloggen peker på skrivebeskyttet (' + AF.forklaringslogg.oppforinger.length + ' oppføringer i loggen). Rettelser blir nye rader.</p></div>';
+// ---------------------------------------------------------------------------------------------
+// Seksjon 4 og 5: lesevisningen av hver sak
+// ---------------------------------------------------------------------------------------------
+[['a', 'sak-a'], ['b', 'sak-b']].forEach(([nokkel, seksjon]) => {
+  const rot = $(seksjon);
+  const host = $(nokkel + '-root');
+  sak(nokkel).then(({ vm }) => {
+    rot.querySelector('h2').textContent = vm.tittel;
+    $(nokkel + '-intro').innerHTML = vm.sak ? '<span class="sak-id">sak ' + esc(vm.sak.id) + '</span>' : '';
+    host.innerHTML = tilHtml(vm);
+  }).catch(() => feil(host));
+});
 
-  // ----- Sak B -----
-  var B = data.case_b;
-  var esk = B.vurderinger.filter(function (x) { return x.eskalert; }).length;
-  document.getElementById('b-intro').innerHTML = esc(addrOf(B.sak.tittel)) + ' <span class="sak-id">· sak ' + esc(B.sak.sakId) + '</span>';
-  document.getElementById('b-root').innerHTML =
-    '<div class="case-banner is-warn"><h3><span class="pill warn">Ingen vedtak ennå</span> Rutet til manuell saksbehandling</h3>' +
-      '<p>Sakens status er <code>' + esc(B.sak.status) + '</code>. Det finnes ingen <code>Vedtak</code>, og dermed er heller ingenting frosset.</p></div>' +
-    '<div class="fact-row">' +
-      '<div class="fact"><span class="big">' + esc(B.sak.status) + '</span><span class="lbl">Sak.Status</span></div>' +
-      '<div class="fact"><span class="big">' + B.vurderinger.length + '</span><span class="lbl">vurderinger i treet</span></div>' +
-      '<div class="fact"><span class="big">' + esk + '</span><span class="lbl">eskalerte vurderinger</span></div>' +
-    '</div>' +
-    tree(B.vurderinger, B.faktum) +
-    '<div class="callout"><h3>Forklaringen finnes før vedtaket</h3>' +
-      '<p>Vurderingene ble lagret mens saken fortsatt er åpen (<code>erLaast = false</code>). Saksbehandleren får altså ikke bare «avvik», men en strukturert forklaring av hva som ble sjekket, hva som holdt og hvorfor ett delvilkår ikke kunne bekreftes automatisk, med faktum og hjemmel. Roten er <em>Uavklart</em> og ikke <em>IkkeOppfylt</em>: systemet avslår ikke, det gir videre til et menneske.</p>' +
-      '<p>Treet har her bare to delvurderinger, selv om rotens beregningsspor omtaler tre delvilkår. Hva som skjedde med det tredje, sier ikke dataene: det finnes ingen egen rad for det i denne kjøringen. Modellen krever ikke at kallende system oppretter en.</p></div>';
-})();
-</script>
-<script>
+// ---------------------------------------------------------------------------------------------
+// Seksjon 6: hele saken i ett kall, med formatbryter
+// ---------------------------------------------------------------------------------------------
 (function () {
-  var host = document.getElementById('json-files');
+  const panel = $('sf-panel');
+  const ut = $('sf-ut');
+  const sakBryter = $('sf-tabs');
+  const formatBryter = $('sf-format');
+  if (!panel || !ut || !sakBryter || !formatBryter) return;
+
+  const laast = (rader) => rader.filter((r) => r.erLaast).length;
+  const antallNoder = (noder) => (noder || []).reduce((n, x) => n + 1 + antallNoder(x.delvurderinger), 0);
+
+  function oppbygning(r) {
+    const rd = r.referansedata;
+    const rader = [
+      ['sak', 'Selve saken', esc(r.sak.tittel) + ' (' + esc(r.sak.status) + ')'],
+      ['oppsummering', 'Tellinger til en oversikt', 'harVedtak ' + r.oppsummering.harVedtak + ', ' + r.oppsummering.antallVurderinger + ' vurderinger, ' + r.oppsummering.antallEskalerteVurderinger + ' eskalerte'],
+      ['relasjoner', 'Koblinger til andre saker', r.relasjoner.length],
+      ['faktum', 'Alle faktum i saken', r.faktum.length + ' (' + laast(r.faktum) + ' låst)'],
+      ['vurderinger', 'Alle vurderinger, flat liste', r.vurderinger.length + ' (' + laast(r.vurderinger) + ' låst)'],
+      ['vurderingstre', 'Samme vurderinger, ferdig nøstet', r.vurderingstre.length + ' rot, ' + antallNoder(r.vurderingstre) + ' noder'],
+      ['partsmedvirkninger', 'Partenes medvirkning', r.partsmedvirkninger.length],
+      ['vedtak', 'Vedtak med forklaringslogg og virkninger', r.vedtak.length],
+      ['refererteVurderinger', 'Vurderinger i andre saker (ett nivå)', r.refererteVurderinger.length],
+      ['andreFaktum', 'Faktum som tilhører andre saker', r.andreFaktum.length],
+      ['referansedata', 'Kilder · rettskilder · regler · vilkår', [rd.kilder, rd.rettskilder, rd.regler, rd.vilkar].map((l) => l.length).join(' · ')],
+    ];
+    return '<div class="table-scroll"><table class="ds-table"><thead><tr><th scope="col">Felt</th><th scope="col">Hva det er</th><th scope="col">I dette svaret</th></tr></thead><tbody>' +
+      rader.map((x) => '<tr><td><code>' + x[0] + '</code></td><td>' + x[1] + '</td><td>' + x[2] + '</td></tr>').join('') +
+      '</tbody></table></div>';
+  }
+
+  function banner(entry, doc) {
+    const r = doc.response;
+    return '<div class="case-banner">' +
+      '<h3><span class="pill info">' + esc(doc.method) + '</span> ' + esc(doc.path) + ' <span class="pill ok">' + esc(doc.status) + '</span></h3>' +
+      '<p>' + esc(r.sak.tittel) + '</p>' +
+      '<p class="sak-id">sakId ' + esc(r.sak.sakId) + ' · <a href="data/' + encodeURI(entry.file) + '" target="_blank" rel="noopener">Åpne råfilen</a> (data/' + esc(entry.file) + ', ' + kb(entry.bytes) + ')</p></div>';
+  }
+
+  const FORMATER = {
+    lese: { ende: null },
+    md: { ende: 'md', mime: 'text/markdown;charset=utf-8', lag: (vm) => tilMarkdown(vm), merke: 'Markdown' },
+    tekst: { ende: 'txt', mime: 'text/plain;charset=utf-8', lag: (vm) => tilTekst(vm), merke: 'Ren tekst' },
+    json: { ende: null },
+  };
+
+  let aktivSak = 'a';
+  let aktivFormat = 'lese';
+  let teller = 0;   // forkaster sene svar hvis brukeren har byttet i mellomtiden
+
+  function filnavn(vm, ende) {
+    return 'forklaring-sak-' + (vm.sak ? String(vm.sak.id).slice(0, 8) : 'ukjent') + '.' + ende;
+  }
+
+  function verktoy(vm, tekst, f) {
+    const linje = document.createElement('div');
+    linje.className = 'jtool';
+    const navn = document.createElement('span');
+    navn.className = 'fname';
+    navn.textContent = filnavn(vm, f.ende);
+    const kopier = document.createElement('button');
+    kopier.type = 'button'; kopier.className = 'ds-button'; kopier.dataset.variant = 'secondary'; kopier.dataset.color = 'accent'; kopier.dataset.size = 'sm';
+    kopier.textContent = 'Kopier';
+    kopier.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(tekst);
+        kopier.textContent = 'Kopiert';
+      } catch (e) {
+        kopier.textContent = 'Kunne ikke kopiere';
+      }
+      setTimeout(() => { kopier.textContent = 'Kopier'; }, 1500);
+    });
+    const last = document.createElement('button');
+    last.type = 'button'; last.className = 'ds-button'; last.dataset.variant = 'secondary'; last.dataset.color = 'accent'; last.dataset.size = 'sm';
+    last.textContent = 'Last ned';
+    last.addEventListener('click', () => {
+      const url = URL.createObjectURL(new Blob([tekst], { type: f.mime }));
+      const a = document.createElement('a');
+      a.href = url; a.download = filnavn(vm, f.ende);
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+    linje.append(navn, kopier, last);
+    return linje;
+  }
+
+  function kodeblokk(tekst, html) {
+    const pre = document.createElement('pre');
+    pre.className = 'code';
+    pre.tabIndex = 0;
+    const kode = document.createElement('code');
+    if (html) kode.innerHTML = html; else kode.textContent = tekst;
+    pre.appendChild(kode);
+    return pre;
+  }
+
+  function visUt(vm) {
+    ut.textContent = '';
+    if (aktivFormat === 'lese') {
+      const d = document.createElement('div');
+      d.innerHTML = tilHtml(vm);
+      ut.appendChild(d);
+    } else if (aktivFormat === 'json') {
+      const tekst = JSON.stringify(vm, null, 2);
+      ut.appendChild(kodeblokk(tekst, highlight(tekst)));
+    } else {
+      const f = FORMATER[aktivFormat];
+      const tekst = f.lag(vm);
+      ut.append(verktoy(vm, tekst, f), kodeblokk(tekst));
+    }
+  }
+
+  function render() {
+    const mitt = ++teller;
+    panel.innerHTML = '<p class="footnote">Laster svaret …</p>';
+    sak(aktivSak).then(({ entry, doc, vm }) => {
+      if (mitt !== teller) return;
+      panel.innerHTML = banner(entry, doc) + '<h3>Svarets oppbygning</h3><p class="hint">Alt på toppnivå, og hva det inneholder her.</p>' + oppbygning(doc.response);
+      visUt(vm);
+    }).catch(() => { if (mitt === teller) { feil(panel); ut.textContent = ''; } });
+  }
+
+  function marker(bryter, attr, verdi) {
+    bryter.querySelectorAll('button').forEach((b) => {
+      const pa = b.getAttribute(attr) === verdi;
+      b.setAttribute('aria-pressed', pa ? 'true' : 'false');
+      if (pa) b.removeAttribute('data-variant'); else b.setAttribute('data-variant', 'secondary');
+    });
+  }
+
+  sakBryter.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-sak]');
+    if (!b) return;
+    aktivSak = b.getAttribute('data-sak');
+    marker(sakBryter, 'data-sak', aktivSak);
+    render();
+  });
+  formatBryter.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-format]');
+    if (!b) return;
+    aktivFormat = b.getAttribute('data-format');
+    marker(formatBryter, 'data-format', aktivFormat);
+    sak(aktivSak).then(({ vm }) => visUt(vm)).catch(() => {});
+  });
+
+  render();
+})();
+
+// ---------------------------------------------------------------------------------------------
+// Seksjon 9: filoversikten med alle 28 kall
+// ---------------------------------------------------------------------------------------------
+(function () {
+  const host = $('json-files');
   if (!host) return;
 
-  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-
-  function highlight(text) {
-    return esc(text).replace(
-      /("(?:\\.|[^"\\])*")(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g,
-      function (m, str, colon, word) {
-        if (str) { return colon ? '<span class="json-k">' + str + '</span>' + colon : '<span class="json-s">' + str + '</span>'; }
-        if (word) { return '<span class="json-b">' + word + '</span>'; }
-        return '<span class="json-n">' + m + '</span>';
-      });
-  }
-
-  function kb(n) { return n < 1024 ? n + ' B' : (n / 1024).toFixed(1).replace('.', ',') + ' kB'; }
-
   function fileEl(entry, nr) {
-    var d = document.createElement('details');
+    const d = document.createElement('details');
     d.className = 'jfile';
-    var method = entry.method === 'GET' ? 'info' : '';
+    const metode = entry.method === 'GET' ? 'info' : '';
     d.innerHTML =
       '<summary>' +
-        '<span class="pill ' + method + '">' + esc(entry.method) + '</span>' +
+        '<span class="pill ' + metode + '">' + esc(entry.method) + '</span>' +
         '<span class="jpath">' + esc(entry.path) + '</span>' +
         '<span class="pill ok">' + entry.status + '</span>' +
         '<span class="jdesc">' + String(nr).padStart(2, '0') + ' · ' + esc(entry.desc) + '</span>' +
@@ -442,206 +580,50 @@ dotnet run --project src/Forklaringsmodell.Api</code></pre>
         '<pre class="code"><code>Laster …</code></pre>' +
       '</div>';
 
-    var loaded = false, raw = '';
-    var code = d.querySelector('code');
-    var copyBtn = d.querySelector('button');
-    d.addEventListener('toggle', function () {
-      if (!d.open || loaded) return;
-      loaded = true;
-      fetch('data/' + encodeURI(entry.file))
-        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
-        .then(function (t) { raw = t; code.innerHTML = highlight(t); })
-        .catch(function () {
-          loaded = false;
-          code.textContent = 'Kunne ikke laste filen. Åpnes siden som en lokal fil? Start da en liten webserver, for eksempel: python -m http.server --directory site';
-        });
+    let lastetFil = false, raa = '';
+    const code = d.querySelector('code');
+    const kopier = d.querySelector('button');
+    d.addEventListener('toggle', () => {
+      if (!d.open || lastetFil) return;
+      lastetFil = true;
+      hentTekst('data/' + encodeURI(entry.file))
+        .then((t) => { raa = t; code.innerHTML = highlight(t); })
+        .catch(() => { lastetFil = false; code.textContent = FEIL_LASTING; });
     });
-    copyBtn.addEventListener('click', function () {
-      function fallback() {
-        var r = document.createRange(); r.selectNodeContents(code);
-        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+    kopier.addEventListener('click', async () => {
+      if (!raa) return;
+      try {
+        await navigator.clipboard.writeText(raa);
+        kopier.textContent = 'Kopiert';
+      } catch (e) {
+        const r = document.createRange(); r.selectNodeContents(code);
+        const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        kopier.textContent = 'Markert';
       }
-      if (!raw) { return; }
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(raw).then(function () {
-          copyBtn.textContent = 'Kopiert';
-          setTimeout(function () { copyBtn.textContent = 'Kopier'; }, 1500);
-        }).catch(fallback);
-      } else { fallback(); }
+      setTimeout(() => { kopier.textContent = 'Kopier'; }, 1500);
     });
     return d;
   }
 
-  fetch('data/index.json')
-    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(function (list) {
-      host.innerHTML = '';
-      var groups = [], byName = {};
-      list.forEach(function (e, i) {
-        if (!byName[e.group]) { byName[e.group] = { name: e.group, items: [] }; groups.push(byName[e.group]); }
-        byName[e.group].items.push({ e: e, nr: i + 1 });
-      });
-      groups.forEach(function (g) {
-        var wrap = document.createElement('div');
-        wrap.className = 'jgroup';
-        var h = document.createElement('h3');
-        h.textContent = g.name + ' (' + g.items.length + ' kall)';
-        wrap.appendChild(h);
-        g.items.forEach(function (it) { wrap.appendChild(fileEl(it.e, it.nr)); });
-        host.appendChild(wrap);
-      });
-    })
-    .catch(function () {
-      host.innerHTML = '<p class="footnote">Kunne ikke laste filoversikten. <a href="data/index.json">Åpne den direkte</a>.</p>';
+  indeks.then((liste) => {
+    host.innerHTML = '';
+    const grupper = [], perNavn = {};
+    liste.forEach((e, i) => {
+      if (!perNavn[e.group]) { perNavn[e.group] = { navn: e.group, rader: [] }; grupper.push(perNavn[e.group]); }
+      perNavn[e.group].rader.push({ e, nr: i + 1 });
     });
-})();
-</script>
-<script>
-(function () {
-  var panel = document.getElementById('sf-panel');
-  var tabs = document.getElementById('sf-tabs');
-  if (!panel || !tabs) return;
-
-  function esc(v) { return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-  function by(list, key) { var m = {}; (list || []).forEach(function (x) { m[x[key]] = x; }); return m; }
-  function dato(iso) { var d = new Date(iso); return isNaN(d) ? iso : d.toLocaleString('nb-NO', { dateStyle: 'medium', timeStyle: 'short' }); }
-  function antallNoder(noder) { return (noder || []).reduce(function (n, x) { return n + 1 + antallNoder(x.delvurderinger); }, 0); }
-  function pillUtfall(u) { return u === 'Oppfylt' ? 'ok' : u === 'IkkeOppfylt' ? 'bad' : 'warn'; }
-  function laast(rader) { return rader.filter(function (r) { return r.erLaast; }).length; }
-
-  function node(n, ctx, erRot) {
-    var h = '<div class="dnode' + (erRot ? ' is-root' : '') + '"><div class="dnode__head">' +
-      '<span class="pill ' + pillUtfall(n.utfall) + '">' + esc(n.utfall) + '</span>' +
-      (n.eskalert ? '<span class="pill warn">eskalert</span>' : '') +
-      '<span class="pill ' + (n.erLaast ? 'info' : '') + '">' + (n.erLaast ? 'låst' : 'levende') + '</span></div>' +
-      '<p class="dnode__spor">' + esc(n.beregningsspor) + '</p>';
-    var refs = '';
-    (n.faktumIder || []).forEach(function (id) {
-      var f = ctx.faktum[id]; if (!f) return;
-      var k = ctx.kilder[f.kildeId];
-      refs += '<div><b>faktum</b>' + esc(f.verdi) + (k ? ' <em>(' + esc(k.navn) + ')</em>' : '') + '</div>';
+    grupper.forEach((g) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'jgroup';
+      const h = document.createElement('h3');
+      h.textContent = g.navn + ' (' + g.rader.length + ' kall)';
+      wrap.appendChild(h);
+      g.rader.forEach((it) => wrap.appendChild(fileEl(it.e, it.nr)));
+      host.appendChild(wrap);
     });
-    (n.rettskildeIder || []).forEach(function (id) {
-      var r = ctx.rett[id]; if (r) refs += '<div><b>hjemmel</b>' + esc(r.henvisning) + '</div>';
-    });
-    if (refs) h += '<div class="dnode__refs">' + refs + '</div>';
-    h += '</div>';
-    if (n.delvurderinger && n.delvurderinger.length) {
-      h += '<div class="dchildren">' + n.delvurderinger.map(function (c) { return node(c, ctx, false); }).join('') + '</div>';
-    }
-    return h;
-  }
-
-  function oppbygning(r) {
-    var rader = [
-      ['sak', 'Selve saken', esc(r.sak.tittel) + ' (' + esc(r.sak.status) + ')'],
-      ['oppsummering', 'Tellinger til en oversikt', 'harVedtak ' + r.oppsummering.harVedtak + ', ' + r.oppsummering.antallVurderinger + ' vurderinger, ' + r.oppsummering.antallEskalerteVurderinger + ' eskalerte'],
-      ['relasjoner', 'Koblinger til andre saker', r.relasjoner.length],
-      ['faktum', 'Alle faktum i saken', r.faktum.length + ' (' + laast(r.faktum) + ' låst)'],
-      ['vurderinger', 'Alle vurderinger, flat liste', r.vurderinger.length + ' (' + laast(r.vurderinger) + ' låst)'],
-      ['vurderingstre', 'Samme vurderinger, ferdig nøstet', r.vurderingstre.length + ' rot, ' + antallNoder(r.vurderingstre) + ' noder'],
-      ['partsmedvirkninger', 'Partenes medvirkning', r.partsmedvirkninger.length],
-      ['vedtak', 'Vedtak med forklaringslogg og virkninger', r.vedtak.length],
-      ['refererteVurderinger', 'Vurderinger i andre saker (ett nivå)', r.refererteVurderinger.length],
-      ['andreFaktum', 'Faktum som tilhører andre saker', r.andreFaktum.length],
-      ['referansedata', 'Kilder · rettskilder · regler · vilkår', [r.referansedata.kilder, r.referansedata.rettskilder, r.referansedata.regler, r.referansedata.vilkar].map(function (l) { return l.length; }).join(' · ')]
-    ];
-    return '<div class="table-scroll"><table class="ds-table"><thead><tr><th scope="col">Felt</th><th scope="col">Hva det er</th><th scope="col">I dette svaret</th></tr></thead><tbody>' +
-      rader.map(function (x) { return '<tr><td><code>' + x[0] + '</code></td><td>' + x[1] + '</td><td>' + x[2] + '</td></tr>'; }).join('') +
-      '</tbody></table></div>';
-  }
-
-  function vedtakHtml(r) {
-    if (!r.vedtak.length) {
-      return '<div class="callout"><h3>Ingen vedtak ennå</h3><p>Derfor er ingenting frosset: alle rader har <code>erLaast = false</code>. Likevel er forklaringen på hvorfor saken ble sendt til en saksbehandler fullt ut med i svaret.</p></div>';
-    }
-    return r.vedtak.map(function (v) {
-      var opp = v.forklaringslogg.oppforinger || [];
-      var tell = function (t) { return opp.filter(function (o) { return o.type === t; }).length; };
-      var virk = v.virkninger.map(function (x) {
-        var tekst = (x.beskrivelse || []).map(function (b) { return '<span class="ds-tag" data-color="accent">' + esc(b.spraakKode) + '</span> ' + esc(b.verdi); }).join(' &nbsp; ');
-        return '<div><b>virkning</b>' + esc(x.type) + ', ' + esc(x.varighet) + ': ' + tekst + '</div>';
-      }).join('');
-      return '<div class="dnode is-root"><div class="dnode__head"><span class="pill ok">' + esc(v.vedtak.automatiseringsGrad) + '</span><span class="pill">' + esc(dato(v.vedtak.tidspunkt)) + '</span></div>' +
-        '<p class="dnode__spor"><strong>' + esc(v.vedtak.utfall) + '</strong></p>' +
-        '<div class="dnode__refs"><div><b>logg</b>' + opp.length + ' oppføringer frosset: ' + tell('Faktum') + ' faktum, ' + tell('Vurdering') + ' vurderinger, ' + tell('Partsmedvirkning') + ' partsmedvirkning</div>' + virk + '</div></div>';
-    }).join('');
-  }
-
-  function liste(tittel, items) {
-    if (!items.length) return '';
-    return '<div><h4>' + tittel + ' (' + items.length + ')</h4><ul class="plain-list">' + items.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></div>';
-  }
-
-  function render(entry, r) {
-    var ctx = { faktum: by(r.faktum.concat(r.andreFaktum), 'faktumId'), kilder: by(r.referansedata.kilder, 'kildeId'), rett: by(r.referansedata.rettskilder, 'rettskildeId') };
-    var rd = r.referansedata;
-    var nF = r.faktum.length, nV = r.vurderinger.length;
-    var h = '<div class="case-banner ' + (r.oppsummering.harVedtak ? 'is-ok' : 'is-warn') + '">' +
-      '<h3><span class="pill info">GET</span> /api/saker/{sakId}/forklaring <span class="pill ok">200</span></h3>' +
-      '<p>' + esc(r.sak.tittel) + '</p><p class="sak-id">sakId ' + esc(r.sak.sakId) + ' · <a href="data/' + encodeURI(entry.file) + '" target="_blank" rel="noopener">Åpne råfilen</a> (data/' + esc(entry.file) + ', ' + (entry.bytes / 1024).toFixed(1).replace('.', ',') + ' kB)</p></div>';
-
-    h += '<h3>Svarets oppbygning</h3><p class="hint">Alt på toppnivå, og hva det inneholder her.</p>' + oppbygning(r);
-
-    h += '<h3>Oppsummering</h3><div class="fact-row">' +
-      '<div class="fact"><span class="big">' + r.oppsummering.antallVedtak + '</span><span class="lbl">vedtak</span></div>' +
-      '<div class="fact"><span class="big">' + r.oppsummering.antallFaktum + '</span><span class="lbl">faktum, ' + laast(r.faktum) + ' låst</span></div>' +
-      '<div class="fact"><span class="big">' + r.oppsummering.antallVurderinger + '</span><span class="lbl">vurderinger, ' + laast(r.vurderinger) + ' låst</span></div>' +
-      '<div class="fact"><span class="big">' + r.oppsummering.antallEskalerteVurderinger + '</span><span class="lbl">eskalerte vurderinger</span></div></div>';
-
-    h += '<h3>Vurderingstreet, ferdig nøstet</h3><p class="hint">Dette er <code>vurderingstre</code> slik API-et leverer det. Siden slår ikke opp <code>delvurderingIder</code> selv. Fakta og hjemler er slått opp i <code>faktum</code> og <code>referansedata</code> i samme svar.</p>' +
-      '<div class="dtree">' + r.vurderingstre.map(function (n) { return node(n, ctx, true); }).join('') + '</div>';
-
-    h += '<h3>Vedtak</h3>' + vedtakHtml(r);
-
-    h += '<h3>Referansedata, ferdig oppløst</h3><p class="hint">Kilder, hjemler, regler og vilkår som saken peker på. Klienten slipper egne oppslag.</p><div class="refcols">' +
-      liste('Kilder', rd.kilder.map(function (k) { return esc(k.navn) + ' <em>(' + (k.autoritativ ? 'autoritativ' : 'ikke autoritativ') + ')</em>'; })) +
-      liste('Rettskilder', rd.rettskilder.map(function (x) { return esc(x.henvisning); })) +
-      liste('Regler', rd.regler.map(function (x) { return esc(x.teknologi) + ' <em>(' + esc(x.type) + ')</em>'; })) +
-      liste('Vilkår', rd.vilkar.map(function (x) { return esc(x.navn) + ' <code>' + esc(x.kode) + '</code>'; })) +
-      '</div>';
-
-    h += '<h3>Andre saker</h3><p class="hint"><code>refererteVurderinger</code> og <code>andreFaktum</code> er tomme her (' + r.refererteVurderinger.length + ' og ' + r.andreFaktum.length + '), fordi ingen vurdering i saken bygger på en annen sak. Gjør den det, kommer de siterte radene med, ett nivå ut, så en kryss-sak-referanse kan vises uten flere oppslag.</p>';
-
-    panel.innerHTML = h;
-  }
-
-  var files = {}, cache = {}, aktiv = 'a';
-
-  function velg(k) {
-    aktiv = k;
-    Array.prototype.forEach.call(tabs.querySelectorAll('button'), function (b) {
-      var på = b.getAttribute('data-sak') === k;
-      b.setAttribute('aria-pressed', på ? 'true' : 'false');
-      if (på) { b.removeAttribute('data-variant'); } else { b.setAttribute('data-variant', 'secondary'); }
-    });
-    var entry = files[k];
-    if (!entry) { panel.innerHTML = '<p class="footnote">Fant ikke filen i oversikten.</p>'; return; }
-    if (cache[k]) { render(entry, cache[k]); return; }
-    panel.innerHTML = '<p class="footnote">Laster svaret …</p>';
-    fetch('data/' + encodeURI(entry.file))
-      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function (doc) { cache[k] = doc.response; if (aktiv === k) render(entry, doc.response); })
-      .catch(function () { panel.innerHTML = '<p class="footnote">Kunne ikke laste filen. Åpnes siden som en lokal fil? Start da en liten webserver, for eksempel: python -m http.server --directory site</p>'; });
-  }
-
-  tabs.addEventListener('click', function (e) {
-    var b = e.target.closest('button[data-sak]');
-    if (b) velg(b.getAttribute('data-sak'));
+  }).catch(() => {
+    host.innerHTML = '<p class="footnote">Kunne ikke laste filoversikten. <a href="data/index.json">Åpne den direkte</a>.</p>';
   });
-
-  fetch('data/index.json')
-    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(function (liste) {
-      liste.forEach(function (e) {
-        if (e.method === 'GET' && e.path === '/api/saker/{sakId}/forklaring') {
-          if (/^Sak A/.test(e.group)) files.a = e;
-          if (/^Sak B/.test(e.group)) files.b = e;
-        }
-      });
-      velg('a');
-    })
-    .catch(function () { panel.innerHTML = '<p class="footnote">Kunne ikke laste filoversikten.</p>'; });
 })();
 </script>
 <script src="../assets/js/site.js" defer></script>
