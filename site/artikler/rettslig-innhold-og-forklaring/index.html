@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="nb" data-color-scheme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Systemets rettslige innhold og vedtakets forklaring – Forklaringsmodell</title>
+<meta name="description" content="Decisive AS skriver at forvaltningen må kunne vise det rettslige innholdet i automatiserte systemer. Forklaringsmodellen viser hva systemet gjorde i hver sak. Her er sammenhengen, og hvor den peker på hull.">
+<link rel="canonical" href="https://finnuro.github.io/forklaringsmodell-api/artikler/rettslig-innhold-og-forklaring/">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/css/fonts.css">
+<link rel="stylesheet" href="../../assets/css/vendor/designsystemet.css">
+<link rel="stylesheet" href="../../assets/css/vendor/designsystemet-theme.css">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<meta property="og:title" content="Systemets rettslige innhold og vedtakets forklaring – Forklaringsmodell">
+<meta property="og:description" content="Decisive AS skriver at forvaltningen må kunne vise det rettslige innholdet i automatiserte systemer. Forklaringsmodellen viser hva systemet gjorde i hver sak. Her er sammenhengen, og hvor den peker på hull.">
+<meta property="og:type" content="website">
+</head>
+<body>
+
+<a class="ds-link skip-to-content" href="#main">Hopp til innhold</a>
+
+<div class="disclaimer-bar">
+  <div class="wrap">
+    <span>📎 <strong>Prototype / proof of concept</strong> — ikke en produksjonstjeneste og ikke en offisiell Digdir-tjeneste. <strong>Utviklet sammen med Claude Code.</strong></span>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand plain" href="../../">
+      <span class="brand__mark" aria-hidden="true">FM</span>
+      <span class="brand__text">
+        <span class="brand__title">Forklaringsmodell</span>
+        <span class="brand__subtitle">API for forklarbare vedtak</span>
+      </span>
+    </a>
+    <nav class="main-nav" aria-label="Hovedmeny">
+      <a href="../../">Forside</a>
+      <a href="../../modell/">Modell</a>
+      <a href="../../regler/">Regler</a>
+      <a href="../../eksempel/">Eksempel</a>
+      <a href="../../api/">API</a>
+      <a href="../../versjoner/">Versjoner</a>
+      <a href="../../artikler/" aria-current="page">Artikler</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap page-head">
+    <span style="font-size:var(--ds-body-xs-font-size); color:var(--ds-color-text-subtle);"><a class="ds-link" href="../../">Forside</a> / <a class="ds-link" href="../">Artikler</a> / Systemets rettslige innhold</span>
+    <p style="margin:var(--ds-size-4) 0 0;"><span class="pill info">Artikkel</span> <span class="footnote">5. november 2026</span></p>
+    <h1>Systemets rettslige innhold og vedtakets forklaring</h1>
+    <p class="lead">Decisive AS skriver at forvaltningen må kunne vise «det rettslige innholdet» i systemene sine. Forklaringsmodellen viser hva systemet gjorde i hver enkelt sak. Det er to sider av samme sak, og de trenger hverandre.</p>
+  </div>
+
+  <div class="wrap" style="padding-bottom:var(--ds-size-16);">
+    <div class="prose">
+
+      <h2>Artikkelen i korte trekk</h2>
+      <p>3. november 2026 publiserte konsulentselskapet <a href="https://www.decisive.no/rettslige-innholdet-i-systemet-ditt/" target="_blank" rel="noopener">Decisive AS</a> innlegget «Hva er det rettslige innholdet i systemet ditt?». Under er hovedpunktene slik vi leser dem. Oppsummeringen er vår, og lovhenvisningene er artikkelens egne, ikke kontrollert mot lovteksten.</p>
+      <ul>
+        <li><strong>Bakgrunn.</strong> Ifølge artikkelen krever § 13 i ny forvaltningslov at et forvaltningsorgan dokumenterer det rettslige innholdet i automatiserte systemer, og som hovedregel offentliggjør dokumentasjonen. Flere høringsinstanser har pekt på at det er uklart hva som skal dokumenteres, og forskriften var ikke på høring da artikkelen ble skrevet.</li>
+        <li><strong>To fristelser.</strong> Å dokumentere reglene i seg selv, eller å dokumentere kildekoden. Artikkelen mener begge er nyttige, men at ingen av dem sier hvilket spørsmål systemet faktisk svarer på.</li>
+        <li><strong>Forslaget.</strong> Beslutningsbasert dokumentasjon, med tre artefakter som henger sammen: <em>beslutningen</em> (beskrevet som spørsmål, vurderinger, utfall og særtilfeller), <em>reglene</em> (med hjemmel, for eksempel som beslutningstabell) og <em>faktaene</em> (som en faktamodell koblet til datakilder).</li>
+        <li><strong>Tre nivåer.</strong> Et overbygg med beslutningsstruktur, prosessflyt og grensesnittet mellom automatisk og manuell behandling. Så beslutningsstruktur og regelanalyse. Til slutt implementasjonen i en regelmotor.</li>
+        <li><strong>Anbefalingen.</strong> «Begynn med beslutningen» i stedet for reglene eller koden.</li>
+      </ul>
+      <p class="footnote">Artikkelen er skrevet av et selskap som selger rådgivning på området, og den er et faglig innlegg med egne meninger, ikke en fasit. Vi har bare lest denne ene artikkelen.</p>
+
+      <h2>To nivåer: systemet og saken</h2>
+      <p>Det artikkelen beskriver er dokumentasjon av <em>systemet</em>: hvilke beslutninger det tar, etter hvilke regler og på hvilke fakta. Den gjelder alle saker likt. Forklaringsmodellen beskriver derimot <em>én enkelt sak</em>: hva systemet faktisk gjorde i akkurat denne saken.</p>
+    </div>
+    <div class="table-scroll" style="max-width:60rem; margin-bottom:var(--ds-size-6);">
+      <table class="ds-table">
+        <thead><tr><th scope="col"></th><th scope="col">Systemdokumentasjon (artikkelen)</th><th scope="col">Forklaring (forklaringsmodellen)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Spørsmålet</strong></td><td>Hva avgjør systemet, etter hvilke regler og på hvilke fakta?</td><td>Hva ble avgjort i denne saken, og hvorfor ble det slik?</td></tr>
+          <tr><td><strong>Gjelder</strong></td><td>Systemet og alle sakene det behandler</td><td>Ett vedtak, eller én sak</td></tr>
+          <tr><td><strong>Endres når</strong></td><td>Regelverket eller systemet endres</td><td>Aldri etter at vedtaket er fattet. Den er frosset, og rettelser er nye rader</td></tr>
+          <tr><td><strong>Inneholder</strong></td><td>Beslutninger, regler med hjemmel, faktamodell og datakilder</td><td>Faktum med kilde, vurderinger med regelversjon og hjemmel, utfall og virkninger</td></tr>
+          <tr><td><strong>Brukes til</strong></td><td>Åpenhet, kontroll og tillit til hvordan systemet er bygget</td><td>Begrunnelse overfor parten, klage, tilsyn og innsyn i en konkret sak</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose">
+      <p>Slik vi ser det trenger de to hverandre. Systemdokumentasjonen sier hva systemet skal gjøre, og forklaringen viser hva det gjorde. Uten den første har du ingenting å sammenligne forklaringen med. Uten den andre kan du ikke vise at systemet faktisk fulgte dokumentasjonen.</p>
+
+      <h2>Hvor de møtes</h2>
+      <p>Mange av artikkelens begreper har en motpart i forklaringsmodellen. Noen har ingen, og noen betyr noe annet.</p>
+    </div>
+    <div class="table-scroll" style="max-width:60rem; margin-bottom:var(--ds-size-6);">
+      <table class="ds-table">
+        <thead><tr><th scope="col">I artikkelen</th><th scope="col">I forklaringsmodellen</th><th scope="col">Merknad</th></tr></thead>
+        <tbody>
+          <tr><td>Beslutning, med spørsmål og mulige utfall</td><td><code>Vedtak</code> og <code>Vedtaksvirkning</code> for utfallet, rotvurderingen for det samlede svaret, og <code>Vilkar</code> som katalog</td><td>Vi har ingen egen «beslutning» med spørsmål og utfallsrom. Se «Hull» under.</td></tr>
+          <tr><td>Vurdering: et faktum som er sant eller usant</td><td><code>Faktum</code> av typen subsumert, og delvurderinger</td><td>Samme ord, ulik betydning. Hos oss er en <code>Vurdering</code> en regel anvendt på fakta, og den kan være regel, KI eller skjønn.</td></tr>
+          <tr><td>Regler, som beslutningstabell eller i RuleSpeak</td><td><code>Regel</code>, med peker til regelartefaktet i <code>RegeldefinisjonReferanse</code></td><td>Vi lagrer ikke selve regelen, bare hvilken versjon som ble brukt og hvor den ligger (regel 3.16).</td></tr>
+          <tr><td>Hjemmel for hver regel</td><td><code>Rettskilde</code>, koblet til både <code>Regel</code> og <code>Vurdering</code></td><td>Samme grunnidé: regelen skal kunne føres tilbake til en rettskilde (regel 3.7).</td></tr>
+          <tr><td>Faktamodell og datakilder</td><td><code>Faktum</code> og <code>Kilde</code>, med markering av om kilden er autoritativ</td><td>Innhenting har egen hjemmel (regel 3.8).</td></tr>
+          <tr><td>Grensesnittet mellom automatisk og manuell behandling</td><td><code>Eskalert</code>, <code>AutomatiseringsGrad</code> og utfallet <code>Uavklart</code></td><td>Regel 3.3, 3.5 og 3.14.</td></tr>
+          <tr><td>Prosessflyt i overbygget</td><td>Bevisst utenfor</td><td>Modellen er ingen prosessmotor (regel 3.11).</td></tr>
+          <tr><td>Implementasjon i regelmotor</td><td><code>Regel.Teknologi</code></td><td>Modellen er teknologinøytral.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose">
+      <h2>Der vi er enige</h2>
+      <ul>
+        <li><strong>Hjemmelen skal henge på regelen.</strong> Det er det som skiller rettslig innhold fra ren logikk. I forklaringsmodellen kan hver regel og hver vurdering peke på sine rettskilder.</li>
+        <li><strong>Begynn med utfallet.</strong> I vurderingstreet er roten den samlede konklusjonen, og delvurderingene viser hva den bygger på. En leser starter i svaret og går nedover mot grunnlaget.</li>
+        <li><strong>Ikke kopier regelen eller koden.</strong> Artikkelen mener regler og kode alene ikke sier hvilket spørsmål systemet besvarer. Vi lagrer heller en referanse til regelen og versjonen, og lar regelmotoren eie selve regelen.</li>
+      </ul>
+
+      <h2>Eksempelet vårt på begge nivåer</h2>
+      <p>Slik vi forstår spørsmål–vurdering–utfall–særtilfelle-formen, kunne systemnivået for <a href="../../eksempel/">piperehabiliteringen</a> se ut som til venstre under, mens forekomstene i forklaringsmodellen står til høyre. Dette er vår tolkning av formen og vårt eget eksempel. Det er ikke Decisives metode og ikke Stavangers faktiske dokumentasjon.</p>
+    </div>
+    <div class="table-scroll" style="max-width:60rem; margin-bottom:var(--ds-size-6);">
+      <table class="ds-table">
+        <thead><tr><th scope="col"></th><th scope="col">Systemnivå (vår tolkning)</th><th scope="col">Forekomst: Sak A og Sak B</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Spørsmål</strong></td><td>Kan søknaden om rehabilitering av skorstein godkjennes automatisk?</td><td>Rotvurderingen. Oppfylt i Sak A, Uavklart og eskalert i Sak B.</td></tr>
+          <tr><td><strong>Vurdering 1</strong></td><td>Har ansvarlig foretak sentral godkjenning i riktig kategori?</td><td>Delvurdering om ansvarsrett: Oppfylt i Sak A, Ikke oppfylt i Sak B, med faktum fra sentral godkjenning.</td></tr>
+          <tr><td><strong>Vurdering 2</strong></td><td>Er tiltaket bare innvendig fôring, uten utvendig dimensjonsendring?</td><td>Delvurdering om tiltakets omfang.</td></tr>
+          <tr><td><strong>Vurdering 3</strong></td><td>Er bygningen ikke fredet eller verneverdig?</td><td>Delvurdering om fredning.</td></tr>
+          <tr><td><strong>Utfall</strong></td><td>Godkjennes automatisk, eller rutes til manuell behandling.</td><td>Vedtaket med virkning i Sak A. Ingen vedtak ennå i Sak B.</td></tr>
+          <tr><td><strong>Særtilfelle</strong></td><td>Data mangler, eller to kilder er uenige.</td><td>Utfallene <code>IkkeVurdert</code> og <code>Uavklart</code>, og nye faktum som egne rader.</td></tr>
+          <tr><td><strong>Hjemmel</strong></td><td>Plan- og bygningsloven § 20-1 bokstav f og §§ 22-1 og 23-3.</td><td><code>Rettskilde</code>, koblet til regelen og til delvurderingene.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose">
+      <h2>Hull artikkelen får oss til å se</h2>
+      <p>Dette er våre egne observasjoner. Artikkelen sier ikke noe om forklaringsmodellen.</p>
+      <ul>
+        <li><strong>Vi har ingen egen beslutning.</strong> Artikkelen vil at man begynner med beslutningen, formulert som et spørsmål med mulige svar. Vi har <code>Vilkar</code> som katalog, men et vilkår er ikke et spørsmål med et definert utfallsrom. I dag kan et kallende system peke til sin egen beslutningskatalog via <code>Vilkar.Kode</code> og <code>Kodeverk</code>. Om vi skal få en tydeligere referanse er ikke besluttet.</li>
+        <li><strong>Rekkefølge.</strong> Artikkelen mener et rettslig svar skal være det samme uansett i hvilken rekkefølge reglene leses. Forklaringsmodellen kan registrere <code>IkkeVurdert</code> når behandlingen stoppet før et vilkår ble nådd (regel 3.14). Det dokumenterer hva som skjedde, men sier ikke om regelsettet er rekkefølgeuavhengig. Det er et krav til regelsettet, ikke til forklaringen.</li>
+        <li><strong>Samme ord, to betydninger.</strong> «Vurdering» betyr noe annet i artikkelen enn i forklaringsmodellen. Det kan skape forvirring der begge brukes i samme prosjekt, og bør avklares i dokumentasjonen.</li>
+        <li><strong>Uenige kilder.</strong> Artikkelen nevner at to kilder kan avvike, for eksempel en internt registrert og en folkeregistrert adresse. Vi kan lagre begge som faktum med hver sin kilde, men har ingen markering av at de er i konflikt.</li>
+        <li><strong>Systemnivået er utenfor.</strong> Forklaringsmodellen erstatter ikke dokumentasjon av systemet. Den gir forekomstdata som slik dokumentasjon kan peke til og testes mot.</li>
+      </ul>
+
+      <h2>Det vi tar med oss</h2>
+      <p>Tre forslag som ingen er besluttet:</p>
+      <ol>
+        <li>Beskrive eksempelsakene også på systemnivå, med spørsmål, vurderinger og utfall, og koble de to nivåene via <code>Vilkar.Kode</code> og <code>Regel.RegeldefinisjonReferanse</code>.</li>
+        <li>Avklare i dokumentasjonen hva «vurdering» betyr hos oss, og hvordan det forholder seg til artikkelens bruk.</li>
+        <li>Vurdere om en vurdering eller et vilkår bør kunne peke på systemets beslutning med en egen, ekstern referanse, i tråd med prinsippet om referanse i stedet for kopi.</li>
+      </ol>
+      <p>Har du synspunkter, bruk «Gi tilbakemelding» nederst til høyre.</p>
+
+      <div class="callout">
+        <h3>Forbehold</h3>
+        <p>Vi har bare lest denne ene artikkelen. Lovhenvisningene er gjengitt fra artikkelen og er ikke kontrollert mot lovteksten. Dette er ikke en juridisk vurdering, og det er verken Digdirs eller Decisives syn. Nettstedet er en prototype utviklet sammen med Claude Code.</p>
+        <p><strong>Kilde:</strong> Decisive AS, «Hva er det rettslige innholdet i systemet ditt?», 3. november 2026. <a href="https://www.decisive.no/rettslige-innholdet-i-systemet-ditt/" target="_blank" rel="noopener">decisive.no</a></p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <h3>Om nettstedet</h3>
+      <p style="font-size:var(--ds-body-sm-font-size); color:var(--ds-color-text-subtle); max-width:32ch; margin:0;">
+        Dokumentasjon for <a href="https://github.com/FinnurO/forklaringsmodell-api" target="_blank" rel="noopener">forklaringsmodell-api</a>:
+        en prototype for en felles informasjonsmodell som forklarer vedtak. Bygget med
+        <a href="https://designsystemet.no/" target="_blank" rel="noopener">designsystemet.no</a>.
+      </p>
+    </div>
+    <div>
+      <h3>Dokumentasjon</h3>
+      <ul>
+        <li><a href="../../modell/">Modell</a></li>
+        <li><a href="../../regler/">Forretningsregler</a></li>
+        <li><a href="../../eksempel/">Eksempel: piperehabilitering</a></li>
+        <li><a href="../../api/">API</a></li>
+        <li><a href="../../versjoner/">Versjoner</a></li>
+        <li><a href="../../artikler/">Artikler</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Relatert</h3>
+      <ul>
+        <li><a href="https://github.com/FinnurO/digital-rettsstat" target="_blank" rel="noopener">Rammeverk for digital rettsstat</a></li>
+        <li><a href="https://github.com/FinnurO/regel-ide" target="_blank" rel="noopener">Regel-IDE</a></li>
+        <li><a href="https://lovdata.no/lov/1967-02-10" target="_blank" rel="noopener">Forvaltningsloven (Lovdata)</a></li>
+        <li><a href="https://data.norge.no/" target="_blank" rel="noopener">Felles datakatalog</a></li>
+        <li><a href="https://sjekkliste-bygg.ft.dibk.no/" target="_blank" rel="noopener">DiBKs sjekkliste for bygg</a></li>
+      </ul>
+    </div>
+    <p class="fine">
+      Prototype og proof of concept — ikke en offisiell nettside for Digitaliseringsdirektoratet (Digdir), og ikke en produksjonsklar tjeneste. Eksemplene bruker fiktive adresser og saker, og er utledet fra offentlig tilgjengelig informasjon.
+      Kildekode på <a href="https://github.com/FinnurO/forklaringsmodell-api" target="_blank" rel="noopener">GitHub</a>.
+    </p>
+    <p class="fine">
+      <strong>Utviklet sammen med Claude Code</strong> (Anthropic) — kode, tester og dokumentasjon. Innholdet er ikke fasitsjekket av jurister; behandle det som et utkast og meld gjerne fra via «Gi tilbakemelding».
+    </p>
+  </div>
+</footer>
+
+<script src="../../assets/js/site.js" defer></script>
+</body>
+</html>
