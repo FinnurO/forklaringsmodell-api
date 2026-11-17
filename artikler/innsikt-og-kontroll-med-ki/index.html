@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="nb" data-color-scheme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Når KI anbefaler og mennesket bestemmer – Forklaringsmodell</title>
+<meta name="description" content="Sivilombudet mener forvaltningen må ha reell innsikt i og kontroll med KI-systemene den bruker. Hva betyr det for forklaringsmodellen og API-et? Det modellen gir, hullene og forslag til endringer.">
+<link rel="canonical" href="https://finnuro.github.io/forklaringsmodell-api/artikler/innsikt-og-kontroll-med-ki/">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/css/fonts.css">
+<link rel="stylesheet" href="../../assets/css/vendor/designsystemet.css">
+<link rel="stylesheet" href="../../assets/css/vendor/designsystemet-theme.css">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<meta property="og:title" content="Når KI anbefaler og mennesket bestemmer – Forklaringsmodell">
+<meta property="og:description" content="Sivilombudet mener forvaltningen må ha reell innsikt i og kontroll med KI-systemene den bruker. Hva betyr det for forklaringsmodellen og API-et? Det modellen gir, hullene og forslag til endringer.">
+<meta property="og:type" content="website">
+</head>
+<body>
+
+<a class="ds-link skip-to-content" href="#main">Hopp til innhold</a>
+
+<div class="disclaimer-bar">
+  <div class="wrap">
+    <span>📎 <strong>Prototype / proof of concept</strong> — ikke en produksjonstjeneste og ikke en offisiell Digdir-tjeneste. <strong>Utviklet sammen med Claude Code.</strong></span>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand plain" href="../../">
+      <span class="brand__mark" aria-hidden="true">FM</span>
+      <span class="brand__text">
+        <span class="brand__title">Forklaringsmodell</span>
+        <span class="brand__subtitle">API for forklarbare vedtak</span>
+      </span>
+    </a>
+    <nav class="main-nav" aria-label="Hovedmeny">
+      <a href="../../">Forside</a>
+      <a href="../../modell/">Modell</a>
+      <a href="../../regler/">Regler</a>
+      <a href="../../eksempel/">Eksempel</a>
+      <a href="../../api/">API</a>
+      <a href="../../versjoner/">Versjoner</a>
+      <a href="../../artikler/" aria-current="page">Artikler</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap page-head">
+    <span style="font-size:var(--ds-body-xs-font-size); color:var(--ds-color-text-subtle);"><a class="ds-link" href="../../">Forside</a> / <a class="ds-link" href="../">Artikler</a> / Innsikt i og kontroll med KI</span>
+    <p style="margin:var(--ds-size-4) 0 0;"><span class="pill info">Artikkel</span> <span class="footnote">17. november 2026</span></p>
+    <h1>Når KI anbefaler og mennesket bestemmer</h1>
+    <p class="lead">Sivilombudet mener forvaltningen må ha reell innsikt i og kontroll med KI-systemene den bruker, og at det ikke er nok at et menneske tar den endelige beslutningen. Her er hva uttalelsen betyr for forklaringsmodellen og API-et: hva modellen allerede gir, og hva den mangler.</p>
+  </div>
+
+  <div class="wrap" style="padding-bottom:var(--ds-size-16);">
+    <div class="prose">
+
+      <h2>Uttalelsen i korte trekk</h2>
+      <p>31. oktober 2026 avga Sivilombudet uttalelsen <a href="https://www.sivilombudet.no/uttalelser/forvaltningsrettslige-krav-til-innsikt-i-og-kontroll-med-forvaltningens-ki-systemer/" target="_blank" rel="noopener">«Forvaltningsrettslige krav til innsikt i og kontroll med forvaltningens KI-systemer»</a> (sak 2026/145). Den ble publisert 11. november. Saken er tatt opp av eget tiltak og er generell, ikke en klage i en enkeltsak. Ombudet har hentet inn opplysninger fra Arbeidstilsynet, Skatteetaten, Tolletaten og Nav. Under er hovedpunktene slik vi leser dem.</p>
+      <ul>
+        <li><strong>Systemene.</strong> Arbeidstilsynets prediksjonsindeks og Skatteetatens modeller for fradrag og sekundærbolig gir forslag til hvem som skal få tilsyn eller kontroll. Beslutningen tas av et menneske. Tolletatens maskinlæring finner mønstre i varedata, som analytikere bruker som grunnlag når de utformer kontrollregler, uten risikoscore. Nav bruker per i dag ikke KI til digital beslutningsstøtte. Uttalelsen vurderer ikke generativ KI eller språkmodeller som egen kategori.</li>
+        <li><strong>Kjernen.</strong> Forvaltningen må ha tilstrekkelig innsikt i og reelle muligheter til å kontrollere at systemene og resultatene bygger på saklige og lovlige hensyn. Ombudet bygger på forbudet mot utenforliggende hensyn og usaklig forskjellsbehandling, som ny forvaltningslov § 40 ifølge uttalelsen lovfester uten å endre gjeldende rett, og på likebehandlingsprinsippet. Forsvarlig saksbehandling brukes som vurderingsnorm. Uttalelsen sier at et generelt, ulovfestet krav om forsvarlig saksbehandling er omstridt.</li>
+        <li><strong>Et menneske i løkken er ikke nok.</strong> Ombudet mener det er «ikke i seg selv tilstrekkelig at den endelige beslutningen treffes av et menneske». Forvaltningen må ha rutiner som sikrer at kontrollmulighetene faktisk brukes. Begrunnelsen er blant annet automatiseringsbias: tendensen til å stole ukritisk på automatiske anbefalinger.</li>
+        <li><strong>Innsikt i den enkelte saken.</strong> Hvor mye innsikt som trengs, varierer. Noen ganger må forvaltningen kunne se hvilke opplysninger som påvirket det konkrete resultatet. Andre ganger kan resultatet, sammen med kunnskap om systemet, være nok, dersom det gir grunnlag for reell kontroll.</li>
+        <li><strong>Utplukk til kontroll.</strong> Når en KI-vurdering får vesentlig betydning for hvem som velges ut til kontroll, skjerpes kravet om at utvelgelsen kan etterprøves som saklig og lovlig. At den som blir valgt ut senere kontrolleres, er ikke nok.</li>
+        <li><strong>Ingen konklusjon om lovbrudd.</strong> Ombudet sier at det ikke har grunnlag for å vurdere om etatenes bruk oppfyller kravene i alle tilfeller, og at det er viktig at etatene følger opp uavklarte spørsmål, blant annet om hvilke bruksområder som er høyrisiko etter KI-forordningen. Ombudet mener det kan være grunn til å vurdere om kravene bør komme tydeligere fram i lov eller forskrift.</li>
+      </ul>
+      <p>Hoveddelen av vurderingen gjelder forvaltningens egen innsikt. Ombudet sier uttrykkelig at den ikke gjelder hvilken forklaring innbyggerne har krav på. Det behandles i et vedlegg, med ny forvaltningslov § 12, personvernforordningen artikkel 15 og 22, og EUs KI-forordning, som ikke er gjennomført i norsk rett. Ifølge uttalelsen tar regjeringen sikte på å foreslå en KI-lov våren 2027.</p>
+
+      <h2>To behov: forvaltningens kontroll og partens forklaring</h2>
+      <p>Uttalelsen skiller mellom det forvaltningen selv må vite, og det den saken gjelder har krav på å få forklart. Forklaringsmodellen skal tjene begge.</p>
+    </div>
+    <div class="table-scroll" style="max-width:60rem; margin-bottom:var(--ds-size-6);">
+      <table class="ds-table">
+        <thead><tr><th scope="col"></th><th scope="col">Forvaltningens innsikt og kontroll (hoveddelen)</th><th scope="col">Forklaring til den saken gjelder (vedlegget)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>For hvem</strong></td><td>Forvaltningen selv, og i ettertid ombudet</td><td>Den saken gjelder</td></tr>
+          <tr><td><strong>Grunnlag ifølge uttalelsen</strong></td><td>Forbudet mot utenforliggende hensyn og usaklig forskjellsbehandling, likebehandling, og forsvarlig saksbehandling som vurderingsnorm</td><td>Ny forvaltningslov § 12 andre ledd og personvernforordningen artikkel 15 og 22. KI-forordningen artikkel 86, som bare gjelder høyrisiko-systemer og ikke er gjennomført i norsk rett</td></tr>
+          <tr><td><strong>Hva som trengs</strong></td><td>Kunne kontrollere at resultatet bygger på saklige og lovlige hensyn, og noen ganger se hvilke opplysninger som påvirket det konkrete resultatet</td><td>Forstå hvordan og på hvilket grunnlag avgjørelsen ble truffet. Ifølge forarbeidene bør forklaringen omfatte opplysningene, hvordan de er vektlagt, hva som var utslagsgivende, og hvilke deler som er automatisert</td></tr>
+          <tr><td><strong>Hva forklaringsmodellen bidrar med</strong></td><td>Data om hver sak som kan kontrolleres i ettertid: faktum med kilde, regelversjon, hjemmel og eskalering</td><td>Grunnlaget for en forklaring, og lesevisningen, som lager en lesbar versjon automatisk</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose">
+      <p>Uttalelsen gjengir at forarbeidene til ny forvaltningslov antar at det kan være praktisk å generere forklaringen automatisk ved automatiserte avgjørelser. Den gjengir også EU-domstolens dom C-203/22 (Dun &amp; Bradstreet) om personvernforordningen: det er ikke nok å vise til en komplisert matematisk modell. Begge deler er relevante for oss: en peker til modellen i <code>Regel.RegeldefinisjonReferanse</code> er sporbarhet, ikke en forklaring.</p>
+
+      <h2>Det modellen allerede gir</h2>
+    </div>
+    <div class="table-scroll" style="max-width:60rem; margin-bottom:var(--ds-size-6);">
+      <table class="ds-table">
+        <thead><tr><th scope="col">Uttalelsen peker på</th><th scope="col">I forklaringsmodellen</th><th scope="col">Merknad</th></tr></thead>
+        <tbody>
+          <tr><td>Hvilke opplysninger resultatet bygget på</td><td><code>Faktum</code> med <code>Kilde</code>, koblet til hver vurdering</td><td>Viser hvilke opplysninger, ikke hvor mye de betydde. Se hull 2.</td></tr>
+          <tr><td>Etterprøving i ettertid</td><td>Frosset forklaringslogg, og <code>Regel</code> som egen rad per versjon med peker til modellen</td><td>Uttalelsen nevner ikke logging eller versjonering. Men etterprøving forutsetter at man vet hvilken modellversjon som ga resultatet.</td></tr>
+          <tr><td>Saklige og lovlige hensyn</td><td><code>Rettskilde</code> koblet til regel og vurdering</td><td>Hjemmelen viser rammen, ikke at modellen holder seg innenfor den.</td></tr>
+          <tr><td>Menneskelig vurdering</td><td>Vurderingstypen <code>Skjonn</code>, med obligatorisk hovedhensyn og forkastede utfall (regel 3.2)</td><td></td></tr>
+          <tr><td>Hvilke deler som er automatisert</td><td><code>Type</code> på hver vurdering og <code>AutomatiseringsGrad</code> på vedtaket (regel 3.5)</td><td>Viser hvem som vurderte, ikke om den menneskelige kontrollen var reell. Se hull 3.</td></tr>
+          <tr><td>Saker som sendes til et menneske</td><td><code>Eskalert</code> og utfallet <code>Uavklart</code></td><td></td></tr>
+          <tr><td>En forklaring som genereres automatisk</td><td>Lesevisningen, som lager en lesbar versjon fra dataene</td><td>Laget for innsyn i dataene, ikke tilpasset parten. Se hull 5.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prose">
+
+      <h2>Hull uttalelsen avdekker</h2>
+      <p>Dette er våre egne vurderinger av modellen. Uttalelsen sier ikke noe om forklaringsmodellen.</p>
+
+      <h3>1. Modellen kjenner bare generativ KI</h3>
+      <p>Uttalelsen handler om maskinlæring og statistiske modeller, og vurderer ikke generativ KI som egen kategori. Forklaringsmodellen har tre vurderingstyper: deterministisk regel, generativ KI og skjønn. En risikoscore fra en maskinlæringsmodell må i dag registreres som generativ KI, og den eneste plassen for et tall er <code>Konfidens</code>, som bare er tillatt for den typen.</p>
+      <p>En risikoscore er ikke en konfidens. Den er selve resultatet. Med dagens regel blir en vurdering eskalert når konfidensen er under terskelen, så en lav risikoscore lagt inn som konfidens ville blitt sendt til manuell behandling. Det er det motsatte av det som er meningen.</p>
+
+      <h3>2. Modellen viser hvilke opplysninger, ikke hvor mye de betydde</h3>
+      <p>Koblingen mellom en vurdering og faktumene den bygger på har ingen vekt. Ombudet mener forvaltningen noen ganger må kunne se hvilke opplysninger som påvirket det konkrete resultatet. Skatteetaten bruker Shapley-verdier, en metode som viser hvor mye hver opplysning betydde for en prediksjon. Ombudet sier at slike verdier ikke alltid er påkrevd. Til parten bør forklaringen ifølge forarbeidene omfatte hvordan opplysningene er vektlagt, og hva som var utslagsgivende.</p>
+      <p>I dag kan dette bare skrives som tekst i <code>Beregningsspor</code>, som lesevisningen ikke kan tolke eller vise strukturert.</p>
+
+      <h3>3. Modellen viser ikke om den menneskelige kontrollen var reell</h3>
+      <p>Vi registrerer at en vurdering ble eskalert og at et menneske utøvde skjønn. Vi registrerer ikke hva saksbehandleren gjorde med KI-anbefalingen: om den ble fulgt, overstyrt eller ikke brukt, og hvorfor. <code>AutomatiseringsGrad</code> teller vurderingstyper og sier ingenting om dette.</p>
+      <p>Ombudet mener forvaltningen må ha rutiner som sikrer at kontrollmulighetene faktisk brukes. Slike rutiner trenger data. Blir anbefalingene nesten alltid fulgt, kan det være et tegn på automatiseringsbias, men det kan bare oppdages hvis avvik registreres. I dag kan en skjønnsvurdering ha KI-vurderingen som delvurdering og beskrive et avvik som fritekst i <code>ForkastedeUtfall</code>, men det kan ikke telles.</p>
+
+      <h3>4. Utplukk til kontroll er ikke et vedtak</h3>
+      <p>Utvelgelse til kontroll er et hovedtema i uttalelsen. Når KI får vesentlig betydning for utvelgelsen, skjerpes kravet om at den kan etterprøves. Forklaringsmodellen er bygget rundt vedtak, men en sak kan finnes uten vedtak, og utløsende hendelse kan være <code>Kontroll</code>. Utplukket kan derfor registreres som den første vurderingen i kontrollsaken, med modellversjon, resultat og opplysninger.</p>
+      <p>Men utplukk skjer ofte i store kjøringer, og de som ikke blir valgt ut, får ingen sak. Uttalelsen sier ikke om utvelgelsen må dokumenteres for dem. Spørsmålet berører også prinsippet om at modellen ikke er en prosessmotor (regel 3.11).</p>
+
+      <h3>5. Lesevisningen er ikke en forklaring til parten</h3>
+      <p>Lesevisningen viser alt som er registrert, også interne opplysninger som om en rad er låst. Ifølge forarbeidene, slik uttalelsen gjengir dem, skal forklaringen til den saken gjelder tilpasses avgjørelsens betydning og vise tydelig hvilke deler som er automatisert. Personvernforordningen artikkel 12 krever at informasjonen er kortfattet og lett forståelig. Det gjør ikke lesevisningen i dag.</p>
+
+      <h3>6. Usaklige hensyn kan skjule seg i opplysningene</h3>
+      <p>Ombudet peker på at bruk av opplysninger som virker som stedfortreder for et diskrimineringsgrunnlag kan reise spørsmål etter likestillings- og diskrimineringsloven § 6, selv om grunnlaget ikke selv er en opplysning i modellen. Forklaringsmodellen viser hvilke opplysninger hver vurdering bygget på, så slike mønstre kan undersøkes i ettertid på tvers av saker. Den markerer ikke slike opplysninger, og vi foreslår ingen endring her nå.</p>
+
+      <h2>Hva uttalelsen ikke sier</h2>
+      <ul>
+        <li>Den nevner ikke krav om logging, versjonering eller lagringstid. Det modellen gjør på disse punktene, er vårt eget valg for å gjøre etterprøving mulig.</li>
+        <li>Den krever ikke at hvert resultat forklares med hvor mye hver opplysning betydde. Ombudet sier at behovet varierer, og at Shapley-verdier ikke alltid er påkrevd.</li>
+        <li>Den konkluderer ikke med at noen etat bryter loven.</li>
+        <li>Den vurderer ikke generativ KI eller språkmodeller som egen kategori.</li>
+        <li>KI-forordningen er ikke gjennomført i norsk rett. Uttalelsen tar heller ikke stilling til om etatenes systemer er høyrisiko, eller om Skatteetaten og Tolletaten er rettshåndhevende myndigheter etter forordningen.</li>
+        <li>Ut fra Skatteetatens beskrivelse er ombudet enig i at personvernforordningen artikkel 22 ikke får anvendelse når KI-resultatet er én av flere faktorer i en reell menneskelig vurdering. Profilering som i praksis avgjør utplukket, kan likevel være omfattet.</li>
+        <li>Den sier ikke når ny forvaltningslov § 12 trer i kraft.</li>
+      </ul>
+
+      <h2>Forslag til endringer i modellen og API-et</h2>
+      <p>Ingen av forslagene er besluttet. Alle kan legges til uten å bryte dagens API.</p>
+      <ol>
+        <li><strong>En egen vurderingstype for statistiske modeller og maskinlæring</strong>, med et eget felt for modellens resultat, atskilt fra <code>Konfidens</code>, og egne regler for når slike vurderinger eskaleres.</li>
+        <li><strong>Et valgfritt bidrag per faktum i en vurdering</strong>, med hvilken forklaringsmetode som ga det, og visning av det i lesevisningen. Det følger prinsippet om referanse i stedet for kopi: vi lagrer resultatet av forklaringen for denne saken, ikke modellen.</li>
+        <li><strong>Registrering av om en KI-anbefaling ble fulgt</strong>, med begrunnelse når den ikke ble det, og en telling av avvik i sak-forklaringen. Modellen gir da data til forvaltningens rutiner, men erstatter dem ikke.</li>
+        <li><strong>En partsvisning i lesevisningen</strong>, laget av de samme dataene, som skjuler interne opplysninger, viser tydelig hva som er automatisert og framhever det som var utslagsgivende.</li>
+        <li><strong>En avklaring av om utplukk til kontroll hører hjemme i modellen</strong>, og i så fall hvordan, uten at modellen blir en prosessmotor.</li>
+      </ol>
+      <p>Nettstedet viser i dag til begrunnelsesplikten i forvaltningsloven § 25. Uttalelsen viser til ny forvaltningslov § 12 for forklaring av automatiserte avgjørelser. Henvisningene bør gjennomgås når det er klart når den nye loven trer i kraft.</p>
+
+      <h2>Sammenhengen med forrige artikkel</h2>
+      <p>I <a href="../rettslig-innhold-og-forklaring/">artikkelen om systemets rettslige innhold</a> skilte vi mellom å dokumentere systemet og å forklare den enkelte saken. Uttalelsen peker i samme retning. Hovedpoenget er at forvaltningen må kunne kontrollere resultatene systemet gir, ikke bare kjenne systemet. Om KI-forordningen artikkel 13, som ikke er gjennomført i norsk rett, sier uttalelsen at informasjonsplikten ikke kan oppfylles med generell systemdokumentasjon uten tilknytning til resultatene, men at artikkelen ikke krever detaljerte beregninger i den enkelte saken. Det forklaringsmodellen registrerer, er nettopp hva systemet gjorde i den enkelte saken.</p>
+      <p>Har du synspunkter, bruk «Gi tilbakemelding» nederst til høyre.</p>
+
+      <div class="callout">
+        <h3>Forbehold</h3>
+        <p>Oppsummeringen er vår og bygger på uttalelsen. Påstandene om hva uttalelsen sier er kontrollert mot uttalelsen før publisering. Vi har ikke lest kildene den viser til, som forarbeidene og EU-domstolens dom, og lovhenvisningene er gjengitt fra uttalelsen. Dette er ikke en juridisk vurdering, og det er verken Digdirs eller Sivilombudets syn. Nettstedet er en prototype utviklet sammen med Claude Code.</p>
+        <p><strong>Kilde:</strong> Sivilombudet, «Forvaltningsrettslige krav til innsikt i og kontroll med forvaltningens KI-systemer», uttalelse 31. oktober 2026, sak 2026/145. <a href="https://www.sivilombudet.no/uttalelser/forvaltningsrettslige-krav-til-innsikt-i-og-kontroll-med-forvaltningens-ki-systemer/" target="_blank" rel="noopener">sivilombudet.no</a></p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <h3>Om nettstedet</h3>
+      <p style="font-size:var(--ds-body-sm-font-size); color:var(--ds-color-text-subtle); max-width:32ch; margin:0;">
+        Dokumentasjon for <a href="https://github.com/FinnurO/forklaringsmodell-api" target="_blank" rel="noopener">forklaringsmodell-api</a>:
+        en prototype for en felles informasjonsmodell som forklarer vedtak. Bygget med
+        <a href="https://designsystemet.no/" target="_blank" rel="noopener">designsystemet.no</a>.
+      </p>
+    </div>
+    <div>
+      <h3>Dokumentasjon</h3>
+      <ul>
+        <li><a href="../../modell/">Modell</a></li>
+        <li><a href="../../regler/">Forretningsregler</a></li>
+        <li><a href="../../eksempel/">Eksempel: piperehabilitering</a></li>
+        <li><a href="../../api/">API</a></li>
+        <li><a href="../../versjoner/">Versjoner</a></li>
+        <li><a href="../../artikler/">Artikler</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Relatert</h3>
+      <ul>
+        <li><a href="https://github.com/FinnurO/digital-rettsstat" target="_blank" rel="noopener">Rammeverk for digital rettsstat</a></li>
+        <li><a href="https://github.com/FinnurO/regel-ide" target="_blank" rel="noopener">Regel-IDE</a></li>
+        <li><a href="https://lovdata.no/lov/1967-02-10" target="_blank" rel="noopener">Forvaltningsloven (Lovdata)</a></li>
+        <li><a href="https://data.norge.no/" target="_blank" rel="noopener">Felles datakatalog</a></li>
+        <li><a href="https://sjekkliste-bygg.ft.dibk.no/" target="_blank" rel="noopener">DiBKs sjekkliste for bygg</a></li>
+      </ul>
+    </div>
+    <p class="fine">
+      Prototype og proof of concept — ikke en offisiell nettside for Digitaliseringsdirektoratet (Digdir), og ikke en produksjonsklar tjeneste. Eksemplene bruker fiktive adresser og saker, og er utledet fra offentlig tilgjengelig informasjon.
+      Kildekode på <a href="https://github.com/FinnurO/forklaringsmodell-api" target="_blank" rel="noopener">GitHub</a>.
+    </p>
+    <p class="fine">
+      <strong>Utviklet sammen med Claude Code</strong> (Anthropic) — kode, tester og dokumentasjon. Innholdet er ikke fasitsjekket av jurister; behandle det som et utkast og meld gjerne fra via «Gi tilbakemelding».
+    </p>
+  </div>
+</footer>
+
+<script src="../../assets/js/site.js" defer></script>
+</body>
+</html>
